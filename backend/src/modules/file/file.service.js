@@ -30,6 +30,10 @@ const resolveAvatarKey = (data) => {
   return data.profile?.avatarName || data.avatarName || null;
 };
 
+const checkValidImageExtensionFile = (file) => {
+  return (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png')
+}
+
 export const getImagePresignedUrl = async (data) => {
   const key = resolveAvatarKey(data);
   if (!key) return null;
@@ -47,6 +51,9 @@ export const getImagePresignedUrl = async (data) => {
  * @param {User} data
  */
 export const deleteOldAndInsertNewImageInS3 = async (data, file) => {
+  if(!checkValidImageExtensionFile(file))
+    throw new AppError("Định dạng file không hợp lệ! Chỉ chấp nhận ảnh JPG/PNG.", 400);
+
   const oldKey = resolveAvatarKey(data);
   if (oldKey) {
     await s3.send(new DeleteObjectCommand({
