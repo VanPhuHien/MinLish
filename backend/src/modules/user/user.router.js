@@ -4,7 +4,6 @@ import { protect } from "../../middlewares/auth.middleware.js";
 import validate from "../../middlewares/validate.middleware.js";
 import { validateAvatar } from "../../middlewares/fileValidate.middleware.js";
 import { putProfileSchema } from "./user.schema.js";
-import multer from "multer";
 
 const router = Router();
 
