@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const deckSchema = new mongoose.Schema(
+const lessonSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -17,10 +17,6 @@ const deckSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
-    coverImage: {
-      type: String,
-      default: '',
-    },
     tagIds: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -33,16 +29,28 @@ const deckSchema = new mongoose.Schema(
         ref: 'CefrLevel',
       },
     ],
-    topicCount: {
-      type: Number,
-      default: 0,
-    },
-    cardCount: {
-      type: Number,
-      default: 0,
+    modes: [
+      {
+        type: String,
+        enum: ['dictation', 'shadowing'],
+      },
+    ],
+    status: {
+      type: String,
+      enum: ['draft', 'published', 'archived'],
+      default: 'draft',
     },
     publishedAt: {
       type: Date,
+    },
+    sourceUrl: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    thumbnailUrl: {
+      type: String,
+      default: '',
     },
   },
   {
@@ -50,5 +58,5 @@ const deckSchema = new mongoose.Schema(
   }
 );
 
-const Deck = mongoose.models.Deck || mongoose.model('Deck', deckSchema, 'decks');
-export default Deck;
+const Lesson = mongoose.models.Lesson || mongoose.model('Lesson', lessonSchema, 'lessons');
+export default Lesson;

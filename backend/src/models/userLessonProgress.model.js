@@ -20,12 +20,10 @@ const userLessonProgressSchema = new mongoose.Schema(
     progressPct: {
       type: Number,
       default: 0,
-      min: 0,
-      max: 100,
     },
     lastSegmentOrder: {
       type: Number,
-      default: 0,
+      default: 1,
     },
     selectedMode: {
       type: String,
@@ -38,6 +36,5 @@ const userLessonProgressSchema = new mongoose.Schema(
   }
 );
 
-userLessonProgressSchema.index({ userId: 1, lessonId: 1 }, { unique: true });
-
-export default mongoose.model('UserLessonProgress', userLessonProgressSchema);
+const UserLessonProgress = mongoose.models.UserLessonProgress || mongoose.model('UserLessonProgress', userLessonProgressSchema, 'user_lesson_progress');
+export default UserLessonProgress;

@@ -2,11 +2,16 @@ import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema(
   {
-    firebaseUid: {
+    email: {
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
       trim: true,
+    },
+    passwordHash: {
+      type: String,
+      required: true,
     },
     name: {
       type: String,
@@ -22,25 +27,23 @@ const userSchema = new mongoose.Schema(
       enum: ['user', 'admin'],
       default: 'user',
     },
-    cerfLevel: {
-      type: String,
-      enum: ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', ''],
-      default: '',
+    isVerified: {
+      type: Boolean,
+      default: false,
     },
-    goal: {
-      type: String,
-      default: '',
-    },
-    firstTimeLogin: {
+    isActive: {
       type: Boolean,
       default: true,
-    }
+    },
+    banReason: {
+      type: String,
+      default: '',
+    },
   },
   {
     timestamps: true,
   }
 );
 
-const User = mongoose.model('User', userSchema);
-
+const User = mongoose.models.User || mongoose.model('User', userSchema, 'users');
 export default User;

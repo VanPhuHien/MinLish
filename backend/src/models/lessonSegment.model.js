@@ -6,7 +6,6 @@ const lessonSegmentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Lesson',
       required: true,
-      index: true, // query thường xuyên theo lessonId
     },
     order: {
       type: Number,
@@ -27,12 +26,12 @@ const lessonSegmentSchema = new mongoose.Schema(
       },
       normalized: {
         type: String,
-        required: true, // lowercase, bỏ dấu câu - dùng để tính điểm dictation
+        required: true,
       },
     },
     translation: {
       type: String,
-      default: '',
+      required: true,
     },
   },
   {
@@ -40,7 +39,5 @@ const lessonSegmentSchema = new mongoose.Schema(
   }
 );
 
-// Đảm bảo order không trùng trong cùng 1 lesson
-lessonSegmentSchema.index({ lessonId: 1, order: 1 }, { unique: true });
-
-export default mongoose.model('LessonSegment', lessonSegmentSchema);
+const LessonSegment = mongoose.models.LessonSegment || mongoose.model('LessonSegment', lessonSegmentSchema, 'lesson_segments');
+export default LessonSegment;
