@@ -27,17 +27,13 @@ export const signup = async (email, password, name) => {
     isActive: true,
   });
 
-  // Tự động sinh OTP và gửi email kích hoạt ngay sau khi đăng ký thành công
-  try {
-    if (redisClient.isOpen) {
-      const otp = generateOtpCode();
-      const redisKey = `otp:verify_email:${email}`;
-      await redisClient.set(redisKey, otp, { EX: config.otpTTL });
-      await sendOtpEmail(email, otp);
-    }
-  } catch (error) {
-    console.error('Lỗi khi tự động gửi OTP kích hoạt:', error);
-  }
+  const otp = generateOtpCode();
+  const redisKey = `otp:verify_email:${email}`;
+  await redisClient.set(redisKey, otp, { EX: config.otpTTL });
+
+  sendOtpEmail(email, otp).catch((error) => {
+    console.error('Lỗi gửi email kích hoạt ngầm:', error);
+  });
 
   return {
     id: user._id,
@@ -106,7 +102,10 @@ export const sendVerificationEmail = async (email) => {
   const redisKey = `otp:verify_email:${email}`;
   await redisClient.set(redisKey, otp, { EX: config.otpTTL });
 
-  await sendOtpEmail(email, otp);
+  sendOtpEmail(email, otp).catch((error) => {
+    console.error('Lỗi gửi email:', error);
+  });
+
   return { message: 'Mã OTP kích hoạt tài khoản đã được gửi' };
 };
 
@@ -149,7 +148,10 @@ export const forgotPassword = async (email) => {
   const redisKey = `otp:forgot_password:${email}`;
   await redisClient.set(redisKey, otp, { EX: config.otpTTL });
 
-  await sendForgotPasswordEmail(email, otp);
+  sendForgotPasswordEmail(email, otp).catch((error) => {
+    console.error('Lỗi gửi email đặt lại mật khẩu:', error);
+  });
+
   return { message: 'Mã OTP đặt lại mật khẩu đã được gửi' };
 };
 
@@ -173,9 +175,7 @@ export const resetPassword = async (email, otp, newPassword) => {
     throw new AppError('Không tìm thấy người dùng', 404);
   }
 
-  // Đổi mật khẩu thành công, xóa OTP
   await redisClient.del(redisKey);
-
   return { message: 'Đặt lại mật khẩu thành công' };
 };
 
