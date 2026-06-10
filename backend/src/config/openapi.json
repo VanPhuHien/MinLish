@@ -3,7 +3,7 @@
   "info": {
     "title": "MinLish API",
     "version": "1.0.0",
-    "description": "Tài liệu API cho ứng dụng học tiếng Anh MinLish. Hệ thống hỗ trợ xác thực bằng Access Token (Bearer JWT) và Refresh Token (HTTP-only Cookie)."
+    "description": "Tài liệu API cho ứng dụng học tiếng Anh MinLish. Hệ thống sử dụng Access Token (Bearer JWT) và Refresh Token (HTTP-only Cookie) cùng cơ chế xác thực email/quên mật khẩu qua OTP Redis."
   },
   "servers": [
     {
@@ -16,7 +16,7 @@
       "post": {
         "tags": ["Auth"],
         "summary": "Đăng ký tài khoản mới",
-        "description": "Tạo tài khoản người dùng mới. Tài khoản tạo xong sẽ ở trạng thái chưa kích hoạt (isVerified = false) và yêu cầu xác thực OTP qua email.",
+        "description": "Tạo tài khoản người dùng mới. Tài khoản tạo xong sẽ ở trạng thái chưa kích hoạt (isVerified = false) và một mã OTP kích hoạt sẽ tự động được gửi qua email.",
         "requestBody": {
           "required": true,
           "content": {
@@ -122,17 +122,17 @@
         }
       }
     },
-    "/auth/otp/send": {
+    "/auth/verify-email/send": {
       "post": {
         "tags": ["Auth"],
-        "summary": "Gửi mã OTP qua email",
-        "description": "Tạo mã OTP ngẫu nhiên gồm 6 chữ số, lưu trữ vào Redis (TTL 10 phút) và gửi email cho người dùng dựa trên mục đích.",
+        "summary": "Gửi lại OTP kích hoạt tài khoản",
+        "description": "Sinh lại mã OTP kích hoạt tài khoản mới, cập nhật vào Redis (TTL 10 phút) và gửi email kích hoạt cho người dùng.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OtpSendPayload"
+                "$ref": "#/components/schemas/ResendVerifyEmailPayload"
               }
             }
           }
@@ -149,7 +149,7 @@
             }
           },
           "400": {
-            "description": "Yêu cầu không hợp lệ (ví dụ: email đã kích hoạt)",
+            "description": "Tài khoản đã được kích hoạt trước đó hoặc dữ liệu lỗi",
             "content": {
               "application/json": {
                 "schema": {
@@ -159,7 +159,7 @@
             }
           },
           "404": {
-            "description": "Không tìm thấy người dùng (khi quên mật khẩu)",
+            "description": "Không tìm thấy người dùng",
             "content": {
               "application/json": {
                 "schema": {
@@ -171,24 +171,24 @@
         }
       }
     },
-    "/auth/otp/verify": {
+    "/auth/verify-email": {
       "post": {
         "tags": ["Auth"],
-        "summary": "Xác thực mã OTP",
-        "description": "Xác thực OTP lấy từ người dùng so sánh với mã lưu trong Redis. Nếu đúng và mục đích là verify_email thì kích hoạt tài khoản. Nếu là forgot_password thì lưu trạng thái reset_status trong Redis có hiệu lực 5 phút.",
+        "summary": "Xác thực mã OTP kích hoạt tài khoản",
+        "description": "Xác thực OTP lấy từ email kích hoạt. Nếu khớp thì kích hoạt tài khoản (isVerified = true) và xóa OTP khỏi Redis.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OtpVerifyPayload"
+                "$ref": "#/components/schemas/VerifyEmailPayload"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Xác thực OTP thành công",
+            "description": "Xác thực và kích hoạt tài khoản thành công",
             "content": {
               "application/json": {
                 "schema": {
@@ -210,11 +210,60 @@
         }
       }
     },
+    "/auth/forgot-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Yêu cầu OTP đặt lại mật khẩu",
+        "description": "Xác minh tài khoản tồn tại và đang hoạt động, sinh mã OTP đặt lại mật khẩu lưu trên Redis (TTL 10 phút) và gửi email OTP.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Mã OTP đặt lại mật khẩu đã được gửi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Tài khoản đã bị khóa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy người dùng",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/auth/reset-password": {
       "post": {
         "tags": ["Auth"],
         "summary": "Đặt lại mật khẩu mới",
-        "description": "Đổi mật khẩu cho người dùng khi quên mật khẩu. Yêu cầu tài khoản đã được xác thực OTP quên mật khẩu trước đó (trong vòng 5 phút).",
+        "description": "Đổi mật khẩu mới cho người dùng. Yêu cầu truyền email, mã OTP quên mật khẩu hợp lệ và mật khẩu mới trong payload. Sau khi đổi thành công, mã OTP sẽ bị xóa khỏi Redis.",
         "requestBody": {
           "required": true,
           "content": {
@@ -237,7 +286,7 @@
             }
           },
           "400": {
-            "description": "Phiên xác thực đã hết hạn hoặc không hợp lệ",
+            "description": "Mã OTP không chính xác, hết hạn hoặc không khớp email",
             "content": {
               "application/json": {
                 "schema": {
@@ -253,7 +302,7 @@
       "post": {
         "tags": ["Auth"],
         "summary": "Làm mới Access Token",
-        "description": "Cấp lại Access Token mới dựa trên Refresh Token gửi lên từ Cookie. Cơ chế xoay vòng Refresh Token (Refresh Token Rotation) sẽ được kích hoạt.",
+        "description": "Cấp lại Access Token mới dựa trên Refresh Token gửi lên từ Cookie.",
         "security": [
           {
             "CookieAuth": []
@@ -296,7 +345,7 @@
     "/auth/logout": {
       "post": {
         "tags": ["Auth"],
-        "summary": "Đăng xuất khỏi hệ thống",
+        "summary": "Đăng xuất",
         "description": "Xóa bỏ cookie chứa Refresh Token ở phía client.",
         "responses": {
           "200": {
@@ -319,13 +368,13 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "description": "Nhập JWT Access Token có dạng: Bearer <Token>"
+        "description": "JWT Access Token: Bearer <Token>"
       },
       "CookieAuth": {
         "type": "apiKey",
         "in": "cookie",
         "name": "refreshToken",
-        "description": "Refresh Token được lưu trữ bảo mật dưới dạng HTTP-only Cookie"
+        "description": "Refresh Token lưu dưới dạng HTTP-only Cookie"
       }
     },
     "schemas": {
@@ -357,37 +406,34 @@
           "password": { "type": "string", "format": "password", "example": "password123" }
         }
       },
-      "OtpSendPayload": {
+      "ResendVerifyEmailPayload": {
         "type": "object",
-        "required": ["email", "purpose"],
+        "required": ["email"],
         "properties": {
-          "email": { "type": "string", "format": "email", "example": "user@example.com" },
-          "purpose": {
-            "type": "string",
-            "enum": ["verify_email", "forgot_password"],
-            "example": "verify_email",
-            "description": "verify_email để kích hoạt tài khoản, forgot_password để chuẩn bị đặt lại mật khẩu"
-          }
+          "email": { "type": "string", "format": "email", "example": "user@example.com" }
         }
       },
-      "OtpVerifyPayload": {
+      "VerifyEmailPayload": {
         "type": "object",
-        "required": ["email", "otp", "purpose"],
+        "required": ["email", "otp"],
         "properties": {
           "email": { "type": "string", "format": "email", "example": "user@example.com" },
-          "otp": { "type": "string", "length": 6, "example": "123456" },
-          "purpose": {
-            "type": "string",
-            "enum": ["verify_email", "forgot_password"],
-            "example": "verify_email"
-          }
+          "otp": { "type": "string", "length": 6, "example": "123456" }
+        }
+      },
+      "ForgotPasswordPayload": {
+        "type": "object",
+        "required": ["email"],
+        "properties": {
+          "email": { "type": "string", "format": "email", "example": "user@example.com" }
         }
       },
       "ResetPasswordPayload": {
         "type": "object",
-        "required": ["email", "newPassword"],
+        "required": ["email", "otp", "newPassword"],
         "properties": {
           "email": { "type": "string", "format": "email", "example": "user@example.com" },
+          "otp": { "type": "string", "length": 6, "example": "123456" },
           "newPassword": { "type": "string", "format": "password", "minLength": 6, "example": "newpassword123" }
         }
       },

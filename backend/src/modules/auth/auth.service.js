@@ -6,6 +6,9 @@ import redisClient from '../../config/redis.js';
 import AppError from '../../utils/AppError.js';
 import { sendOtpEmail, sendForgotPasswordEmail } from '../../utils/mail.util.js';
 
+// Helper sinh mã OTP 6 chữ số
+const generateOtpCode = () => Math.floor(100000 + Math.random() * 900000).toString();
+
 export const signup = async (email, password, name) => {
   const existingUser = await User.findOne({ email });
   if (existingUser) {
@@ -23,6 +26,18 @@ export const signup = async (email, password, name) => {
     isVerified: false,
     isActive: true,
   });
+
+  // Tự động sinh OTP và gửi email kích hoạt ngay sau khi đăng ký thành công
+  try {
+    if (redisClient.isOpen) {
+      const otp = generateOtpCode();
+      const redisKey = `otp:verify_email:${email}`;
+      await redisClient.set(redisKey, otp, { EX: 600 }); // TTL: 10 phút
+      await sendOtpEmail(email, otp);
+    }
+  } catch (error) {
+    console.error('Lỗi khi tự động gửi OTP kích hoạt:', error);
+  }
 
   return {
     id: user._id,
@@ -43,7 +58,7 @@ export const login = async (email, password) => {
   }
 
   if (!user.isVerified) {
-    throw new AppError('Tài khoản chưa được kích hoạt, vui lòng xác thực OTP', 403);
+    throw new AppError('Tài khoản chưa được kích hoạt, vui lòng xác thực email', 403);
   }
 
   if (!user.isActive) {
@@ -74,88 +89,82 @@ export const login = async (email, password) => {
   };
 };
 
-export const sendOtp = async (email, purpose) => {
+export const sendVerificationEmail = async (email) => {
   if (!redisClient.isOpen) {
     throw new AppError('Hệ thống tạm thời gián đoạn, vui lòng thử lại sau', 500);
   }
 
-  if (purpose === 'forgot_password') {
-    const user = await User.findOne({ email });
-    if (!user) {
-      throw new AppError('Không tìm thấy tài khoản với email này', 404);
-    }
-    if (!user.isActive) {
-      throw new AppError('Tài khoản này đã bị khóa', 403);
-    }
-  } else if (purpose === 'verify_email') {
-    const user = await User.findOne({ email });
-    if (!user) {
-      throw new AppError('Không tìm thấy tài khoản với email này', 404);
-    }
-    if (user.isVerified) {
-      throw new AppError('Tài khoản này đã được kích hoạt trước đó', 400);
-    }
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new AppError('Không tìm thấy tài khoản với email này', 404);
+  }
+  if (user.isVerified) {
+    throw new AppError('Tài khoản đã được kích hoạt trước đó', 400);
   }
 
-  // Sinh mã OTP 6 chữ số
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const otp = generateOtpCode();
+  const redisKey = `otp:verify_email:${email}`;
+  await redisClient.set(redisKey, otp, { EX: 600 }); // TTL: 10 phút
 
-  const redisKey = `otp:${purpose}:${email}`;
-  // Lưu OTP vào Redis với thời gian hết hạn là 10 phút (600 giây)
-  await redisClient.set(redisKey, otp, { EX: 600 });
-
-  // Gửi OTP qua email
-  if (purpose === 'verify_email') {
-    await sendOtpEmail(email, otp);
-  } else if (purpose === 'forgot_password') {
-    await sendForgotPasswordEmail(email, otp);
-  }
-
-  return { message: 'Mã OTP đã được gửi' };
+  await sendOtpEmail(email, otp);
+  return { message: 'Mã OTP kích hoạt tài khoản đã được gửi' };
 };
 
-export const verifyOtp = async (email, otp, purpose) => {
+export const verifyEmail = async (email, otp) => {
   if (!redisClient.isOpen) {
-    throw new AppError('Hệ thống cache tạm thời gián đoạn, vui lòng thử lại sau', 500);
+    throw new AppError('Hệ thống tạm thời gián đoạn, vui lòng thử lại sau', 500);
   }
 
-  const redisKey = `otp:${purpose}:${email}`;
+  const redisKey = `otp:verify_email:${email}`;
   const cachedOtp = await redisClient.get(redisKey);
 
   if (!cachedOtp || cachedOtp !== otp) {
     throw new AppError('Mã OTP không hợp lệ hoặc đã hết hạn', 400);
   }
 
-  // OTP chính xác, xóa khỏi Redis
-  await redisClient.del(redisKey);
-
-  if (purpose === 'verify_email') {
-    const user = await User.findOneAndUpdate({ email }, { isVerified: true }, { new: true });
-    if (!user) {
-      throw new AppError('Không tìm thấy tài khoản để kích hoạt', 404);
-    }
-  } else if (purpose === 'forgot_password') {
-    // Lưu quyền được reset password cho email này trong vòng 5 phút (300 giây)
-    const resetStatusKey = `reset_status:${email}`;
-    await redisClient.set(resetStatusKey, 'verified', { EX: 300 });
+  // Xác thực đúng, cập nhật DB và xóa OTP
+  const user = await User.findOneAndUpdate({ email }, { isVerified: true }, { new: true });
+  if (!user) {
+    throw new AppError('Không tìm thấy tài khoản để kích hoạt', 404);
   }
 
-  return { message: 'Xác thực mã OTP thành công' };
+  await redisClient.del(redisKey);
+  return { message: 'Kích hoạt tài khoản thành công' };
 };
 
-export const resetPassword = async (email, newPassword) => {
+export const forgotPassword = async (email) => {
   if (!redisClient.isOpen) {
-    throw new AppError('Hệ thống cache tạm thời gián đoạn, vui lòng thử lại sau', 500);
+    throw new AppError('Hệ thống tạm thời gián đoạn, vui lòng thử lại sau', 500);
   }
 
-  const resetStatusKey = `reset_status:${email}`;
-  const resetStatus = await redisClient.get(resetStatusKey);
-
-  if (!resetStatus || resetStatus !== 'verified') {
-    throw new AppError('Phiên xác thực đã hết hạn hoặc không hợp lệ. Vui lòng gửi và xác thực OTP lại', 400);
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new AppError('Không tìm thấy tài khoản với email này', 404);
+  }
+  if (!user.isActive) {
+    throw new AppError('Tài khoản này đã bị khóa', 403);
   }
 
-  // Cập nhật mật khẩu mới
+  const otp = generateOtpCode();
+  const redisKey = `otp:forgot_password:${email}`;
+  await redisClient.set(redisKey, otp, { EX: 600 }); // TTL: 10 phút
+
+  await sendForgotPasswordEmail(email, otp);
+  return { message: 'Mã OTP đặt lại mật khẩu đã được gửi' };
+};
+
+export const resetPassword = async (email, otp, newPassword) => {
+  if (!redisClient.isOpen) {
+    throw new AppError('Hệ thống tạm thời gián đoạn, vui lòng thử lại sau', 500);
+  }
+
+  const redisKey = `otp:forgot_password:${email}`;
+  const cachedOtp = await redisClient.get(redisKey);
+
+  if (!cachedOtp || cachedOtp !== otp) {
+    throw new AppError('Mã OTP không hợp lệ hoặc đã hết hạn', 400);
+  }
+
   const salt = await bcrypt.genSalt(10);
   const passwordHash = await bcrypt.hash(newPassword, salt);
 
@@ -164,8 +173,8 @@ export const resetPassword = async (email, newPassword) => {
     throw new AppError('Không tìm thấy người dùng', 404);
   }
 
-  // Xóa trạng thái cho phép reset password
-  await redisClient.del(resetStatusKey);
+  // Đổi mật khẩu thành công, xóa OTP
+  await redisClient.del(redisKey);
 
   return { message: 'Đặt lại mật khẩu thành công' };
 };

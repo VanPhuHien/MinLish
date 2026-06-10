@@ -4,8 +4,9 @@ import validate from '../../middlewares/validate.middleware.js';
 import {
   loginSchema,
   signupSchema,
-  otpSendSchema,
-  otpVerifySchema,
+  resendVerifyEmailSchema,
+  verifyEmailSchema,
+  forgotPasswordSchema,
   resetPasswordSchema,
 } from './auth.schema.js';
 import { rateLimiter } from '../../middlewares/rateLimiter.middleware.js';
@@ -13,7 +14,7 @@ import { config } from '../../config/env.js';
 
 const router = express.Router();
 
-// Route đăng ký - có rate limit chống spam đăng ký tài khoản
+// Đăng ký tài khoản mới - áp dụng rate limit
 router.post(
   '/signup',
   rateLimiter({
@@ -25,7 +26,7 @@ router.post(
   authController.signup
 );
 
-// Route đăng nhập - có rate limit chống brute-force mật khẩu
+// Đăng nhập - áp dụng rate limit
 router.post(
   '/login',
   rateLimiter({
@@ -37,19 +38,22 @@ router.post(
   authController.login
 );
 
-// Route gửi mã OTP qua email
-router.post('/otp/send', validate(otpSendSchema), authController.sendOtp);
+// Gửi lại mã OTP kích hoạt tài khoản
+router.post('/verify-email/send', validate(resendVerifyEmailSchema), authController.sendVerificationEmail);
 
-// Route xác thực mã OTP
-router.post('/otp/verify', validate(otpVerifySchema), authController.verifyOtp);
+// Xác thực OTP kích hoạt tài khoản
+router.post('/verify-email', validate(verifyEmailSchema), authController.verifyEmail);
 
-// Route đặt lại mật khẩu sau khi xác thực OTP thành công
+// Yêu cầu OTP khi quên mật khẩu
+router.post('/forgot-password', validate(forgotPasswordSchema), authController.forgotPassword);
+
+// Đặt lại mật khẩu mới kèm OTP xác thực
 router.post('/reset-password', validate(resetPasswordSchema), authController.resetPassword);
 
-// Route làm mới Access Token bằng Refresh Token trong Cookie
+// Làm mới Access Token
 router.post('/refresh', authController.refresh);
 
-// Route đăng xuất để xóa Cookie Refresh Token
+// Đăng xuất
 router.post('/logout', authController.logout);
 
 export default router;

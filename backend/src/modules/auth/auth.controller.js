@@ -7,7 +7,7 @@ export const signup = async (req, res, next) => {
     const user = await authService.signup(email, password, name);
     res.status(201).json(
       successResponse(
-        'Đăng ký tài khoản thành công. Vui lòng kiểm tra email để nhận mã OTP kích hoạt tài khoản.',
+        'Đăng ký tài khoản thành công. Mã OTP kích hoạt đã được gửi đến email của bạn.',
         { user }
       )
     );
@@ -40,21 +40,31 @@ export const login = async (req, res, next) => {
   }
 };
 
-export const sendOtp = async (req, res, next) => {
+export const sendVerificationEmail = async (req, res, next) => {
   try {
-    const { email, purpose } = req.body;
-    const result = await authService.sendOtp(email, purpose);
-    res.status(200).json(successResponse(result.message || 'Gửi OTP thành công'));
+    const { email } = req.body;
+    const result = await authService.sendVerificationEmail(email);
+    res.status(200).json(successResponse(result.message || 'Mã OTP kích hoạt đã được gửi'));
   } catch (error) {
     next(error);
   }
 };
 
-export const verifyOtp = async (req, res, next) => {
+export const verifyEmail = async (req, res, next) => {
   try {
-    const { email, otp, purpose } = req.body;
-    const result = await authService.verifyOtp(email, otp, purpose);
-    res.status(200).json(successResponse(result.message || 'Xác thực OTP thành công'));
+    const { email, otp } = req.body;
+    const result = await authService.verifyEmail(email, otp);
+    res.status(200).json(successResponse(result.message || 'Kích hoạt tài khoản thành công'));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const result = await authService.forgotPassword(email);
+    res.status(200).json(successResponse(result.message || 'Mã OTP đặt lại mật khẩu đã được gửi'));
   } catch (error) {
     next(error);
   }
@@ -62,8 +72,8 @@ export const verifyOtp = async (req, res, next) => {
 
 export const resetPassword = async (req, res, next) => {
   try {
-    const { email, newPassword } = req.body;
-    const result = await authService.resetPassword(email, newPassword);
+    const { email, otp, newPassword } = req.body;
+    const result = await authService.resetPassword(email, otp, newPassword);
     res.status(200).json(successResponse(result.message || 'Đặt lại mật khẩu thành công'));
   } catch (error) {
     next(error);
@@ -75,7 +85,7 @@ export const refresh = async (req, res, next) => {
     const refreshToken = req.cookies.refreshToken;
     const result = await authService.refreshTokens(refreshToken);
 
-    // Xoay vòng Refresh token bằng cách cập nhật cookie mới
+    // Cập nhật cookie mới
     res.cookie('refreshToken', result.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

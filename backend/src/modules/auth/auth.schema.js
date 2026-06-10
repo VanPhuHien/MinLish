@@ -21,17 +21,13 @@ export const signupSchema = z.object({
     .min(2, { message: 'Tên phải chứa ít nhất 2 ký tự' }),
 });
 
-export const otpSendSchema = z.object({
+export const resendVerifyEmailSchema = z.object({
   email: z
     .string({ required_error: 'Email là bắt buộc' })
     .email({ message: 'Email không đúng định dạng' }),
-  purpose: z.enum(['verify_email', 'forgot_password'], {
-    required_error: 'Mục đích gửi OTP là bắt buộc',
-    invalid_type_error: 'Mục đích không hợp lệ',
-  }),
 });
 
-export const otpVerifySchema = z.object({
+export const verifyEmailSchema = z.object({
   email: z
     .string({ required_error: 'Email là bắt buộc' })
     .email({ message: 'Email không đúng định dạng' }),
@@ -39,16 +35,22 @@ export const otpVerifySchema = z.object({
     .string({ required_error: 'Mã OTP là bắt buộc' })
     .length(6, { message: 'Mã OTP phải có đúng 6 chữ số' })
     .regex(/^\d+$/, { message: 'Mã OTP chỉ chứa ký tự số' }),
-  purpose: z.enum(['verify_email', 'forgot_password'], {
-    required_error: 'Mục đích xác thực OTP là bắt buộc',
-    invalid_type_error: 'Mục đích không hợp lệ',
-  }),
+});
+
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string({ required_error: 'Email là bắt buộc' })
+    .email({ message: 'Email không đúng định dạng' }),
 });
 
 export const resetPasswordSchema = z.object({
   email: z
     .string({ required_error: 'Email là bắt buộc' })
     .email({ message: 'Email không đúng định dạng' }),
+  otp: z
+    .string({ required_error: 'Mã OTP là bắt buộc' })
+    .length(6, { message: 'Mã OTP phải có đúng 6 chữ số' })
+    .regex(/^\d+$/, { message: 'Mã OTP chỉ chứa ký tự số' }),
   newPassword: z
     .string({ required_error: 'Mật khẩu mới là bắt buộc' })
     .min(6, { message: 'Mật khẩu mới phải chứa ít nhất 6 ký tự' }),
