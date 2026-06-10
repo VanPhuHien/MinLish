@@ -1,80 +1,108 @@
-import { successResponse } from '../../utils/response.js';
 import * as authService from './auth.service.js';
+import { successResponse } from '../../utils/response.js';
 
-export const login = async (req, res, next) => {
+export const signup = async (req, res, next) => {
   try {
-    const { accessToken, refreshToken, user } = await authService.loginUser(req.body);
-
-    // Set HTTP-only cookie for refresh token
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-    });
-
-    res.status(200).json(successResponse('Đăng nhập thành công', { accessToken, user }));
-  } catch (err) {
-    next(err);
+    const { email, password, name } = req.body;
+    const user = await authService.signup(email, password, name);
+    res.status(201).json(
+      successResponse(
+        'Đăng ký tài khoản thành công. Vui lòng kiểm tra email để nhận mã OTP kích hoạt tài khoản.',
+        { user }
+      )
+    );
+  } catch (error) {
+    next(error);
   }
 };
 
-export const register = async (req, res, next) => {
+export const login = async (req, res, next) => {
   try {
-    const data = await authService.registerUser(req.body);
-    res.status(201).json(successResponse('Đăng ký thành công', data));
-  } catch (err) {
-    next(err);
+    const { email, password } = req.body;
+    const result = await authService.login(email, password);
+
+    // Thiết lập cookie chứa refresh token bảo mật
+    res.cookie('refreshToken', result.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
+    });
+
+    res.status(200).json(
+      successResponse('Đăng nhập thành công', {
+        accessToken: result.accessToken,
+        user: result.user,
+      })
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const sendOtp = async (req, res, next) => {
+  try {
+    const { email, purpose } = req.body;
+    const result = await authService.sendOtp(email, purpose);
+    res.status(200).json(successResponse(result.message || 'Gửi OTP thành công'));
+  } catch (error) {
+    next(error);
   }
 };
 
 export const verifyOtp = async (req, res, next) => {
   try {
-    const data = await authService.verifyOtp(req.body);
-    res.status(200).json(successResponse('Kích hoạt tài khoản thành công', data));
-  } catch (err) {
-    next(err);
-  }
-};
-
-
-export const refreshToken = async (req, res, next) => {
-  try {
-    const token = req.cookies.refreshToken;
-    const { accessToken } = await authService.refreshToken(token);
-
-    res.status(200).json(successResponse('Refresh token thành công', { accessToken }));
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const forgotPassword = async (req, res, next) => {
-  try {
-    const email = req.body.email;
-    const result = await authService.forgotPassword(email);
-    res.status(200).json(successResponse(result.message));
-  } catch (err) {
-    next(err);
+    const { email, otp, purpose } = req.body;
+    const result = await authService.verifyOtp(email, otp, purpose);
+    res.status(200).json(successResponse(result.message || 'Xác thực OTP thành công'));
+  } catch (error) {
+    next(error);
   }
 };
 
 export const resetPassword = async (req, res, next) => {
   try {
-    const result = await authService.resetPassword(req.body);
-    res.status(200).json(successResponse(result.message));
-  } catch (err) {
-    next(err);
+    const { email, newPassword } = req.body;
+    const result = await authService.resetPassword(email, newPassword);
+    res.status(200).json(successResponse(result.message || 'Đặt lại mật khẩu thành công'));
+  } catch (error) {
+    next(error);
   }
 };
 
-
-export const resendOtp = async (req, res, next) => {
+export const refresh = async (req, res, next) => {
   try {
-    const { email } = req.body;
-    const result = await authService.resendOtp(email);
-    res.status(200).json(successResponse(result.message));
-  } catch (err) {
-    next(err);
+    const refreshToken = req.cookies.refreshToken;
+    const result = await authService.refreshTokens(refreshToken);
+
+    // Xoay vòng Refresh token bằng cách cập nhật cookie mới
+    res.cookie('refreshToken', result.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json(
+      successResponse('Làm mới token thành công', {
+        accessToken: result.accessToken,
+      })
+    );
+  } catch (error) {
+    next(error);
   }
-};
+};
+
+export const logout = async (req, res, next) => {
+  try {
+    // Xóa cookie refresh token
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+    res.status(200).json(successResponse('Đăng xuất thành công'));
+  } catch (error) {
+    next(error);
+  }
+};

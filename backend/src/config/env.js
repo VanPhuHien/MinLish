@@ -10,4 +10,9 @@ export const config = {
   mailPort: process.env.MAIL_PORT || 587,
   mailUser: process.env.MAIL_USER || 'your_gmail',
   mailPass: process.env.MAIL_PASS || 'your_password',
+  redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
+  loginLimitWindowMs: parseInt(process.env.LOGIN_LIMIT_WINDOW_MS) || 900000,
+  loginLimitMax: parseInt(process.env.LOGIN_LIMIT_MAX) || 5,
+  registerLimitWindowMs: parseInt(process.env.REGISTER_LIMIT_WINDOW_MS) || 3600000,
+  registerLimitMax: parseInt(process.env.REGISTER_LIMIT_MAX) || 3,
 };
