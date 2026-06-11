@@ -1,6 +1,7 @@
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 
-export default function AdminLayout({ children }) {
+export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">

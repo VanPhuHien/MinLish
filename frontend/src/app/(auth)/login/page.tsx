@@ -13,17 +13,19 @@ const loginSchema = z.object({
   password: z.string().min(6, 'Vui lòng nhập mật khẩu')
 });
 
+type LoginFormValues = z.infer<typeof loginSchema>;
+
 export default function LoginPage() {
   const router = useRouter();
   const setAuth = useAuthStore((state) => state.setAuth);
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema)
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     setErrorMsg('');
     try {
@@ -36,7 +38,7 @@ export default function LoginPage() {
       } else {
         router.push('/profile');
       }
-    } catch (err) {
+    } catch (err: any) {
       setErrorMsg(err.response?.data?.message || 'Có lỗi xảy ra khi đăng nhập');
     } finally {
       setIsLoading(false);

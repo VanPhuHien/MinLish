@@ -1,6 +1,13 @@
 import { cn } from '@/lib/utils';
+import type { ReactNode } from 'react';
 
-export default function AuthCard({ title, children, className }) {
+type AuthCardProps = {
+  title?: ReactNode;
+  children: ReactNode;
+  className?: string;
+};
+
+export default function AuthCard({ title, children, className }: AuthCardProps) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#fdfbfb] to-[#ebedee]">
       <div

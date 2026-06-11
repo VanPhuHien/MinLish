@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import axiosInstance from '@/services/axios';
 import { Button } from '@/components/ui/button';
 import OtpInput from '@/components/ui/otp-input';
+import type { OtpInputRef } from '@/components/ui/otp-input';
 
 const verifyOtpSchema = z.object({
   email: z.string().email('Email không đúng định dạng'),
@@ -16,9 +17,15 @@ const verifyOtpSchema = z.object({
     .regex(/^\d{6}$/, 'Mã OTP chỉ gồm chữ số'),
 });
 
-export default function VerifyOtpForm({ email }) {
+type VerifyOtpFormValues = z.infer<typeof verifyOtpSchema>;
+
+type VerifyOtpFormProps = {
+  email: string;
+};
+
+export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
   const router = useRouter();
-  const otpInputRef = useRef(null);
+  const otpInputRef = useRef<OtpInputRef>(null);
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
@@ -29,7 +36,7 @@ export default function VerifyOtpForm({ email }) {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm({
+  } = useForm<VerifyOtpFormValues>({
     resolver: zodResolver(verifyOtpSchema),
     defaultValues: { 
       email: email || '',
@@ -37,7 +44,7 @@ export default function VerifyOtpForm({ email }) {
     },
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: VerifyOtpFormValues) => {
     setIsLoading(true);
     setErrorMsg('');
     try {
@@ -46,7 +53,7 @@ export default function VerifyOtpForm({ email }) {
         otpCode: data.otpCode,
       });
       router.push('/login?verified=success');
-    } catch (err) {
+    } catch (err: any) {
       setErrorMsg(err.response?.data?.message || 'Mã OTP không chính xác hoặc đã hết hạn');
       // Trigger animation and clear
       if (otpInputRef.current) {
@@ -66,7 +73,7 @@ export default function VerifyOtpForm({ email }) {
       await axiosInstance.post('/auth/resend-otp', { email });
       setResendSuccess('Đã gửi lại mã OTP mới!');
       setTimeout(() => setResendSuccess(''), 5000);
-    } catch (err) {
+    } catch (err: any) {
       setErrorMsg(err.response?.data?.message || 'Không thể gửi lại mã, vui lòng thử lại sau');
     } finally {
       setIsResending(false);
