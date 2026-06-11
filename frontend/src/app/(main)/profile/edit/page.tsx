@@ -14,7 +14,9 @@ type ProfileFormData = {
   birthday: string;
 };
 
-type ProfileFieldErrors = Partial<Record<keyof ProfileFormData | "userId", string | null>>;
+type ProfileFieldErrors = Partial<
+  Record<keyof ProfileFormData | "userId", string | null>
+>;
 
 export default function EditProfilePage() {
   const router = useRouter();
@@ -80,7 +82,11 @@ export default function EditProfilePage() {
     fetchProfile();
   }, [mounted, user?.id]); // user?.id tránh fetch khi user undefined khi load lại trang
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -174,7 +180,9 @@ export default function EditProfilePage() {
   return (
     <div className="container mt-5">
       <div className="card shadow border-0 rounded-4 p-4">
-        <h1 className="fw-bold text-primary mb-4 text-center">Cập Nhật Hồ Sơ</h1>
+        <h1 className="fw-bold text-primary mb-4 text-center">
+          Cập Nhật Hồ Sơ
+        </h1>
 
         {error && <div className="alert alert-danger">{error}</div>}
 

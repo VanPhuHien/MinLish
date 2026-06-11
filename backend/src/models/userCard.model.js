@@ -1,35 +1,16 @@
 import mongoose from 'mongoose';
+import { Phonetic } from './card.model';
 
-const phoneticSchema = new mongoose.Schema(
-  {
-    text: {
-      type: String,
-      trim: true,
-    },
-    audio: {
-      type: String,
-      trim: true,
-    },
-    locale: {
-      type: String,
-      trim: true,
-    },
-  },
-  {
-    _id: false,
-  }
-);
-
-const cardSchema = new mongoose.Schema(
+const userCardSchema = new mongoose.Schema(
   {
     deckId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Deck',
+      ref: 'UserDeck',
       required: true,
     },
     topicId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Topic',
+      ref: 'UserTopic',
       required: true,
     },
     order: {
@@ -46,7 +27,7 @@ const cardSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    phonetics: [phoneticSchema],
+    phonetics: [Phonetic],
     translation: {
       type: String,
       required: true,
@@ -82,10 +63,11 @@ const cardSchema = new mongoose.Schema(
   }
 );
 
-const Card =
-  mongoose.models.Card || mongoose.model('Card', cardSchema, 'cards');
-const Phonetic =
-  mongoose.models.Phonetic ||
-  mongoose.model('Phonetic', phoneticSchema, 'phonetics');
-
-export { Card, Phonetic };
+const UserCard =
+  mongoose.models.UserCard ||
+  mongoose.model('UserCard', userCardSchema, 'userCards');
+// Tránh OverwriteModelError do Next.js có cơ chế Hot Reload - mỗi lần save file, module được load lại
+// 'UserCard': Tên model - dùng để tra cứu trong mongoose.models
+// userCardSchema: Schema - cấu trúc document
+// 'userCards: là tên collection trong MongoDB - nếu không truyền, Mongoose tự đặt thành usercards
+export default Card;

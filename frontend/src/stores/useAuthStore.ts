@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export type AuthUser = {
   id?: string;
@@ -26,9 +26,9 @@ const useAuthStore = create<AuthState>()(
       logout: () => set({ accessToken: null, user: null }),
     }),
     {
-      name: 'auth-storage',
-    }
-  )
+      name: "auth-storage",
+    },
+  ),
 );
 
 export default useAuthStore;

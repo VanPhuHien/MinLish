@@ -38,10 +38,7 @@ export default function ProfilePage() {
     fetchProfile();
   }, [user, router, mounted]);
 
-  if (!mounted)
-    return (
-      <LoadAnimation />
-    );
+  if (!mounted) return <LoadAnimation />;
 
   if (error)
     return (
@@ -49,10 +46,7 @@ export default function ProfilePage() {
         <div className="alert alert-danger shadow">{error}</div>
       </div>
     );
-  if (!profile)
-    return (
-      <LoadAnimation />
-    );
+  if (!profile) return <LoadAnimation />;
 
   const formatDate = (dateString) => {
     if (!dateString) return "Chưa cập nhật";
@@ -118,8 +112,14 @@ export default function ProfilePage() {
           </div>
 
           <div className="info-grid two-col">
-            <InfoCard title={"Ngày sinh"} value={formatDate(profile.profile?.birthday)} />
-            <InfoCard title={"Tiểu sử"} value={profile.profile?.bio || "Chưa cập nhật"} />
+            <InfoCard
+              title={"Ngày sinh"}
+              value={formatDate(profile.profile?.birthday)}
+            />
+            <InfoCard
+              title={"Tiểu sử"}
+              value={profile.profile?.bio || "Chưa cập nhật"}
+            />
           </div>
         </div>
       </div>

@@ -12,10 +12,10 @@ const segments = [
     startMs: 0,
     endMs: 4200,
     transcript: {
-      original: "She sells seashells by the seashore.",
-      normalized: "she sells seashells by the seashore",
+      original: 'She sells seashells by the seashore.',
+      normalized: 'she sells seashells by the seashore',
     },
-    translation: "Cô ấy bán vỏ sò bên bờ biển.",
+    translation: 'Cô ấy bán vỏ sò bên bờ biển.',
   },
   {
     lessonId: LESSON_ID,
@@ -23,10 +23,10 @@ const segments = [
     startMs: 4200,
     endMs: 9000,
     transcript: {
-      original: "The weather is nice today.",
-      normalized: "the weather is nice today",
+      original: 'The weather is nice today.',
+      normalized: 'the weather is nice today',
     },
-    translation: "Thời tiết hôm nay đẹp.",
+    translation: 'Thời tiết hôm nay đẹp.',
   },
   {
     lessonId: LESSON_ID,
@@ -34,10 +34,10 @@ const segments = [
     startMs: 9000,
     endMs: 14500,
     transcript: {
-      original: "How long have you been learning English?",
-      normalized: "how long have you been learning english",
+      original: 'How long have you been learning English?',
+      normalized: 'how long have you been learning english',
     },
-    translation: "Bạn đã học tiếng Anh bao lâu rồi?",
+    translation: 'Bạn đã học tiếng Anh bao lâu rồi?',
   },
   {
     lessonId: LESSON_ID,
@@ -45,10 +45,10 @@ const segments = [
     startMs: 14500,
     endMs: 19000,
     transcript: {
-      original: "I would like a cup of coffee, please.",
-      normalized: "i would like a cup of coffee please",
+      original: 'I would like a cup of coffee, please.',
+      normalized: 'i would like a cup of coffee please',
     },
-    translation: "Cho tôi một tách cà phê.",
+    translation: 'Cho tôi một tách cà phê.',
   },
   {
     lessonId: LESSON_ID,
@@ -56,10 +56,10 @@ const segments = [
     startMs: 19000,
     endMs: 24000,
     transcript: {
-      original: "Can you speak more slowly?",
-      normalized: "can you speak more slowly",
+      original: 'Can you speak more slowly?',
+      normalized: 'can you speak more slowly',
     },
-    translation: "Bạn có thể nói chậm hơn không?",
+    translation: 'Bạn có thể nói chậm hơn không?',
   },
 ];
 

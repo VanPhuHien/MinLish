@@ -1,46 +1,54 @@
-'use client';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import axiosInstance from '@/services/axios';
-import { Button } from '@/components/ui/button';
-import FormField from '@/components/ui/form-field';
+"use client";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import axiosInstance from "@/services/axios";
+import { Button } from "@/components/ui/button";
+import FormField from "@/components/ui/form-field";
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email('Email không đúng định dạng'),
+  email: z.string().email("Email không đúng định dạng"),
 });
 
 type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPasswordForm() {
   const router = useRouter();
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ForgotPasswordFormValues>({ resolver: zodResolver(forgotPasswordSchema) });
+  } = useForm<ForgotPasswordFormValues>({
+    resolver: zodResolver(forgotPasswordSchema),
+  });
 
   const onSubmit = async (data: ForgotPasswordFormValues) => {
     setIsLoading(true);
-    setErrorMsg('');
+    setErrorMsg("");
     try {
-      await axiosInstance.post('/auth/forgot-password', { email: data.email });
+      await axiosInstance.post("/auth/forgot-password", { email: data.email });
       router.push(`/reset-password?email=${encodeURIComponent(data.email)}`);
     } catch (err: any) {
-      setErrorMsg(err.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại');
+      setErrorMsg(
+        err.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại",
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col gap-4"
+      noValidate
+    >
       {errorMsg && (
         <div className="rounded-md bg-destructive/10 px-4 py-2 text-sm text-destructive">
           {errorMsg}
@@ -53,11 +61,11 @@ export default function ForgotPasswordForm() {
         type="email"
         placeholder="name@example.com"
         error={errors.email?.message}
-        {...register('email')}
+        {...register("email")}
       />
 
       <Button type="submit" size="lg" className="w-full" disabled={isLoading}>
-        {isLoading ? 'Đang gửi...' : 'Gửi mã OTP'}
+        {isLoading ? "Đang gửi..." : "Gửi mã OTP"}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">

@@ -1,20 +1,20 @@
-'use client';
-import { useState, useRef } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
-import axiosInstance from '@/services/axios';
-import { Button } from '@/components/ui/button';
-import OtpInput from '@/components/ui/otp-input';
-import type { OtpInputRef } from '@/components/ui/otp-input';
+"use client";
+import { useState, useRef } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import axiosInstance from "@/services/axios";
+import { Button } from "@/components/ui/button";
+import OtpInput from "@/components/ui/otp-input";
+import type { OtpInputRef } from "@/components/ui/otp-input";
 
 const verifyOtpSchema = z.object({
-  email: z.string().email('Email không đúng định dạng'),
+  email: z.string().email("Email không đúng định dạng"),
   otpCode: z
     .string()
-    .length(6, 'Mã OTP phải đúng 6 chữ số')
-    .regex(/^\d{6}$/, 'Mã OTP chỉ gồm chữ số'),
+    .length(6, "Mã OTP phải đúng 6 chữ số")
+    .regex(/^\d{6}$/, "Mã OTP chỉ gồm chữ số"),
 });
 
 type VerifyOtpFormValues = z.infer<typeof verifyOtpSchema>;
@@ -26,10 +26,10 @@ type VerifyOtpFormProps = {
 export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
   const router = useRouter();
   const otpInputRef = useRef<OtpInputRef>(null);
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
-  const [resendSuccess, setResendSuccess] = useState('');
+  const [resendSuccess, setResendSuccess] = useState("");
 
   const {
     control,
@@ -38,28 +38,29 @@ export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
     formState: { errors },
   } = useForm<VerifyOtpFormValues>({
     resolver: zodResolver(verifyOtpSchema),
-    defaultValues: { 
-      email: email || '',
-      otpCode: ''
+    defaultValues: {
+      email: email || "",
+      otpCode: "",
     },
   });
 
   const onSubmit = async (data: VerifyOtpFormValues) => {
     setIsLoading(true);
-    setErrorMsg('');
+    setErrorMsg("");
     try {
-      await axiosInstance.post('/auth/verify-otp', {
+      await axiosInstance.post("/auth/verify-otp", {
         email: data.email,
         otpCode: data.otpCode,
       });
-      router.push('/login?verified=success');
+      router.push("/login?verified=success");
     } catch (err: any) {
-      setErrorMsg(err.response?.data?.message || 'Mã OTP không chính xác hoặc đã hết hạn');
+      setErrorMsg(
+        err.response?.data?.message || "Mã OTP không chính xác hoặc đã hết hạn",
+      );
       // Trigger animation and clear
       if (otpInputRef.current) {
         otpInputRef.current.clearWithAnimation();
       }
-
     } finally {
       setIsLoading(false);
     }
@@ -67,24 +68,32 @@ export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
 
   const handleResend = async () => {
     setIsResending(true);
-    setErrorMsg('');
-    setResendSuccess('');
+    setErrorMsg("");
+    setResendSuccess("");
     try {
-      await axiosInstance.post('/auth/resend-otp', { email });
-      setResendSuccess('Đã gửi lại mã OTP mới!');
-      setTimeout(() => setResendSuccess(''), 5000);
+      await axiosInstance.post("/auth/resend-otp", { email });
+      setResendSuccess("Đã gửi lại mã OTP mới!");
+      setTimeout(() => setResendSuccess(""), 5000);
     } catch (err: any) {
-      setErrorMsg(err.response?.data?.message || 'Không thể gửi lại mã, vui lòng thử lại sau');
+      setErrorMsg(
+        err.response?.data?.message ||
+          "Không thể gửi lại mã, vui lòng thử lại sau",
+      );
     } finally {
       setIsResending(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6" noValidate>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col gap-6"
+      noValidate
+    >
       <div className="text-center">
         <p className="text-sm text-muted-foreground leading-relaxed">
-          Chúng tôi đã gửi mã xác thực đến email<br />
+          Chúng tôi đã gửi mã xác thực đến email
+          <br />
           <strong className="text-foreground">{email}</strong>.
         </p>
       </div>
@@ -102,7 +111,9 @@ export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
       )}
 
       <div className="py-2">
-        <label className="text-sm font-medium mb-3 block text-center">Nhập mã xác thực 6 chữ số</label>
+        <label className="text-sm font-medium mb-3 block text-center">
+          Nhập mã xác thực 6 chữ số
+        </label>
         <Controller
           name="otpCode"
           control={control}
@@ -117,23 +128,26 @@ export default function VerifyOtpForm({ email }: VerifyOtpFormProps) {
         />
       </div>
 
-      <Button type="submit" size="lg" className="w-full font-bold" disabled={isLoading || isResending}>
-        {isLoading ? 'Đang xác thực...' : 'Xác thực tài khoản'}
+      <Button
+        type="submit"
+        size="lg"
+        className="w-full font-bold"
+        disabled={isLoading || isResending}
+      >
+        {isLoading ? "Đang xác thực..." : "Xác thực tài khoản"}
       </Button>
 
       <div className="text-center text-sm text-muted-foreground">
-        Không nhận được mã?{' '}
+        Không nhận được mã?{" "}
         <button
           type="button"
           className="text-primary hover:underline font-semibold disabled:opacity-50"
           onClick={handleResend}
           disabled={isResending}
         >
-          {isResending ? 'Đang gửi...' : 'Gửi lại'}
+          {isResending ? "Đang gửi..." : "Gửi lại"}
         </button>
       </div>
     </form>
   );
 }
-
-

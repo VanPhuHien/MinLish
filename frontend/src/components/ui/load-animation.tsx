@@ -1,4 +1,5 @@
-export default function LoadAnimation() {//export default -> chứa 1 component duy nhất != export
+export default function LoadAnimation() {
+  //export default -> chứa 1 component duy nhất != export
   return (
     <>
       <div className="text-center mt-5">
