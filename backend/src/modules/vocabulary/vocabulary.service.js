@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import Card from '../../models/card.model.js';
+import {Card} from '../../models/card.model.js';
 import Topic from '../../models/topic.model.js';
 import Deck from '../../models/deck.model.js';
 import UserCardState from '../../models/userCardState.model.js';

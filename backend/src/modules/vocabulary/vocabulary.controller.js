@@ -15,8 +15,7 @@ export const getCardsByUserId = async (req, res, next) => {
       return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
     }
 
-    const firebaseUid = req.user?.uid;
-    let userId = null;
+    let userId = req.user?.uid;
     if (firebaseUid) {
       const user = await userRepository.findByFirebaseUid(firebaseUid);
       if (user) {
