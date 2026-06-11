@@ -6,18 +6,28 @@ import useAuthStore from "@/stores/useAuthStore";
 import { useRouter } from "next/navigation";
 import { putProfileSchema } from "./user.schemas";
 
+type ProfileFormData = {
+  fullname: string;
+  phone: string;
+  gender: string;
+  bio: string;
+  birthday: string;
+};
+
+type ProfileFieldErrors = Partial<Record<keyof ProfileFormData | "userId", string | null>>;
+
 export default function EditProfilePage() {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [fieldErrors, setFieldErrors] = useState({});
+  const [fieldErrors, setFieldErrors] = useState<ProfileFieldErrors>({});
   const [success, setSuccess] = useState("");
   const [mounted, setMounted] = useState(false);
-  const [avatar, setAvatar] = useState(null);
-  const [preview, setPreview] = useState(null);
-  const [formData, setFormData] = useState({
+  const [avatar, setAvatar] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [formData, setFormData] = useState<ProfileFormData>({
     fullname: "",
     phone: "",
     gender: "",
@@ -70,7 +80,7 @@ export default function EditProfilePage() {
     fetchProfile();
   }, [mounted, user?.id]); // user?.id tránh fetch khi user undefined khi load lại trang
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -83,8 +93,8 @@ export default function EditProfilePage() {
     }
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       const validTypes = ["image/jpeg", "image/png"];
       if (!validTypes.includes(file.type)) {
@@ -101,7 +111,7 @@ export default function EditProfilePage() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setFieldErrors({});
@@ -115,9 +125,9 @@ export default function EditProfilePage() {
 
     if (!validation.success) {
       // Chuyển đổi lỗi Zod thành object { fieldName: message }
-      const errors = {};
+      const errors: ProfileFieldErrors = {};
       validation.error.errors.forEach((err) => {
-        errors[err.path[0]] = err.message;
+        errors[err.path[0] as keyof ProfileFieldErrors] = err.message;
       });
       setFieldErrors(errors);
       return; // Dừng lại không call API
@@ -148,7 +158,7 @@ export default function EditProfilePage() {
       setTimeout(() => {
         router.push("/profile");
       }, 1000);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.response?.data?.message || "Cập nhật thất bại");
     }
   };
@@ -236,7 +246,7 @@ export default function EditProfilePage() {
 
               <textarea
                 className="form-control"
-                rows="4"
+                rows={4}
                 name="bio"
                 value={formData.bio}
                 onChange={handleChange}

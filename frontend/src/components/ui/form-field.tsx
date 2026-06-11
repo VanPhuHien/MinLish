@@ -3,7 +3,15 @@ import { cn } from '@/lib/utils';
 import { Input } from './input';
 import { Label } from './label';
 
-const FormField = React.forwardRef(({ id, label, error, className, ...rest }, ref) => {
+type FormFieldProps = React.ComponentPropsWithoutRef<typeof Input> & {
+  id: string;
+  label: React.ReactNode;
+  error?: React.ReactNode;
+  className?: string;
+};
+
+const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(
+  ({ id, label, error, className, ...rest }, ref) => {
   return (
     <div className={cn('flex flex-col gap-1.5', className)}>
       <Label htmlFor={id}>{label}</Label>

@@ -5,10 +5,10 @@ import VerifyOtpForm from './VerifyOtpForm';
 import AuthCard from '@/components/ui/auth-card';
 
 export default function RegisterPage() {
-  const [step, setStep] = useState('register'); // 'register' or 'verify'
+  const [step, setStep] = useState<'register' | 'verify'>('register'); // 'register' or 'verify'
   const [registeredEmail, setRegisteredEmail] = useState('');
 
-  const handleRegisterSuccess = (email) => {
+  const handleRegisterSuccess = (email: string) => {
     setRegisteredEmail(email);
     setStep('verify');
   };

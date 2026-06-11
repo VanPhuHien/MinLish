@@ -1,10 +1,22 @@
 import { useRef, useState, useEffect, useImperativeHandle, forwardRef } from 'react';
+import type { ChangeEvent, ClipboardEvent, KeyboardEvent } from 'react';
 import { cn } from '@/lib/utils';
 
-const OtpInput = forwardRef(({ length = 6, value, onChange, error }, ref) => {
+export type OtpInputRef = {
+  clearWithAnimation: () => Promise<void>;
+};
+
+type OtpInputProps = {
+  length?: number;
+  value?: string;
+  onChange: (value: string) => void;
+  error?: string;
+};
+
+const OtpInput = forwardRef<OtpInputRef, OtpInputProps>(({ length = 6, value, onChange, error }, ref) => {
   const [otp, setOtp] = useState(new Array(length).fill(''));
   const [clearingIndex, setClearingIndex] = useState(-1);
-  const inputRefs = useRef([]);
+  const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
 
   useImperativeHandle(ref, () => ({
     clearWithAnimation: async () => {
@@ -38,9 +50,9 @@ const OtpInput = forwardRef(({ length = 6, value, onChange, error }, ref) => {
 
 
 
-  const handleChange = (element, index) => {
+  const handleChange = (element: HTMLInputElement, index: number) => {
     const val = element.value;
-    if (isNaN(val)) return false;
+    if (Number.isNaN(Number(val))) return false;
 
     const newOtp = [...otp];
     newOtp[index] = val.substring(val.length - 1);
@@ -48,19 +60,19 @@ const OtpInput = forwardRef(({ length = 6, value, onChange, error }, ref) => {
     onChange(newOtp.join(''));
 
     if (val && index < length - 1) {
-      inputRefs.current[index + 1].focus();
+      inputRefs.current[index + 1]?.focus();
     }
   };
 
-  const handleKeyDown = (e, index) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>, index: number) => {
     if (e.key === 'Backspace') {
       if (!otp[index] && index > 0) {
-        inputRefs.current[index - 1].focus();
+        inputRefs.current[index - 1]?.focus();
       }
     }
   };
 
-  const handlePaste = (e) => {
+  const handlePaste = (e: ClipboardEvent<HTMLDivElement>) => {
     e.preventDefault();
     const data = e.clipboardData.getData('text').slice(0, length);
     if (!/^\d+$/.test(data)) return;
@@ -71,7 +83,7 @@ const OtpInput = forwardRef(({ length = 6, value, onChange, error }, ref) => {
     onChange(paddedOtp.join(''));
 
     const nextIndex = Math.min(data.length, length - 1);
-    inputRefs.current[nextIndex].focus();
+    inputRefs.current[nextIndex]?.focus();
   };
 
   return (
@@ -83,9 +95,11 @@ const OtpInput = forwardRef(({ length = 6, value, onChange, error }, ref) => {
             key={index}
             type="text"
             maxLength={1}
-            ref={(el) => (inputRefs.current[index] = el)}
+            ref={(el) => {
+              inputRefs.current[index] = el;
+            }}
             value={data}
-            onChange={(e) => handleChange(e.target, index)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e.target, index)}
             onKeyDown={(e) => handleKeyDown(e, index)}
             className={cn(
               "w-12 h-14 text-center text-xl font-bold border-2 rounded-xl transition-all outline-none",

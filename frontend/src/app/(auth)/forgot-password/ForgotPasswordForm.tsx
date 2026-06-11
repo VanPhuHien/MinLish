@@ -13,6 +13,8 @@ const forgotPasswordSchema = z.object({
   email: z.string().email('Email không đúng định dạng'),
 });
 
+type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
+
 export default function ForgotPasswordForm() {
   const router = useRouter();
   const [errorMsg, setErrorMsg] = useState('');
@@ -22,15 +24,15 @@ export default function ForgotPasswordForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ resolver: zodResolver(forgotPasswordSchema) });
+  } = useForm<ForgotPasswordFormValues>({ resolver: zodResolver(forgotPasswordSchema) });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: ForgotPasswordFormValues) => {
     setIsLoading(true);
     setErrorMsg('');
     try {
       await axiosInstance.post('/auth/forgot-password', { email: data.email });
       router.push(`/reset-password?email=${encodeURIComponent(data.email)}`);
-    } catch (err) {
+    } catch (err: any) {
       setErrorMsg(err.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại');
     } finally {
       setIsLoading(false);

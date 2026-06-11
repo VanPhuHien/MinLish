@@ -1,4 +1,11 @@
-export default function InfoCard({ title, value }) {
+import type { ReactNode } from "react";
+
+type InfoCardProps = {
+  title: ReactNode;
+  value: ReactNode;
+};
+
+export default function InfoCard({ title, value }: InfoCardProps) {
   return (
     <>
       <div className="info-card">

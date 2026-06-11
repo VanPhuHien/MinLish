@@ -4,13 +4,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import useDictation from "@/hooks/useDictation";
+import type { DictationSubmitResult } from "@/hooks/useDictation";
 import LoadAnimation from "@/components/ui/load-animation";
 import ErrorMessage from "@/components/ui/error-message";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 export default function DictationPage() {
-  const { id: lessonId } = useParams();
+  const { id: lessonId } = useParams<{ id: string }>();
   // useParams: đọc các giá trị động (dynamic parameters) từ URL của trình duyệt
   // [id] -> { id: '6677028' }
 
@@ -18,14 +19,14 @@ export default function DictationPage() {
   // useRouter: điều hướng bằng code JavaScript thay vì
   // bắt người dùng phải click vào một thẻ Link <a> truyền thống
 
-  const audioRef = useRef(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const { segments, progressMap, startIndex, loading, error, submitSegment } =
     useDictation(lessonId);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userInput, setUserInput] = useState("");
-  const [result, setResult] = useState(null); // { score, completed }
+  const [result, setResult] = useState<DictationSubmitResult | null>(null); // { score, completed }
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
@@ -63,7 +64,7 @@ export default function DictationPage() {
     try {
       const { score, completed } = await submitSegment(segment._id, userInput);
       setResult({ score, completed });
-    } catch (err) {
+    } catch (err: any) {
       setSubmitError(
         err.response?.data?.message || "Submit failed, please try again",
       );

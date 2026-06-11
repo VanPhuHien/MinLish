@@ -1,7 +1,8 @@
 import ForgotPasswordForm from './ForgotPasswordForm';
 import AuthCard from '@/components/ui/auth-card';
+import type { Metadata } from 'next';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Quên mật khẩu - MinLish',
   description: 'Nhập email để nhận mã OTP đặt lại mật khẩu',
 };

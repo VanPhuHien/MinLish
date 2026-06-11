@@ -3,29 +3,30 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axiosInstance from '@/services/axios';
 import { Button } from '@/components/ui/button';
 import FormField from '@/components/ui/form-field';
 
-const resetPasswordSchema = z
+const registerSchema = z
   .object({
+    username: z.string().min(3, 'Tên người dùng ít nhất 3 ký tự'),
     email: z.string().email('Email không đúng định dạng'),
-    otpCode: z
-      .string()
-      .length(6, 'Mã OTP phải đúng 6 chữ số')
-      .regex(/^\d{6}$/, 'Mã OTP chỉ gồm chữ số'),
-    newPassword: z.string().min(6, 'Mật khẩu ít nhất 6 ký tự'),
-    confirmPassword: z.string(),
+    password: z.string().min(6, 'Mật khẩu ít nhất 6 ký tự'),
+    confirmPassword: z.string().min(6, 'Vui lòng xác nhận mật khẩu'),
   })
-  .refine((data) => data.newPassword === data.confirmPassword, {
+  .refine((data) => data.password === data.confirmPassword, {
     message: 'Mật khẩu xác nhận không khớp',
     path: ['confirmPassword'],
   });
 
-export default function ResetPasswordForm({ email }) {
-  const router = useRouter();
+type RegisterFormValues = z.infer<typeof registerSchema>;
+
+type RegisterFormProps = {
+  onSuccess: (email: string) => void;
+};
+
+export default function RegisterForm({ onSuccess }: RegisterFormProps) {
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -33,23 +34,23 @@ export default function ResetPasswordForm({ email }) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(resetPasswordSchema),
-    defaultValues: { email: email || '' },
+  } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: RegisterFormValues) => {
     setIsLoading(true);
     setErrorMsg('');
     try {
-      await axiosInstance.post('/auth/reset-password', {
+      const res = await axiosInstance.post('/auth/register', {
+        username: data.username,
         email: data.email,
-        otpCode: data.otpCode,
-        newPassword: data.newPassword,
+        password: data.password,
       });
-      router.push('/login?reset=success');
-    } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại');
+      // res.data.data will contain the email or message from backend
+      onSuccess(data.email);
+    } catch (err: any) {
+      setErrorMsg(err.response?.data?.message || 'Có lỗi xảy ra khi đăng ký');
     } finally {
       setIsLoading(false);
     }
@@ -64,52 +65,49 @@ export default function ResetPasswordForm({ email }) {
       )}
 
       <FormField
+        id="username"
+        label="Tên đăng nhập"
+        type="text"
+        placeholder="username"
+        error={errors.username?.message}
+        {...register('username')}
+      />
+
+      <FormField
         id="email"
         label="Địa chỉ Email"
         type="email"
         placeholder="name@example.com"
-        readOnly
-        className="opacity-70"
         error={errors.email?.message}
         {...register('email')}
       />
 
       <FormField
-        id="otpCode"
-        label="Mã OTP (6 chữ số)"
-        type="text"
-        placeholder="123456"
-        maxLength={6}
-        inputMode="numeric"
-        error={errors.otpCode?.message}
-        {...register('otpCode')}
-      />
-
-      <FormField
-        id="newPassword"
-        label="Mật khẩu mới"
+        id="password"
+        label="Mật khẩu"
         type="password"
         placeholder="Tối thiểu 6 ký tự"
-        error={errors.newPassword?.message}
-        {...register('newPassword')}
+        error={errors.password?.message}
+        {...register('password')}
       />
 
       <FormField
         id="confirmPassword"
         label="Xác nhận mật khẩu"
         type="password"
-        placeholder="Nhập lại mật khẩu mới"
+        placeholder="Nhập lại mật khẩu"
         error={errors.confirmPassword?.message}
         {...register('confirmPassword')}
       />
 
       <Button type="submit" size="lg" className="w-full" disabled={isLoading}>
-        {isLoading ? 'Đang xử lý...' : 'Đặt lại mật khẩu'}
+        {isLoading ? 'Đang xử lý...' : 'Đăng ký'}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">
-        <Link href="/forgot-password" className="text-primary hover:underline">
-          ← Gửi lại OTP
+        Đã có tài khoản?{' '}
+        <Link href="/login" className="text-primary hover:underline">
+          Đăng nhập ngay
         </Link>
       </p>
     </form>

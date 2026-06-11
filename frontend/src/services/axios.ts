@@ -1,5 +1,15 @@
 import axios from 'axios';
+import type { InternalAxiosRequestConfig } from 'axios';
 import useAuthStore from '../stores/useAuthStore';
+
+type RetryAxiosRequestConfig = InternalAxiosRequestConfig & {
+  _retry?: boolean;
+};
+
+type FailedQueueItem = {
+  resolve: (token: string | null) => void;
+  reject: (error: unknown) => void;
+};
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1',
@@ -26,9 +36,9 @@ axiosInstance.interceptors.request.use((config) => {
 });
 
 let isRefreshing = false;
-let failedQueue = [];
+let failedQueue: FailedQueueItem[] = [];
 
-const processQueue = (error, token = null) => {
+const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach(prom => {
     if (error) {
       prom.reject(error);
@@ -42,11 +52,11 @@ const processQueue = (error, token = null) => {
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
+    const originalRequest = error.config as RetryAxiosRequestConfig | undefined;
 
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+    if (error.response && error.response.status === 401 && originalRequest && !originalRequest._retry) {
       if (isRefreshing) {
-        return new Promise(function(resolve, reject) {
+        return new Promise<string | null>(function(resolve, reject) {
           failedQueue.push({ resolve, reject });
         }).then(token => {
           originalRequest.headers['Authorization'] = 'Bearer ' + token;

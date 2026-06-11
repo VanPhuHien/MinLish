@@ -1,4 +1,10 @@
-export default function ShadowingPage({ params }) {
+type ShadowingPageProps = {
+  params: {
+    id: string;
+  };
+};
+
+export default function ShadowingPage({ params }: ShadowingPageProps) {
   return (
     <div>
       <h2>Luyện Nói Shadowing - Bài {params.id}</h2>
