@@ -107,6 +107,50 @@ cards (“Đây là dữ liệu gốc của từng flashcard/từ vựng”)
 | `createdAt`                       | Ngày tạo.                                      |
 | `updatedAt`                       | Ngày cập nhật.                                 |
 
+user_decks
+
+| Field          | Ý nghĩa                                  |
+| :------------- | :--------------------------------------- |
+| `_id`          | ID bộ thẻ.                               |
+| `title`        | Tên bộ thẻ.                              |
+| `slug`         | URL thân thiện.                          |
+| `description`  | Mô tả ngắn về deck.                      |
+| `coverImage`   | Ảnh bìa.                                 |
+| `tagIds`       | Các tag như `common`, `basic`, `oxford`. |
+| `cefrLevelIds` | Các mức cerf_levels                      |
+| `topicCount`   | Số topic con trong deck.                 |
+| `cardCount`    | Tổng số thẻ.                             |
+| `publishedAt`  | Ngày công khai.                          |
+
+user_topics (“Bảng này là các nhóm nhỏ bên trong một deck. Ví dụ trong deck “1000 từ tiếng Anh thông dụng”, các nhóm con là Gia đình, Trường học, Công việc, Sức khỏe” do user tạo)
+
+| Field       | Ý nghĩa                      |
+| :---------- | :--------------------------- |
+| `_id`       | ID nhóm thẻ.                 |
+| `deckId`    | Thuộc deck nào.              |
+| `name`      | Tên nhóm, ví dụ `Gia đình`.  |
+| `slug`      | URL thân thiện.              |
+| `order`     | Thứ tự hiển thị bên sidebar. |
+| `cardCount` | Số card trong nhóm.          |
+
+user_cards (“Đây là dữ liệu gốc của từng flashcard/từ vựng tạo bởi user”)
+
+| Field                             | Ý nghĩa                                        |
+| :-------------------------------- | :--------------------------------------------- |
+| `_id`                             | ID card.                                       |
+| `deckId`                          | Card thuộc deck nào.                           |
+| `topicId`                         | Card thuộc nhóm nào trong deck (deck_topics ). |
+| `order`                           | Thứ tự card trong nhóm.                        |
+| `term`                            | Từ hoặc cụm từ chính cần học.                  |
+| `pos`                             | Từ loại như noun, verb, adjective.             |
+| `phonetics`                       | [{text, audio, locale}, ...]                   |
+| `translation`                     | Nghĩa của từ dịch sang tiếng việt.             |
+| `explanation.vi / explanation.en` | Giải thích                                     |
+| `examples.vi / examples.en`       | Ví dụ câu dùng từ.                             |
+| `imageUrl`                        | Ảnh minh họa từ                                |
+| `createdAt`                       | Ngày tạo.                                      |
+| `updatedAt`                       | Ngày cập nhật.                                 |
+
 user_lesson_progress
 
 | Field              | Ý nghĩa                                                 |
