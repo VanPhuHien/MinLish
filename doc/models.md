@@ -110,37 +110,6 @@ cards (“Đây là dữ liệu gốc của từng flashcard/từ vựng”)
 | `createdAt`                       | Ngày tạo.                                      |
 | `updatedAt`                       | Ngày cập nhật.                                 |
 
-user_decks
-
-| Field          | Ý nghĩa                                  |
-| :------------- | :--------------------------------------- |
-| `_id`          | ID bộ thẻ.                               |
-| `title`        | Tên bộ thẻ.                              |
-| `slug`         | URL thân thiện.                          |
-| `description`  | Mô tả ngắn về deck.                      |
-| `coverImage`   | Ảnh bìa.                                 |
-| `tagIds`       | Các tag như `common`, `basic`, `oxford`. |
-| `cefrLevelIds` | Các mức cerf_levels                      |
-| `topicCount`   | Số topic con trong deck.                 |
-| `cardCount`    | Tổng số thẻ.                             |
-| `ownerId`      | Id người sở hữu                          |
-| `status`       | Trạng thái như `published`, `archived`.  |
-| `createdAt`    | Ngày tạo.                                |
-| `updatedAt`    | Ngày cập nhật.                           |
-
-user_topics
-
-| Field       | Ý nghĩa                        |
-| :---------- | :----------------------------- |
-| `_id`       | ID nhóm thẻ.                   |
-| `deckId`    | Thuộc deck nào trong DeckUser. |
-| `name`      | Tên nhóm, ví dụ `Gia đình`.    |
-| `slug`      | URL thân thiện.                |
-| `order`     | Thứ tự hiển thị bên sidebar.   |
-| `cardCount` | Số card trong nhóm.            |
-| `createdAt` | Ngày tạo.                      |
-| `updatedAt` | Ngày cập nhật.                 |
-
 user_lesson_progress
 
 | Field              | Ý nghĩa                                                 |

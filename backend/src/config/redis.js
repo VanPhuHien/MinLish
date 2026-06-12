@@ -43,10 +43,15 @@ const makeSafeRedisClient = (rawClient) => {
         return async (...args) => {
           if (!target.isOpen) {
             try {
-              console.log(`[Redis Proxy] Client is closed. Attempting to connect before executing "${prop}"...`);
+              console.log(
+                `[Redis Proxy] Client is closed. Attempting to connect before executing "${prop}"...`
+              );
               await connectRedis();
             } catch (err) {
-              console.error(`[Redis Proxy] Failed to connect before executing "${prop}":`, err);
+              console.error(
+                `[Redis Proxy] Failed to connect before executing "${prop}":`,
+                err
+              );
             }
           }
           return value.apply(target, args);
