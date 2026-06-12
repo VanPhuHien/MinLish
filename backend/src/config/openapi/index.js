@@ -7,6 +7,8 @@ import authSchemas from './schemas/auth.schema.js';
 import commonSchemas from './schemas/common.schema.js';
 import userSchemas from './schemas/user.schema.js';
 
+import commonResponses from './responses/common.response.js';
+
 export default {
   ...base,
   paths: {
@@ -32,6 +34,9 @@ export default {
       ...commonSchemas,
       ...authSchemas,
       ...userSchemas,
+    },
+    responses: {
+      ...commonResponses,
     },
   },
 };

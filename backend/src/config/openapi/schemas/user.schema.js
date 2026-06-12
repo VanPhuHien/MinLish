@@ -61,4 +61,103 @@ export default {
       },
     },
   },
+  UserSegmentProgress: {
+    type: 'object',
+    properties: {
+      _id: {
+        type: 'string',
+        example: '64d111222333444555666777',
+        description: 'ID bản ghi.',
+      },
+      userId: {
+        type: 'string',
+        example: '64a000111222333444555666',
+        description: 'User nào.',
+      },
+      lessonId: {
+        type: 'string',
+        example: '64c999888777666555444333',
+        description: 'Thuộc lesson nào.',
+      },
+      segmentId: {
+        type: 'string',
+        example: '64e888777666555444333222',
+        description: 'Thuộc segment nào.',
+      },
+      dictation: {
+        type: 'object',
+        properties: {
+          attemptCount: {
+            type: 'integer',
+            example: 3,
+            description: 'Số lần thử.',
+          },
+          bestScore: {
+            type: 'number',
+            example: 95.5,
+            description: 'Điểm tốt nhất.',
+          },
+          completed: {
+            type: 'boolean',
+            example: true,
+            description: 'Đã vượt qua hay chưa.',
+          },
+          hintUsedCount: {
+            type: 'integer',
+            example: 1,
+            description: 'Đã dùng gợi ý bao nhiêu lần.',
+          },
+        },
+        description: 'Trạng thái Dictation cho segment này.',
+      },
+      shadowing: {
+        type: 'object',
+        properties: {
+          attemptCount: {
+            type: 'integer',
+            example: 2,
+            description: 'Số lần thử.',
+          },
+          bestScore: {
+            type: 'number',
+            example: 88.0,
+            description: 'Điểm tốt nhất.',
+          },
+          latestAudioUrl: {
+            type: 'string',
+            example: 'https://cdn.minlish.com/audio/user_shadowing.mp3',
+            description: 'URL audio mới nhất.',
+          },
+          completed: {
+            type: 'boolean',
+            example: false,
+            description: 'Đã vượt qua hay chưa.',
+          },
+        },
+        description: 'Trạng thái Shadowing cho segment này.',
+      },
+      updatedAt: {
+        type: 'string',
+        format: 'date-time',
+        example: '2023-10-15T09:00:00.000Z',
+        description: 'Lần cập nhật gần nhất.',
+      },
+    },
+  },
+  SegmentProgressResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      message: {
+        type: 'string',
+        example: 'Lấy tiến độ các segment thành công',
+      },
+      data: {
+        type: 'array',
+        items: {
+          $ref: '#/components/schemas/UserSegmentProgress',
+        },
+      },
+    },
+  },
 };

@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import http from 'http'
+import http from 'http';
 import app from './src/app.js';
 import { connectMongoDB } from './src/config/mongodb.js';
 import { connectRedis } from './src/config/redis.js';

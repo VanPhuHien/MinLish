@@ -22,35 +22,52 @@ export default {
           },
         },
         401: {
-          description: 'Chưa đăng nhập hoặc token không hợp lệ',
-          content: {
-            'application/json': {
-              schema: {
-                $ref: '#/components/schemas/ErrorResponse',
-              },
-              example: {
-                success: false,
-                message: 'Chưa đăng nhập hoặc token không hợp lệ',
-              },
-            },
-          },
+          $ref: '#/components/responses/Unauthorized',
         },
         403: {
-          description: 'Không có quyền truy cập',
+          $ref: '#/components/responses/Forbidden',
+        },
+        500: {
+          $ref: '#/components/responses/ServerError',
+        },
+      },
+    },
+  },
+  '/users/me/lessons/{lessonId}/segments-progress': {
+    get: {
+      tags: ['Users'],
+      summary: 'Lấy tiến độ các segment của bài học',
+      description:
+        'Lấy danh sách tiến độ chi tiết từng segment (user_segment_progress) trong một bài học của người dùng hiện tại.',
+      security: [
+        {
+          BearerAuth: [],
+        },
+      ],
+      parameters: [
+        {
+          in: 'path',
+          name: 'lessonId',
+          required: true,
+          schema: {
+            type: 'string',
+          },
+          description: 'ID của bài học',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'Lấy tiến độ các segment thành công',
           content: {
             'application/json': {
               schema: {
-                $ref: '#/components/schemas/ErrorResponse',
-              },
-              example: {
-                success: false,
-                message: 'Không có quyền truy cập',
+                $ref: '#/components/schemas/SegmentProgressResponse',
               },
             },
           },
         },
-        500: {
-          description: 'Lỗi server',
+        400: {
+          description: 'ID bài học không hợp lệ',
           content: {
             'application/json': {
               schema: {
@@ -58,10 +75,19 @@ export default {
               },
               example: {
                 success: false,
-                message: 'Lỗi server',
+                message: 'ID bài học không hợp lệ',
               },
             },
           },
+        },
+        401: {
+          $ref: '#/components/responses/Unauthorized',
+        },
+        403: {
+          $ref: '#/components/responses/Forbidden',
+        },
+        500: {
+          $ref: '#/components/responses/ServerError',
         },
       },
     },
