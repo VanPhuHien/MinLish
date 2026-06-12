@@ -160,4 +160,82 @@ export default {
       },
     },
   },
+  UserCardState: {
+    type: 'object',
+    properties: {
+      _id: {
+        type: 'string',
+        example: '64f111222333444555666777',
+        description: 'ID state.',
+      },
+      userId: {
+        type: 'string',
+        example: '64a000111222333444555666',
+        description: 'User nào.',
+      },
+      cardId: {
+        type: 'string',
+        example: '64b222333444555666777888',
+        description: 'Card nào.',
+      },
+      deckId: {
+        type: 'string',
+        example: '64c333444555666777888999',
+        description: 'Thuộc deck nào.',
+      },
+      topicId: {
+        type: 'string',
+        example: '64d444555666777888999000',
+        description: 'Thuộc topic nào.',
+      },
+      srs: {
+        type: 'object',
+        properties: {
+          easeFactor: { type: 'number', example: 2.5 },
+          interval: { type: 'integer', example: 6 },
+          lastGrade: { type: 'integer', example: 4 },
+          nextReviewAt: {
+            type: 'string',
+            format: 'date-time',
+            example: '2023-10-18T09:00:00.000Z',
+          },
+        },
+        description: 'Trạng thái Spaced Repetition.',
+      },
+      flags: {
+        type: 'array',
+        items: { type: 'string' },
+        example: ['starred'],
+        description: 'Cờ đặc biệt như đánh dấu sao, tạm ẩn.',
+      },
+      createdAt: {
+        type: 'string',
+        format: 'date-time',
+        example: '2023-10-01T08:00:00.000Z',
+        description: 'Ngày bắt đầu học card này.',
+      },
+      updatedAt: {
+        type: 'string',
+        format: 'date-time',
+        example: '2023-10-15T09:00:00.000Z',
+        description: 'Ngày cập nhật gần nhất.',
+      },
+    },
+  },
+  CardStatesResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      message: {
+        type: 'string',
+        example: 'Lấy trạng thái học từ vựng thành công',
+      },
+      data: {
+        type: 'array',
+        items: {
+          $ref: '#/components/schemas/UserCardState',
+        },
+      },
+    },
+  },
 };

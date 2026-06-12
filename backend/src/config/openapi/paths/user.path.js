@@ -92,4 +92,38 @@ export default {
       },
     },
   },
+  '/users/me/card-states': {
+    get: {
+      tags: ['Users'],
+      summary: 'Lấy trạng thái các thẻ từ vựng của người dùng hiện tại',
+      description:
+        'Lấy danh sách trạng thái học thẻ từ vựng (user_card_states) của người dùng hiện tại.',
+      security: [
+        {
+          BearerAuth: [],
+        },
+      ],
+      responses: {
+        200: {
+          description: 'Lấy trạng thái thẻ từ vựng thành công',
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/CardStatesResponse',
+              },
+            },
+          },
+        },
+        401: {
+          $ref: '#/components/responses/Unauthorized',
+        },
+        403: {
+          $ref: '#/components/responses/Forbidden',
+        },
+        500: {
+          $ref: '#/components/responses/ServerError',
+        },
+      },
+    },
+  },
 };
