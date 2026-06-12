@@ -11,17 +11,9 @@ import errorLogger from './middlewares/errorLogger.js';
 import requestLogger from './middlewares/requestLogger.js';
 import authRouter from './modules/auth/auth.router.js';
 import swaggerUi from 'swagger-ui-express';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import openapiDocument from './config/openapi/index.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const app = express();
-
-const openapiDocument = JSON.parse(
-  fs.readFileSync(path.join(__dirname, 'config', 'openapi.json'), 'utf8')
-);
 
 app.use(
   cors({

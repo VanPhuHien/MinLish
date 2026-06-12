@@ -21,15 +21,13 @@ export const submitSegmentProgress = async (req, res, next) => {
         userInput
       );
 
-    return res
-      .status(200)
-      .json(
-        successResponse('Nộp kết quả thành công', {
-          score,
-          completed,
-          progress,
-        })
-      );
+    return res.status(200).json(
+      successResponse('Nộp kết quả thành công', {
+        score,
+        completed,
+        progress,
+      })
+    );
   } catch (err) {
     next(err);
   }
