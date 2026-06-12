@@ -20,6 +20,13 @@ POST /auth/otp/send kèm payload { "email": "user@example.com", "purpose": "veri
 POST /auth/otp/verify kèm payload { "email": "user@example.com", "otp": "482913", "purpose": "verify\_email" }  
 forgot-password, reset-password tương tự
 
+## **Lessons công khai**
+
+* GET /api/v1/lessons — danh sách lesson đã publish; hỗ trợ filter theo tagId, cefrLevelId, mode, q, page, limit.  
+* GET /api/v1/lessons/{lessonId} — chi tiết một lesson đã publish.  
+* GET /api/v1/lessons/{lessonId}/segments — danh sách segment của lesson theo order.  
+* GET /api/v1/lessons/{lessonId}/segments/{segmentId} — chi tiết một segment.
+
 # **Cần token API**
 
 ## **Profile**
@@ -31,13 +38,6 @@ forgot-password, reset-password tương tự
 
 * GET /api/v1/cefr-levels — lấy danh sách level CEFR để filter lesson/deck.  
 * GET /api/v1/tags — lấy danh sách tag.
-
-## **Lessons công khai**
-
-* GET /api/v1/lessons — danh sách lesson đã publish; hỗ trợ filter theo tagId, cefrLevelId, mode, q, page, limit.  
-* GET /api/v1/lessons/{lessonId} — chi tiết một lesson đã publish.  
-* GET /api/v1/lessons/{lessonId}/segments — danh sách segment của lesson theo order.  
-* GET /api/v1/lessons/{lessonId}/segments/{segmentId} — chi tiết một segment.
 
 ## **Decks công khai**
 

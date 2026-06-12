@@ -1,6 +1,9 @@
+import { publicAccess } from '../helpers/security.js';
+
 export default {
   '/auth/signup': {
     post: {
+      ...publicAccess,
       tags: ['Auth'],
       summary: 'Đăng ký tài khoản mới',
       description:
@@ -32,6 +35,10 @@ export default {
             'application/json': {
               schema: {
                 $ref: '#/components/schemas/ErrorResponse',
+              },
+              example: {
+                success: false,
+                message: 'Email hoặc mật khẩu không chính xác',
               },
             },
           },

@@ -17,11 +17,8 @@ export default {
         items: {
           type: 'object',
           properties: {
-            field: { type: 'string', example: 'email' },
-            message: {
-              type: 'string',
-              example: 'Email không đúng định dạng',
-            },
+            field: { type: 'string' },
+            message: { type: 'string' },
           },
         },
       },
