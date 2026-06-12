@@ -77,6 +77,9 @@ decks
 | `topicCount` | Số topic con trong deck. |
 | `cardCount` | Tổng số thẻ. |
 | `publishedAt` | Ngày công khai. |
+|`ownerType`| 'user' hoặc 'system' |
+|`ownerId`| id người sở hữu | null nếu là từ hệ thống |
+|`status`| 'draft' / 'published' / 'archived' |
 
 topics (“Bảng này là các nhóm nhỏ bên trong một deck. Ví dụ trong deck “1000 từ tiếng Anh thông dụng”, các nhóm con là Gia đình, Trường học, Công việc, Sức khỏe”)
 
