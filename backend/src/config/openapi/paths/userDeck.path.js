@@ -120,7 +120,7 @@ export default {
       tags: [TAG],
       summary: 'Tạo deck mới',
       description:
-        'Tạo một deck thuộc sở hữu người dùng hiện tại (ownerType = user, ownerId = người dùng hiện tại). Status mặc định là draft; dùng PUT để thay đổi status sau.',
+        'Tạo một deck thuộc sở hữu người dùng hiện tại (ownerType = user, ownerId = người dùng hiện tại). Status luôn là published vì deck chỉ dùng cho cá nhân.',
       requestBody: jsonBody('UserDeckCreateRequest'),
       responses: {
         201: jsonResponse('UserDeckCreateResponse', 'Tạo deck thành công.'),

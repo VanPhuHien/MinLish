@@ -37,6 +37,11 @@ export default {
             type: 'string',
             example: '665f1f77bcf86cd799439020',
           },
+          status: {
+            type: 'string',
+            enum: ['published'],
+            example: 'published',
+          },
         },
       },
     ],
@@ -85,11 +90,6 @@ export default {
       cefrLevelIds: {
         type: 'array',
         items: { type: 'string', pattern: '^[a-fA-F0-9]{24}$' },
-      },
-      status: {
-        type: 'string',
-        enum: ['draft', 'published', 'archived'],
-        example: 'draft',
       },
     },
   },
