@@ -268,7 +268,7 @@ export default {
         type: 'object',
         properties: {
           attemptCount: { type: 'integer', example: 1 },
-          bestOverallScore: { type: 'number', example: 78 },
+          bestScore: { type: 'number', example: 78 },
           latestAudioUrl: {
             type: 'string',
             example: 'https://example.com/uploads/shadowing.wav',

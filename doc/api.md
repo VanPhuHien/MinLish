@@ -49,6 +49,30 @@ forgot-password, reset-password tương tự
 - GET /api/v1/decks/{deckId}/topics — danh sách topic trong deck kèm tiến độ topic của user.
 - GET /api/v1/decks/{deckId}/topics/{topicId}/cards — danh sách card trong topic kèm trạng thái học của user.
 
+## **Deck của user (ownerType = user)**
+
+- GET /api/v1/users/me/decks — danh sách deck do user hiện tại sở hữu; hỗ trợ filter q, page, limit.
+- POST /api/v1/users/me/decks — tạo deck mới thuộc sở hữu user hiện tại (draft mặc định).
+- GET /api/v1/users/me/decks/{deckId} — chi tiết một deck của user.
+- PUT /api/v1/users/me/decks/{deckId} — cập nhật deck (chỉ chủ sở hữu).
+- DELETE /api/v1/users/me/decks/{deckId} — xóa deck kèm toàn bộ topic và card bên trong (chỉ chủ sở hữu).
+
+## **Topics trong deck của user**
+
+- GET /api/v1/users/me/decks/{deckId}/topics — danh sách topic trong deck của user.
+- POST /api/v1/users/me/decks/{deckId}/topics — tạo topic mới trong deck.
+- GET /api/v1/users/me/decks/{deckId}/topics/{topicId} — chi tiết topic.
+- PUT /api/v1/users/me/decks/{deckId}/topics/{topicId} — cập nhật topic.
+- DELETE /api/v1/users/me/decks/{deckId}/topics/{topicId} — xóa topic kèm toàn bộ card bên trong.
+
+## **Cards trong deck của user**
+
+- GET /api/v1/users/me/decks/{deckId}/cards — danh sách card trong deck; hỗ trợ filter topicId, q, page, limit.
+- POST /api/v1/users/me/decks/{deckId}/cards — tạo card mới trong deck (cần chỉ định topicId).
+- GET /api/v1/users/me/decks/{deckId}/cards/{cardId} — chi tiết card.
+- PUT /api/v1/users/me/decks/{deckId}/cards/{cardId} — cập nhật term, pos, phonetics, translation, explanation, examples, imageUrl.
+- DELETE /api/v1/users/me/decks/{deckId}/cards/{cardId} — xóa card.
+
 ## **Progress của user**
 
 - GET /api/v1/users/me/lesson-progress — danh sách tiến độ lesson của user.

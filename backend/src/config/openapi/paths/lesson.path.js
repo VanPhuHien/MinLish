@@ -112,6 +112,9 @@ export default {
         401: {
           $ref: '#/components/responses/Unauthorized',
         },
+        500: {
+          $ref: '#/components/responses/ServerError',
+        },
       },
     },
   },
@@ -183,6 +186,9 @@ export default {
             },
           },
         },
+        500: {
+          $ref: '#/components/responses/ServerError',
+        },
       },
     },
   },
@@ -253,6 +259,9 @@ export default {
               },
             },
           },
+        },
+        500: {
+          $ref: '#/components/responses/ServerError',
         },
       },
     },
@@ -335,6 +344,9 @@ export default {
               },
             },
           },
+        },
+        500: {
+          $ref: '#/components/responses/ServerError',
         },
       },
     },
