@@ -55,4 +55,18 @@ export default {
       },
     },
   },
+  Conflict: {
+    description: 'Dữ liệu đã tồn tại',
+    content: {
+      'application/json': {
+        schema: {
+          $ref: '#/components/schemas/ErrorResponse',
+        },
+        example: {
+          success: false,
+          message: 'Dữ liệu đã tồn tại',
+        },
+      },
+    },
+  },
 };

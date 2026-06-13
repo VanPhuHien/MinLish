@@ -37,13 +37,8 @@ export default {
   },
   CefrLevelPayload: {
     type: 'object',
-    required: ['code', 'label'],
+    required: ['label'],
     properties: {
-      code: {
-        type: 'string',
-        example: 'a1',
-        description: 'Mã ngắn (ví dụ: a1, a2).',
-      },
       label: {
         type: 'string',
         example: 'A1',
@@ -61,6 +56,60 @@ export default {
       },
       data: {
         $ref: '#/components/schemas/CefrLevel',
+      },
+    },
+  },
+  Tag: {
+    type: 'object',
+    properties: {
+      _id: {
+        type: 'string',
+        example: '64a1234567890abcdef12345',
+        description: 'ID tag.',
+      },
+      code: {
+        type: 'string',
+        example: 'movie',
+        description: 'Mã ngắn (ví dụ: movie, daily).',
+      },
+      label: {
+        type: 'string',
+        example: 'Movie',
+        description: 'Tên hiển thị (ví dụ: Movie, Daily).',
+      },
+    },
+  },
+  TagsResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      message: { type: 'string', example: 'Lấy danh sách tag thành công' },
+      data: {
+        type: 'array',
+        items: {
+          $ref: '#/components/schemas/Tag',
+        },
+      },
+    },
+  },
+  TagPayload: {
+    type: 'object',
+    required: ['label'],
+    properties: {
+      label: {
+        type: 'string',
+        example: 'Movie',
+        description: 'Tên hiển thị (ví dụ: Movie, Daily).',
+      },
+    },
+  },
+  TagResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      message: { type: 'string', example: 'Lấy chi tiết tag thành công' },
+      data: {
+        $ref: '#/components/schemas/Tag',
       },
     },
   },

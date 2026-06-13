@@ -1,6 +1,5 @@
 const optionalBearerSecurity = [{}, { BearerAuth: [] }];
 
-
 export default {
   '/lessons': {
     get: {
