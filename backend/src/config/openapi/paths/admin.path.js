@@ -274,6 +274,59 @@ const TagConflict = {
   },
 };
 
+const DeckBadRequest = {
+  description: 'Dữ liệu đầu vào không hợp lệ',
+  content: {
+    'application/json': {
+      schema: { $ref: '#/components/schemas/ErrorResponse' },
+      examples: {
+        MissingFields: {
+          summary: 'Thiếu dữ liệu trường bắt buộc',
+          value: {
+            success: false,
+            message: 'Dữ liệu không hợp lệ',
+            errors: [{ field: 'title', message: 'Trường title là bắt buộc' }],
+          },
+        },
+      },
+    },
+  },
+};
+
+const DeckNotFound = {
+  description: 'Không tìm thấy deck',
+  content: {
+    'application/json': {
+      schema: { $ref: '#/components/schemas/ErrorResponse' },
+      example: { success: false, message: 'Không tìm thấy deck' },
+    },
+  },
+};
+
+const DeckSlugConflict = {
+  description: 'Slug đã tồn tại',
+  content: {
+    'application/json': {
+      schema: { $ref: '#/components/schemas/ErrorResponse' },
+      examples: {
+        DuplicateSlug: {
+          summary: 'Trùng slug',
+          value: {
+            success: false,
+            message: 'Dữ liệu đã tồn tại',
+            errors: [
+              {
+                field: 'slug',
+                message: 'Slug của deck đã tồn tại trong hệ thống',
+              },
+            ],
+          },
+        },
+      },
+    },
+  },
+};
+
 export default {
   '/admin/cefr-levels': {
     get: {
@@ -1157,6 +1210,214 @@ export default {
           },
         },
         404: LessonOrSegmentNotFound,
+        401: { $ref: '#/components/responses/Unauthorized' },
+        403: { $ref: '#/components/responses/Forbidden' },
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+  },
+  '/admin/decks': {
+    get: {
+      tags: ['/admin/decks'],
+      summary: 'Lấy danh sách decks',
+      description:
+        'Lấy danh sách tất cả bộ thẻ (decks) dành cho Admin. Hỗ trợ phân trang và tìm kiếm.',
+      security: [{ BearerAuth: [] }],
+      parameters: [
+        {
+          in: 'query',
+          name: 'tagId',
+          schema: { type: 'string' },
+          description: 'Lọc theo tag',
+        },
+        {
+          in: 'query',
+          name: 'cefrLevelId',
+          schema: { type: 'string' },
+          description: 'Lọc theo CEFR level',
+        },
+        {
+          in: 'query',
+          name: 'q',
+          schema: { type: 'string' },
+          description: 'Tìm kiếm theo từ khóa (tiêu đề, mô tả)',
+        },
+        {
+          in: 'query',
+          name: 'page',
+          schema: { type: 'integer', default: 1 },
+          description: 'Trang hiện tại',
+        },
+        {
+          in: 'query',
+          name: 'limit',
+          schema: { type: 'integer', default: 10 },
+          description: 'Số lượng bộ thẻ trên mỗi trang',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'Lấy danh sách decks thành công',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/DeckListResponse' },
+            },
+          },
+        },
+        401: { $ref: '#/components/responses/Unauthorized' },
+        403: { $ref: '#/components/responses/Forbidden' },
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+    post: {
+      tags: ['/admin/decks'],
+      summary: 'Tạo deck mới',
+      description: 'Tạo mới deck. Mặc định trạng thái là draft.',
+      security: [{ BearerAuth: [] }],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: { $ref: '#/components/schemas/DeckPayload' },
+          },
+        },
+      },
+      responses: {
+        201: {
+          description: 'Tạo deck thành công',
+          content: {
+            'application/json': {
+              schema: {
+                allOf: [
+                  { $ref: '#/components/schemas/DeckDetailResponse' },
+                  {
+                    type: 'object',
+                    properties: {
+                      message: {
+                        type: 'string',
+                        example: 'Tạo deck thành công',
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        400: DeckBadRequest,
+        409: DeckSlugConflict,
+        401: { $ref: '#/components/responses/Unauthorized' },
+        403: { $ref: '#/components/responses/Forbidden' },
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+  },
+  '/admin/decks/{deckId}': {
+    get: {
+      tags: ['/admin/decks'],
+      summary: 'Lấy chi tiết một deck',
+      description: 'Lấy thông tin chi tiết một deck bất kể trạng thái.',
+      security: [{ BearerAuth: [] }],
+      parameters: [
+        {
+          in: 'path',
+          name: 'deckId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID của deck',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'Lấy chi tiết deck thành công',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/DeckDetailResponse' },
+            },
+          },
+        },
+        404: DeckNotFound,
+        401: { $ref: '#/components/responses/Unauthorized' },
+        403: { $ref: '#/components/responses/Forbidden' },
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+    put: {
+      tags: ['/admin/decks'],
+      summary: 'Cập nhật deck',
+      description: 'Cập nhật thông tin của một deck.',
+      security: [{ BearerAuth: [] }],
+      parameters: [
+        {
+          in: 'path',
+          name: 'deckId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID của deck',
+        },
+      ],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: { $ref: '#/components/schemas/DeckPayload' },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: 'Cập nhật deck thành công',
+          content: {
+            'application/json': {
+              schema: {
+                allOf: [
+                  { $ref: '#/components/schemas/DeckDetailResponse' },
+                  {
+                    type: 'object',
+                    properties: {
+                      message: {
+                        type: 'string',
+                        example: 'Cập nhật deck thành công',
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        400: DeckBadRequest,
+        404: DeckNotFound,
+        409: DeckSlugConflict,
+        401: { $ref: '#/components/responses/Unauthorized' },
+        403: { $ref: '#/components/responses/Forbidden' },
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+    delete: {
+      tags: ['/admin/decks'],
+      summary: 'Xóa deck',
+      description: 'Xóa hoặc chuyển trạng thái deck sang archived.',
+      security: [{ BearerAuth: [] }],
+      parameters: [
+        {
+          in: 'path',
+          name: 'deckId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID của deck',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'Xóa deck thành công',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/SuccessResponse' },
+            },
+          },
+        },
+        404: DeckNotFound,
         401: { $ref: '#/components/responses/Unauthorized' },
         403: { $ref: '#/components/responses/Forbidden' },
         500: { $ref: '#/components/responses/ServerError' },

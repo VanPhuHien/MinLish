@@ -191,7 +191,7 @@ export default {
       pagination: {
         type: 'object',
         properties: {
-          total: { type: 'integer', example: 100 },
+          totalItems: { type: 'integer', example: 100 },
           page: { type: 'integer', example: 1 },
           limit: { type: 'integer', example: 10 },
           totalPages: { type: 'integer', example: 10 },
@@ -376,6 +376,50 @@ export default {
       message: { type: 'string', example: 'Lấy chi tiết segment thành công' },
       data: {
         $ref: '#/components/schemas/Segment',
+      },
+    },
+  },
+  DeckPayload: {
+    type: 'object',
+    required: ['title'],
+    properties: {
+      title: {
+        type: 'string',
+        example: 'Travel Vocabulary',
+        description: 'Tên bộ thẻ.',
+      },
+      slug: {
+        type: 'string',
+        example: 'travel-vocabulary',
+        description: 'URL thân thiện. Nếu bỏ trống tự sinh từ title.',
+      },
+      description: {
+        type: 'string',
+        example: 'Common English words and phrases for travel.',
+        description: 'Mô tả ngắn về deck.',
+      },
+      coverImage: {
+        type: 'string',
+        example: 'https://example.com/images/travel.jpg',
+        description: 'Ảnh bìa.',
+      },
+      tagIds: {
+        type: 'array',
+        items: { type: 'string' },
+        example: ['665f1f77bcf86cd799439011'],
+        description: 'Danh sách ID tag.',
+      },
+      cefrLevelIds: {
+        type: 'array',
+        items: { type: 'string' },
+        example: ['665f1f77bcf86cd799439012'],
+        description: 'Danh sách ID CEFR level.',
+      },
+      status: {
+        type: 'string',
+        enum: ['draft', 'published', 'archived'],
+        example: 'published',
+        description: 'Trạng thái bộ thẻ.',
       },
     },
   },
