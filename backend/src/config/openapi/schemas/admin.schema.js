@@ -1,0 +1,564 @@
+export default {
+  CefrLevel: {
+    type: 'object',
+    properties: {
+      _id: {
+        type: 'string',
+        example: '64a1234567890abcdef12345',
+        description: 'ID tag.',
+      },
+      code: {
+        type: 'string',
+        example: 'a1',
+        description: 'Mã ngắn (ví dụ: a1, a2).',
+      },
+      label: {
+        type: 'string',
+        example: 'A1',
+        description: 'Tên hiển thị (ví dụ: A1, A2).',
+      },
+    },
+  },
+  CefrLevelsResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      message: {
+        type: 'string',
+        example: 'Lấy danh sách CEFR levels thành công',
+      },
+      data: {
+        type: 'array',
+        items: {
+          $ref: '#/components/schemas/CefrLevel',
+        },
+      },
+    },
+  },
+  CefrLevelPayload: {
+    type: 'object',
+    required: ['label'],
+    properties: {
+      label: {
+        type: 'string',
+        example: 'A1',
+        description: 'Tên hiển thị (ví dụ: A1, A2).',
+      },
+    },
+  },
+  CefrLevelResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      message: {
+        type: 'string',
+        example: 'Lấy chi tiết CEFR level thành công',
+      },
+      data: {
+        $ref: '#/components/schemas/CefrLevel',
+      },
+    },
+  },
+  Tag: {
+    type: 'object',
+    properties: {
+      _id: {
+        type: 'string',
+        example: '64a1234567890abcdef12345',
+        description: 'ID tag.',
+      },
+      code: {
+        type: 'string',
+        example: 'movie',
+        description: 'Mã ngắn (ví dụ: movie, daily).',
+      },
+      label: {
+        type: 'string',
+        example: 'Movie',
+        description: 'Tên hiển thị (ví dụ: Movie, Daily).',
+      },
+    },
+  },
+  TagsResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      message: { type: 'string', example: 'Lấy danh sách tag thành công' },
+      data: {
+        type: 'array',
+        items: {
+          $ref: '#/components/schemas/Tag',
+        },
+      },
+    },
+  },
+  TagPayload: {
+    type: 'object',
+    required: ['label'],
+    properties: {
+      label: {
+        type: 'string',
+        example: 'Movie',
+        description: 'Tên hiển thị (ví dụ: Movie, Daily).',
+      },
+    },
+  },
+  TagResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      message: { type: 'string', example: 'Lấy chi tiết tag thành công' },
+      data: {
+        $ref: '#/components/schemas/Tag',
+      },
+    },
+  },
+  Lesson: {
+    type: 'object',
+    properties: {
+      _id: {
+        type: 'string',
+        example: '64a1234567890abcdef12345',
+        description: 'ID lesson.',
+      },
+      title: {
+        type: 'string',
+        example: 'Ted Talk: How to speak',
+        description: 'Tên bài học.',
+      },
+      slug: {
+        type: 'string',
+        example: 'ted-talk-how-to-speak',
+        description: 'Chuỗi URL thân thiện.',
+      },
+      description: {
+        type: 'string',
+        example: 'Bài học luyện nghe qua video TED Talk.',
+        description: 'Mô tả ngắn.',
+      },
+      tagIds: {
+        type: 'array',
+        items: { type: 'string' },
+        example: ['64a1234567890abcdef12345'],
+        description: 'Danh sách ID tag.',
+      },
+      cefrLevelIds: {
+        type: 'array',
+        items: { type: 'string' },
+        example: ['64a1234567890abcdef12345'],
+        description: 'Danh sách ID CEFR level.',
+      },
+      modes: {
+        type: 'array',
+        items: { type: 'string', enum: ['dictation', 'shadowing'] },
+        example: ['dictation'],
+        description: 'Chế độ hỗ trợ.',
+      },
+      status: {
+        type: 'string',
+        enum: ['draft', 'published', 'archived'],
+        example: 'published',
+        description: 'Trạng thái bài học.',
+      },
+      publishedAt: {
+        type: 'string',
+        format: 'date-time',
+        description: 'Ngày công khai bài học.',
+      },
+      createdAt: { type: 'string', format: 'date-time' },
+      updatedAt: { type: 'string', format: 'date-time' },
+      sourceUrl: {
+        type: 'string',
+        example: 'https://youtube.com/watch?v=123',
+        description: 'URL gốc để phát media.',
+      },
+      thumbnailUrl: {
+        type: 'string',
+        example: 'https://img.youtube.com/vi/123/hqdefault.jpg',
+        description: 'Ảnh thumbnail.',
+      },
+    },
+  },
+  LessonsResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      message: { type: 'string', example: 'Lấy danh sách lesson thành công' },
+      data: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/Lesson' },
+      },
+      pagination: {
+        type: 'object',
+        properties: {
+          totalItems: { type: 'integer', example: 100 },
+          page: { type: 'integer', example: 1 },
+          limit: { type: 'integer', example: 10 },
+          totalPages: { type: 'integer', example: 10 },
+        },
+      },
+    },
+  },
+  LessonPayload: {
+    type: 'object',
+    required: ['title', 'sourceUrl'],
+    properties: {
+      title: {
+        type: 'string',
+        example: 'Ted Talk: How to speak',
+        description: 'Tên bài học.',
+      },
+      slug: {
+        type: 'string',
+        example: 'ted-talk-how-to-speak',
+        description: 'Chuỗi URL thân thiện. Nếu bỏ trống sẽ tự sinh từ title.',
+      },
+      description: {
+        type: 'string',
+        example: 'Bài học luyện nghe qua video TED Talk.',
+        description: 'Mô tả ngắn.',
+      },
+      tagIds: {
+        type: 'array',
+        items: { type: 'string' },
+        example: ['64a1234567890abcdef12345'],
+        description: 'Danh sách ID tag.',
+      },
+      cefrLevelIds: {
+        type: 'array',
+        items: { type: 'string' },
+        example: ['64a1234567890abcdef12345'],
+        description: 'Danh sách ID CEFR level.',
+      },
+      modes: {
+        type: 'array',
+        items: { type: 'string', enum: ['dictation', 'shadowing'] },
+        example: ['dictation'],
+        description: 'Chế độ hỗ trợ.',
+      },
+      sourceUrl: {
+        type: 'string',
+        example: 'https://youtube.com/watch?v=123',
+        description: 'URL gốc để phát media.',
+      },
+      thumbnailUrl: {
+        type: 'string',
+        example: 'https://img.youtube.com/vi/123/hqdefault.jpg',
+        description: 'Ảnh thumbnail.',
+      },
+    },
+  },
+  LessonResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      message: { type: 'string', example: 'Lấy chi tiết lesson thành công' },
+      data: {
+        $ref: '#/components/schemas/Lesson',
+      },
+    },
+  },
+  Segment: {
+    type: 'object',
+    properties: {
+      _id: {
+        type: 'string',
+        example: '64b1234567890abcdef12345',
+        description: 'ID segment.',
+      },
+      lessonId: {
+        type: 'string',
+        example: '64a1234567890abcdef12345',
+        description: 'Segment thuộc lesson nào.',
+      },
+      order: {
+        type: 'integer',
+        minimum: 1,
+        example: 1,
+        description: 'Thứ tự segment trong lesson (phải >= 1).',
+      },
+      startMs: {
+        type: 'integer',
+        minimum: 0,
+        example: 1000,
+        description: 'Thời điểm bắt đầu bằng mili giây (phải >= 0).',
+      },
+      endMs: {
+        type: 'integer',
+        minimum: 0,
+        example: 5000,
+        description: 'Thời điểm kết thúc bằng mili giây (phải > startMs).',
+      },
+      transcript: {
+        type: 'object',
+        properties: {
+          original: {
+            type: 'string',
+            example: 'Hello world!',
+            description: 'Câu gốc đầy đủ.',
+          },
+          normalized: {
+            type: 'string',
+            example: 'hello world',
+            description: 'Chuẩn hóa để so sánh.',
+          },
+        },
+      },
+      translation: {
+        type: 'string',
+        example: 'Chào thế giới!',
+        description: 'Bản dịch.',
+      },
+      createdAt: { type: 'string', format: 'date-time' },
+      updatedAt: { type: 'string', format: 'date-time' },
+    },
+  },
+  SegmentsResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      message: { type: 'string', example: 'Lấy danh sách segment thành công' },
+      data: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/Segment' },
+      },
+    },
+  },
+  SegmentPayload: {
+    type: 'object',
+    required: ['order', 'startMs', 'endMs', 'transcript', 'translation'],
+    properties: {
+      order: {
+        type: 'integer',
+        minimum: 1,
+        example: 1,
+        description: 'Thứ tự segment trong lesson (phải >= 1).',
+      },
+      startMs: {
+        type: 'integer',
+        minimum: 0,
+        example: 1000,
+        description: 'Thời điểm bắt đầu bằng mili giây (phải >= 0).',
+      },
+      endMs: {
+        type: 'integer',
+        minimum: 0,
+        example: 5000,
+        description: 'Thời điểm kết thúc bằng mili giây (phải > startMs).',
+      },
+      transcript: {
+        type: 'object',
+        required: ['original', 'normalized'],
+        properties: {
+          original: {
+            type: 'string',
+            example: 'Hello world!',
+            description: 'Câu gốc đầy đủ.',
+          },
+          normalized: {
+            type: 'string',
+            example: 'hello world',
+            description: 'Chuẩn hóa để so sánh.',
+          },
+        },
+      },
+      translation: {
+        type: 'string',
+        example: 'Chào thế giới!',
+        description: 'Bản dịch.',
+      },
+    },
+  },
+  SegmentResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      message: { type: 'string', example: 'Lấy chi tiết segment thành công' },
+      data: {
+        $ref: '#/components/schemas/Segment',
+      },
+    },
+  },
+  DeckPayload: {
+    type: 'object',
+    required: ['title'],
+    properties: {
+      title: {
+        type: 'string',
+        example: 'Travel Vocabulary',
+        description: 'Tên bộ thẻ.',
+      },
+      slug: {
+        type: 'string',
+        example: 'travel-vocabulary',
+        description: 'URL thân thiện. Nếu bỏ trống tự sinh từ title.',
+      },
+      description: {
+        type: 'string',
+        example: 'Common English words and phrases for travel.',
+        description: 'Mô tả ngắn về deck.',
+      },
+      coverImage: {
+        type: 'string',
+        example: 'https://example.com/images/travel.jpg',
+        description: 'Ảnh bìa.',
+      },
+      tagIds: {
+        type: 'array',
+        items: { type: 'string' },
+        example: ['665f1f77bcf86cd799439011'],
+        description: 'Danh sách ID tag.',
+      },
+      cefrLevelIds: {
+        type: 'array',
+        items: { type: 'string' },
+        example: ['665f1f77bcf86cd799439012'],
+        description: 'Danh sách ID CEFR level.',
+      },
+      status: {
+        type: 'string',
+        enum: ['draft', 'published', 'archived'],
+        example: 'published',
+        description: 'Trạng thái bộ thẻ.',
+      },
+    },
+  },
+  TopicsResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      message: { type: 'string', example: 'Lấy danh sách topics thành công' },
+      data: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/Topic' },
+      },
+    },
+  },
+  TopicResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      message: { type: 'string', example: 'Lấy chi tiết topic thành công' },
+      data: {
+        $ref: '#/components/schemas/Topic',
+      },
+    },
+  },
+  TopicPayload: {
+    type: 'object',
+    required: ['name'],
+    properties: {
+      name: { type: 'string', example: 'Family', description: 'Tên topic.' },
+      slug: {
+        type: 'string',
+        example: 'family',
+        description: 'URL thân thiện. Nếu bỏ trống tự sinh từ name.',
+      },
+      order: {
+        type: 'integer',
+        example: 1,
+        description: 'Thứ tự hiển thị. Nếu bỏ trống hệ thống tự thêm vào cuối.',
+      },
+    },
+  },
+  TopicReorderPayload: {
+    type: 'object',
+    required: ['topics'],
+    properties: {
+      topics: {
+        type: 'array',
+        description: 'Mảng các topic kèm thứ tự mới',
+        items: {
+          type: 'object',
+          required: ['topicId', 'order'],
+          properties: {
+            topicId: { type: 'string', example: '665f1f77bcf86cd799439041' },
+            order: { type: 'integer', example: 1 },
+          },
+        },
+      },
+    },
+  },
+  CardsResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      message: { type: 'string', example: 'Lấy danh sách card thành công' },
+      data: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/Card' },
+      },
+      pagination: {
+        type: 'object',
+        properties: {
+          totalItems: { type: 'integer', example: 100 },
+          page: { type: 'integer', example: 1 },
+          limit: { type: 'integer', example: 10 },
+          totalPages: { type: 'integer', example: 10 },
+        },
+      },
+    },
+  },
+  CardResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      message: { type: 'string', example: 'Lấy chi tiết card thành công' },
+      data: {
+        $ref: '#/components/schemas/Card',
+      },
+    },
+  },
+  CardPayload: {
+    type: 'object',
+    required: ['topicId', 'term', 'pos', 'translation'],
+    properties: {
+      topicId: {
+        type: 'string',
+        example: '665f1f77bcf86cd799439041',
+        description: 'ID của topic chứa card.',
+      },
+      order: {
+        type: 'integer',
+        example: 1,
+        description: 'Thứ tự hiển thị. Nếu bỏ trống hệ thống tự thêm vào cuối.',
+      },
+      term: { type: 'string', example: 'family', description: 'Từ vựng.' },
+      pos: { type: 'string', example: 'noun', description: 'Từ loại.' },
+      phonetics: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/CardPhonetic' },
+        description: 'Danh sách phiên âm và audio.',
+      },
+      translation: {
+        type: 'string',
+        example: 'gia đình',
+        description: 'Nghĩa tiếng Việt.',
+      },
+      explanation: {
+        type: 'object',
+        properties: {
+          vi: {
+            type: 'string',
+            example: 'Những người có quan hệ huyết thống hoặc sống chung.',
+          },
+          en: { type: 'string', example: 'A group of related people.' },
+        },
+        description: 'Giải nghĩa chi tiết.',
+      },
+      examples: {
+        type: 'object',
+        properties: {
+          vi: { type: 'string', example: 'Gia đình tôi có bốn người.' },
+          en: { type: 'string', example: 'My family has four people.' },
+        },
+        description: 'Câu ví dụ.',
+      },
+      imageUrl: {
+        type: 'string',
+        example: 'https://example.com/images/family.jpg',
+        description: 'Ảnh minh họa.',
+      },
+    },
+  },
+};

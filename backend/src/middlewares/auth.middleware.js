@@ -27,3 +27,29 @@ export const protect = (req, res, next) => {
     return next(new AppError('Token không hợp lệ hoặc đã hết hạn', 401));
   }
 };
+
+// Optional auth: attach req.user when a valid Bearer token is present, but never reject. Missing/invalid/expired token anonymous request.
+export const protectOptional = (req, res, next) => {
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const decoded = verifyToken(token);
+    if (decoded.type === 'ACCESS') {
+      req.user = decoded;
+    }
+  } catch (error) {
+    // Ignore invalid/expired token; proceed as anonymous.
+  }
+
+  return next();
+};
