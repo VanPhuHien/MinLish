@@ -8,8 +8,37 @@ import {
   topicIdParamSchema,
   createTopicSchema,
   updateTopicSchema,
+  cardIdParamSchema,
+  listCardsSchema,
+  createCardSchema,
+  updateCardSchema,
 } from './userDeck.validator.js';
 import * as service from './userDeck.service.js';
+
+export const createMyDeckCard = async (req, res, next) => {
+  try {
+    const paramResult = deckIdParamSchema.safeParse(req.params);
+    const bodyResult = createCardSchema.safeParse(req.body);
+
+    if (!paramResult.success || !bodyResult.success) {
+      const errors = [
+        ...(paramResult.success ? [] : paramResult.error.errors),
+        ...(bodyResult.success ? [] : bodyResult.error.errors),
+      ].map((e) => ({ field: e.path.join('.'), message: e.message }));
+      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+    }
+
+    const card = await service.createMyDeckCard(
+      req.user.id,
+      paramResult.data.deckId,
+      bodyResult.data
+    );
+
+    return res.status(201).json(successResponse('Tạo card thành công.', card));
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const getMyDeckTopics = async (req, res, next) => {
   try {

@@ -43,7 +43,7 @@ const cardSchema = new mongoose.Schema(
     },
     pos: {
       type: String,
-      required: true,
+      default: '',
       trim: true,
     },
     phonetics: [phoneticSchema],

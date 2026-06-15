@@ -325,7 +325,6 @@ export default {
         201: jsonResponse('UserCardMutationResponse', 'Tạo card thành công.'),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
-        403: { $ref: '#/components/responses/Forbidden' },
         404: NotFound('Không tìm thấy deck hoặc topic'),
         500: { $ref: '#/components/responses/ServerError' },
       },

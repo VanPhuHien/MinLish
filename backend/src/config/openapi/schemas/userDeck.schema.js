@@ -1,26 +1,3 @@
-const phoneticInput = {
-  type: 'object',
-  properties: {
-    text: { type: 'string', example: '/ˈfæməli/' },
-    audio: {
-      type: 'string',
-      example: 'https://example.com/audio/family-us.mp3',
-    },
-    locale: { type: 'string', example: 'en-US' },
-  },
-};
-
-const localizedText = {
-  type: 'object',
-  properties: {
-    vi: {
-      type: 'string',
-      example: 'Những người có quan hệ huyết thống hoặc sống chung.',
-    },
-    en: { type: 'string', example: 'A group of related people.' },
-  },
-};
-
 export default {
   UserOwnedDeck: {
     allOf: [
@@ -198,51 +175,49 @@ export default {
   // ---------- Card ----------
   UserCardCreateRequest: {
     type: 'object',
-    required: ['topicId', 'term'],
+    required: ['topicId', 'term', 'translation'],
+    description:
+      'Tạo thẻ từ vựng trong deck cá nhân. definition lưu vào explanation.vi, example lưu vào examples.en. order tự gán ở cuối nhóm.',
     properties: {
       topicId: {
         type: 'string',
         pattern: '^[a-fA-F0-9]{24}$',
+        description: 'Nhóm (topic) chứa thẻ; phải thuộc deck này.',
         example: '665f1f77bcf86cd799439041',
       },
-      order: { type: 'integer', example: 1 },
-      term: { type: 'string', example: 'family' },
-      pos: { type: 'string', example: 'noun' },
-      phonetics: { type: 'array', items: phoneticInput },
-      translation: { type: 'string', example: 'gia đình' },
-      explanation: localizedText,
-      examples: {
-        type: 'object',
-        properties: {
-          vi: { type: 'string', example: 'Gia đình tôi có bốn người.' },
-          en: { type: 'string', example: 'My family has four people.' },
-        },
-      },
-      imageUrl: {
+      term: { type: 'string', maxLength: 200, example: 'family' },
+      translation: { type: 'string', maxLength: 500, example: 'gia đình' },
+      definition: {
         type: 'string',
-        example: 'https://example.com/images/family.jpg',
+        maxLength: 1000,
+        description: 'Định nghĩa (tùy chọn) → explanation.vi.',
+        example: 'Những người có quan hệ huyết thống.',
+      },
+      example: {
+        type: 'string',
+        maxLength: 1000,
+        description: 'Câu ví dụ (tùy chọn) → examples.en.',
+        example: 'My family has four people.',
+      },
+      pos: {
+        type: 'string',
+        maxLength: 50,
+        description: 'Loại từ (tùy chọn).',
+        example: 'noun',
       },
     },
   },
   UserCardUpdateRequest: {
     type: 'object',
-    description: 'Tất cả các trường đều tùy chọn; chỉ gửi trường cần cập nhật.',
+    description:
+      'Tất cả các trường đều tùy chọn; gửi ít nhất một. definition → explanation.vi, example → examples.en. Đổi topicId để chuyển thẻ sang nhóm khác trong cùng deck.',
     properties: {
       topicId: { type: 'string', pattern: '^[a-fA-F0-9]{24}$' },
-      order: { type: 'integer', example: 2 },
-      term: { type: 'string', example: 'family' },
-      pos: { type: 'string', example: 'noun' },
-      phonetics: { type: 'array', items: phoneticInput },
-      translation: { type: 'string', example: 'gia đình' },
-      explanation: localizedText,
-      examples: {
-        type: 'object',
-        properties: {
-          vi: { type: 'string' },
-          en: { type: 'string' },
-        },
-      },
-      imageUrl: { type: 'string' },
+      term: { type: 'string', maxLength: 200, example: 'family' },
+      translation: { type: 'string', maxLength: 500, example: 'gia đình' },
+      definition: { type: 'string', maxLength: 1000 },
+      example: { type: 'string', maxLength: 1000 },
+      pos: { type: 'string', maxLength: 50, example: 'noun' },
     },
   },
   UserCardListResponse: {

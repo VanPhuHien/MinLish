@@ -207,6 +207,39 @@ export const createMyDeckTopic = async (userId, deckId, data) => {
   return topic;
 };
 
+export const createMyDeckCard = async (userId, deckId, data) => {
+  await ensureOwnedDeck(userId, deckId);
+
+  // Topic must belong to this deck (block cross-deck topicId).
+  const topic = await Topic.findOne({ _id: data.topicId, deckId });
+  if (!topic) throw new AppError('Không tìm thấy deck hoặc topic', 404);
+
+  // Auto-assign order = highest existing order in this topic + 1.
+  const last = await Card.findOne({ deckId, topicId: data.topicId })
+    .sort({ order: -1 })
+    .select('order');
+  const nextOrder = last ? last.order + 1 : 1;
+
+  const card = await Card.create({
+    deckId,
+    topicId: data.topicId,
+    order: nextOrder,
+    term: data.term,
+    translation: data.translation,
+    pos: data.pos || '',
+    explanation: { vi: data.definition || '', en: '' },
+    examples: { vi: '', en: data.example || '' },
+  });
+
+  // Keep counters in sync (topic + deck).
+  await Promise.all([
+    Topic.updateOne({ _id: data.topicId }, { $inc: { cardCount: 1 } }),
+    Deck.updateOne({ _id: deckId }, { $inc: { cardCount: 1 } }),
+  ]);
+
+  return card;
+};
+
 export const createDeck = async (userId, data) => {
   const ownedCount = await Deck.countDocuments({
     ownerType: 'user',
