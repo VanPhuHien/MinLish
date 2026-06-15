@@ -53,6 +53,22 @@ export const getMyDeckById = async (userId, deckId) => {
   return deck;
 };
 
+export const updateMyDeck = async (userId, deckId, data) => {
+  const update = {};
+  if (data.title !== undefined) update.title = data.title;
+  if (data.description !== undefined) update.description = data.description;
+
+  // Scope by owner so users can only update their own decks.
+  const deck = await Deck.findOneAndUpdate(
+    { _id: deckId, ownerType: 'user', ownerId: userId },
+    { $set: update },
+    { new: true }
+  );
+  if (!deck) throw new AppError('Không tìm thấy deck', 404);
+
+  return deck;
+};
+
 export const createDeck = async (userId, data) => {
   const ownedCount = await Deck.countDocuments({
     ownerType: 'user',
@@ -62,7 +78,7 @@ export const createDeck = async (userId, data) => {
     throw new AppError(`Bạn chỉ được tạo tối đa ${MAX_USER_DECKS} bộ thẻ`, 400);
   }
 
-  // User decks are personal and always published 
+  // User decks are personal and always published
   const deck = await Deck.create({
     title: data.title,
     description: data.description || '',

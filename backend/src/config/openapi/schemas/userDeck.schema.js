@@ -68,21 +68,18 @@ export default {
   },
   UserDeckUpdateRequest: {
     type: 'object',
-    description: 'Tất cả các trường đều tùy chọn; chỉ gửi trường cần cập nhật.',
+    description:
+      'Các trường đều tùy chọn nhưng phải gửi ít nhất một (title hoặc description).',
     properties: {
-      title: { type: 'string', example: 'My Travel Words (updated)' },
-      description: { type: 'string', example: 'Mô tả mới.' },
-      coverImage: {
+      title: {
         type: 'string',
-        example: 'https://example.com/images/new.jpg',
+        maxLength: 100,
+        example: 'Bộ thẻ của tôi (đã sửa)',
       },
-      tagIds: {
-        type: 'array',
-        items: { type: 'string', pattern: '^[a-fA-F0-9]{24}$' },
-      },
-      cefrLevelIds: {
-        type: 'array',
-        items: { type: 'string', pattern: '^[a-fA-F0-9]{24}$' },
+      description: {
+        type: 'string',
+        maxLength: 500,
+        example: 'Mô tả mới.',
       },
     },
   },
