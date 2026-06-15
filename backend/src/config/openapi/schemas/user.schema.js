@@ -348,33 +348,8 @@ export default {
   },
   SegmentProgressPayload: {
     type: 'object',
-    required: ['dictation', 'shadowing'],
-    properties: {
-      dictation: {
-        type: 'object',
-        properties: {
-          attemptCount: { type: 'integer', example: 3 },
-          bestScore: { type: 'number', example: 95.5 },
-          completed: { type: 'boolean', example: true },
-          hintUsedCount: { type: 'integer', example: 1 },
-        },
-      },
-      shadowing: {
-        type: 'object',
-        properties: {
-          attemptCount: { type: 'integer', example: 2 },
-          bestScore: { type: 'number', example: 88.0 },
-          latestAudioUrl: {
-            type: 'string',
-            example: 'https://cdn.minlish.com/audio/user_shadowing.mp3',
-          },
-          completed: { type: 'boolean', example: false },
-        },
-      },
-    },
-  },
-  SegmentProgressPatchPayload: {
-    type: 'object',
+    description:
+      'PUT: ghi đè toàn bộ. PATCH: chỉ truyền block (dictation / shadowing) muốn update.',
     properties: {
       dictation: {
         type: 'object',

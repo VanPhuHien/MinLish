@@ -567,7 +567,7 @@ const CardBadRequest = {
 export default {
   '/admin/cefr-levels': {
     get: {
-      tags: ['/admin/cefr-levels'],
+      tags: ['Admin cefr-levels'],
       summary: 'Lấy danh sách CEFR Levels',
       description:
         'Lấy toàn bộ danh sách các cấp độ CEFR (cefr_levels) dành cho Admin.',
@@ -599,7 +599,7 @@ export default {
       },
     },
     post: {
-      tags: ['/admin/cefr-levels'],
+      tags: ['Admin cefr-levels'],
       summary: 'Tạo CEFR Level mới',
       description: 'Tạo mới một CEFR level dành cho Admin.',
       security: [{ BearerAuth: [] }],
@@ -651,7 +651,7 @@ export default {
   },
   '/admin/cefr-levels/{id}': {
     get: {
-      tags: ['/admin/cefr-levels'],
+      tags: ['Admin cefr-levels'],
       summary: 'Lấy chi tiết một CEFR Level',
       description: 'Lấy thông tin chi tiết một cấp độ CEFR dành cho Admin.',
       security: [{ BearerAuth: [] }],
@@ -688,7 +688,7 @@ export default {
       },
     },
     put: {
-      tags: ['/admin/cefr-levels'],
+      tags: ['Admin cefr-levels'],
       summary: 'Cập nhật CEFR Level',
       description: 'Cập nhật thông tin CEFR level dành cho Admin.',
       security: [{ BearerAuth: [] }],
@@ -748,7 +748,7 @@ export default {
       },
     },
     delete: {
-      tags: ['/admin/cefr-levels'],
+      tags: ['Admin cefr-levels'],
       summary: 'Xóa CEFR Level',
       description: 'Xóa CEFR level dành cho Admin.',
       security: [{ BearerAuth: [] }],
@@ -787,7 +787,7 @@ export default {
   },
   '/admin/tags': {
     get: {
-      tags: ['/admin/tags'],
+      tags: ['Admin tags'],
       summary: 'Lấy danh sách tag',
       description: 'Lấy toàn bộ danh sách tag dành cho Admin.',
       security: [{ BearerAuth: [] }],
@@ -808,7 +808,7 @@ export default {
       },
     },
     post: {
-      tags: ['/admin/tags'],
+      tags: ['Admin tags'],
       summary: 'Tạo tag mới',
       description: 'Tạo mới một tag dành cho Admin.',
       security: [{ BearerAuth: [] }],
@@ -854,7 +854,7 @@ export default {
   },
   '/admin/tags/{id}': {
     get: {
-      tags: ['/admin/tags'],
+      tags: ['Admin tags'],
       summary: 'Lấy chi tiết một Tag',
       description: 'Lấy thông tin chi tiết một tag dành cho Admin.',
       security: [{ BearerAuth: [] }],
@@ -885,7 +885,7 @@ export default {
       },
     },
     put: {
-      tags: ['/admin/tags'],
+      tags: ['Admin tags'],
       summary: 'Cập nhật Tag',
       description: 'Cập nhật thông tin tag dành cho Admin.',
       security: [{ BearerAuth: [] }],
@@ -939,7 +939,7 @@ export default {
       },
     },
     delete: {
-      tags: ['/admin/tags'],
+      tags: ['Admin tags'],
       summary: 'Xóa tag',
       description: 'Xóa tag dành cho Admin.',
       security: [{ BearerAuth: [] }],
@@ -972,7 +972,7 @@ export default {
   },
   '/admin/lessons': {
     get: {
-      tags: ['/admin/lessons'],
+      tags: ['Admin lessons'],
       summary: 'Lấy danh sách lessons',
       description:
         'Lấy danh sách tất cả lessons dành cho Admin. Hỗ trợ phân trang và tìm kiếm.',
@@ -1036,7 +1036,7 @@ export default {
       },
     },
     post: {
-      tags: ['/admin/lessons'],
+      tags: ['Admin lessons'],
       summary: 'Tạo lesson mới',
       description: 'Tạo mới một lesson. Mặc định trạng thái là draft.',
       security: [{ BearerAuth: [] }],
@@ -1080,7 +1080,7 @@ export default {
   },
   '/admin/lessons/{lessonId}': {
     get: {
-      tags: ['/admin/lessons'],
+      tags: ['Admin lessons'],
       summary: 'Lấy chi tiết một lesson',
       description: 'Lấy thông tin chi tiết một lesson bất kể trạng thái.',
       security: [{ BearerAuth: [] }],
@@ -1109,7 +1109,7 @@ export default {
       },
     },
     put: {
-      tags: ['/admin/lessons'],
+      tags: ['Admin lessons'],
       summary: 'Cập nhật lesson',
       description: 'Cập nhật thông tin của lesson.',
       security: [{ BearerAuth: [] }],
@@ -1161,7 +1161,7 @@ export default {
       },
     },
     delete: {
-      tags: ['/admin/lessons'],
+      tags: ['Admin lessons'],
       summary: 'Xóa hoặc archive lesson',
       description: 'Xóa mềm hoặc chuyển trạng thái lesson sang archived.',
       security: [{ BearerAuth: [] }],
@@ -1192,7 +1192,7 @@ export default {
   },
   '/admin/lessons/{lessonId}/publish': {
     post: {
-      tags: ['/admin/lessons'],
+      tags: ['Admin lessons'],
       summary: 'Publish lesson',
       description:
         'Chuyển trạng thái lesson từ draft sang published và ghi nhận publishedAt.',
@@ -1238,7 +1238,7 @@ export default {
   },
   '/admin/lessons/{lessonId}/segments': {
     get: {
-      tags: ['/admin/lessons/:lessonId/segments'],
+      tags: ['Admin lesson segments'],
       summary: 'Lấy danh sách segment của lesson',
       description:
         'Lấy danh sách các segment thuộc về một lesson cụ thể dành cho Admin.',
@@ -1267,7 +1267,7 @@ export default {
       },
     },
     post: {
-      tags: ['/admin/lessons/:lessonId/segments'],
+      tags: ['Admin lesson segments'],
       summary: 'Tạo segment mới',
       description: 'Tạo mới một segment cho một lesson cụ thể dành cho Admin.',
       security: [{ BearerAuth: [] }],
@@ -1320,7 +1320,7 @@ export default {
   },
   '/admin/lessons/{lessonId}/segments/{segmentId}': {
     get: {
-      tags: ['/admin/lessons/:lessonId/segments'],
+      tags: ['Admin lesson segments'],
       summary: 'Lấy chi tiết một segment',
       description:
         'Lấy thông tin chi tiết của một segment cụ thể trong một lesson cụ thể dành cho Admin.',
@@ -1357,7 +1357,7 @@ export default {
       },
     },
     put: {
-      tags: ['/admin/lessons/:lessonId/segments'],
+      tags: ['Admin lesson segments'],
       summary: 'Cập nhật segment',
       description:
         'Cập nhật thông tin segment cụ thể trong một lesson cụ thể dành cho Admin.',
@@ -1417,7 +1417,7 @@ export default {
       },
     },
     delete: {
-      tags: ['/admin/lessons/:lessonId/segments'],
+      tags: ['Admin lesson segments'],
       summary: 'Xóa segment khỏi lesson',
       description: 'Xóa segment khỏi lesson dành cho Admin.',
       security: [{ BearerAuth: [] }],
@@ -1455,7 +1455,7 @@ export default {
   },
   '/admin/decks': {
     get: {
-      tags: ['/admin/decks'],
+      tags: ['Admin decks'],
       summary: 'Lấy danh sách decks',
       description:
         'Lấy danh sách tất cả bộ thẻ (decks) dành cho Admin. Hỗ trợ phân trang và tìm kiếm.',
@@ -1507,7 +1507,7 @@ export default {
       },
     },
     post: {
-      tags: ['/admin/decks'],
+      tags: ['Admin decks'],
       summary: 'Tạo deck mới',
       description: 'Tạo mới deck. Mặc định trạng thái là draft.',
       security: [{ BearerAuth: [] }],
@@ -1551,7 +1551,7 @@ export default {
   },
   '/admin/decks/{deckId}': {
     get: {
-      tags: ['/admin/decks'],
+      tags: ['Admin decks'],
       summary: 'Lấy chi tiết một deck',
       description: 'Lấy thông tin chi tiết một deck bất kể trạng thái.',
       security: [{ BearerAuth: [] }],
@@ -1580,7 +1580,7 @@ export default {
       },
     },
     put: {
-      tags: ['/admin/decks'],
+      tags: ['Admin decks'],
       summary: 'Cập nhật deck',
       description: 'Cập nhật thông tin của một deck.',
       security: [{ BearerAuth: [] }],
@@ -1632,7 +1632,7 @@ export default {
       },
     },
     delete: {
-      tags: ['/admin/decks'],
+      tags: ['Admin decks'],
       summary: 'Xóa deck',
       description: 'Xóa hoặc chuyển trạng thái deck sang archived.',
       security: [{ BearerAuth: [] }],
@@ -1663,7 +1663,7 @@ export default {
   },
   '/admin/decks/{deckId}/topics': {
     get: {
-      tags: ['/admin/decks/:deckId/topics'],
+      tags: ['Admin topics'],
       summary: 'Lấy danh sách topic của deck',
       description:
         'Lấy danh sách các topic thuộc về một deck cụ thể dành cho Admin.',
@@ -1693,7 +1693,7 @@ export default {
       },
     },
     post: {
-      tags: ['/admin/decks/:deckId/topics'],
+      tags: ['Admin topics'],
       summary: 'Tạo topic mới',
       description: 'Tạo mới một topic cho một deck cụ thể dành cho Admin.',
       security: [{ BearerAuth: [] }],
@@ -1747,7 +1747,7 @@ export default {
   },
   '/admin/decks/{deckId}/topics/reorder': {
     patch: {
-      tags: ['/admin/decks/:deckId/topics'],
+      tags: ['Admin topics'],
       summary: 'Sắp xếp lại các topic',
       description: 'Cập nhật lại order của nhiều topics cùng lúc trong deck.',
       security: [{ BearerAuth: [] }],
@@ -1787,7 +1787,7 @@ export default {
   },
   '/admin/decks/{deckId}/topics/{topicId}': {
     get: {
-      tags: ['/admin/decks/:deckId/topics'],
+      tags: ['Admin topics'],
       summary: 'Lấy chi tiết một topic',
       description:
         'Lấy thông tin chi tiết của một topic cụ thể trong một deck cụ thể dành cho Admin.',
@@ -1824,7 +1824,7 @@ export default {
       },
     },
     put: {
-      tags: ['/admin/decks/:deckId/topics'],
+      tags: ['Admin topics'],
       summary: 'Cập nhật topic',
       description:
         'Cập nhật thông tin topic trong một deck cụ thể dành cho Admin.',
@@ -1884,7 +1884,7 @@ export default {
       },
     },
     delete: {
-      tags: ['/admin/decks/:deckId/topics'],
+      tags: ['Admin topics'],
       summary: 'Xóa topic khỏi deck',
       description: 'Xóa topic khỏi deck dành cho Admin.',
       security: [{ BearerAuth: [] }],
@@ -1922,7 +1922,7 @@ export default {
   },
   '/admin/decks/{deckId}/cards': {
     get: {
-      tags: ['/admin/decks/:deckId/cards'],
+      tags: ['Admin cards'],
       summary: 'Lấy danh sách card của deck',
       description:
         'Lấy danh sách các card thuộc về một deck cụ thể dành cho Admin. Hỗ trợ lọc theo topicId, q, page, limit.',
@@ -1976,7 +1976,7 @@ export default {
       },
     },
     post: {
-      tags: ['/admin/decks/:deckId/cards'],
+      tags: ['Admin cards'],
       summary: 'Tạo card mới',
       description:
         'Tạo mới một card cho một deck và topic cụ thể dành cho Admin.',
@@ -2031,7 +2031,7 @@ export default {
   },
   '/admin/decks/{deckId}/cards/{cardId}': {
     get: {
-      tags: ['/admin/decks/:deckId/cards'],
+      tags: ['Admin cards'],
       summary: 'Lấy chi tiết một card',
       description: 'Lấy thông tin chi tiết của một card cụ thể dành cho Admin.',
       security: [{ BearerAuth: [] }],
@@ -2067,7 +2067,7 @@ export default {
       },
     },
     put: {
-      tags: ['/admin/decks/:deckId/cards'],
+      tags: ['Admin cards'],
       summary: 'Cập nhật card',
       description:
         'Cập nhật thông tin card (term, translation, pos, explanation, ...).',
@@ -2127,7 +2127,7 @@ export default {
       },
     },
     delete: {
-      tags: ['/admin/decks/:deckId/cards'],
+      tags: ['Admin cards'],
       summary: 'Xóa card',
       description: 'Xóa card khỏi deck dành cho Admin.',
       security: [{ BearerAuth: [] }],
