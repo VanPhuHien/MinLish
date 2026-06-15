@@ -1,3 +1,85 @@
+const LessonNotFound = {
+  description: 'Không tìm thấy lesson',
+  content: {
+    'application/json': {
+      schema: { $ref: '#/components/schemas/ErrorResponse' },
+      example: {
+        success: false,
+        message: 'Không tìm thấy lesson',
+      },
+    },
+  },
+};
+
+const SegmentNotFound = {
+  description: 'Không tìm thấy segment',
+  content: {
+    'application/json': {
+      schema: { $ref: '#/components/schemas/ErrorResponse' },
+      example: {
+        success: false,
+        message: 'Không tìm thấy segment',
+      },
+    },
+  },
+};
+
+const LessonOrSegmentNotFound = {
+  description: 'Không tìm thấy tài nguyên (Lesson hoặc Segment)',
+  content: {
+    'application/json': {
+      schema: { $ref: '#/components/schemas/ErrorResponse' },
+      examples: {
+        LessonError: {
+          summary: 'Lỗi không tìm thấy Lesson',
+          value: LessonNotFound.content['application/json'].example,
+        },
+        SegmentError: {
+          summary: 'Lỗi không tìm thấy Segment',
+          value: SegmentNotFound.content['application/json'].example,
+        },
+      },
+    },
+  },
+};
+
+const ProgressBadRequest = {
+  description: 'Dữ liệu đầu vào không hợp lệ',
+  content: {
+    'application/json': {
+      schema: { $ref: '#/components/schemas/ErrorResponse' },
+      examples: {
+        InvalidStatus: {
+          summary: 'Trạng thái không hợp lệ',
+          value: {
+            success: false,
+            message: 'Dữ liệu không hợp lệ',
+            errors: [
+              {
+                field: 'status',
+                message: 'Trạng thái phải là in_progress hoặc completed',
+              },
+            ],
+          },
+        },
+        InvalidMode: {
+          summary: 'Chế độ không hợp lệ',
+          value: {
+            success: false,
+            message: 'Dữ liệu không hợp lệ',
+            errors: [
+              {
+                field: 'selectedMode',
+                message: 'Chế độ học phải là dictation hoặc shadowing',
+              },
+            ],
+          },
+        },
+      },
+    },
+  },
+};
+
 const CardStateNotFound = {
   description: 'Không tìm thấy user card state',
   content: {
@@ -73,10 +155,9 @@ const CardStatePatchBadRequest = {
 export default {
   '/users/me/lesson-progress': {
     get: {
-      tags: ['Users'],
-      summary: 'Lấy tiến độ bài học của người dùng hiện tại',
-      description:
-        'Lấy danh sách các tiến độ bài học (user_lesson_progress) của người dùng hiện tại, yêu cầu phải đăng nhập (gửi Bearer Token).',
+      tags: ['User Lesson Progress'],
+      summary: 'Lấy danh sách lesson progress',
+      description: 'Lấy danh sách các lesson progress của người dùng hiện tại.',
       security: [
         {
           BearerAuth: [],
@@ -84,7 +165,7 @@ export default {
       ],
       responses: {
         200: {
-          description: 'Lấy tiến độ bài học thành công',
+          description: 'Lấy danh sách lesson progress thành công',
           content: {
             'application/json': {
               schema: {
@@ -96,21 +177,103 @@ export default {
         401: {
           $ref: '#/components/responses/Unauthorized',
         },
-        403: {
-          $ref: '#/components/responses/Forbidden',
-        },
         500: {
           $ref: '#/components/responses/ServerError',
         },
       },
     },
   },
+  '/users/me/lesson-progress/{lessonId}': {
+    get: {
+      tags: ['User Lesson Progress'],
+      summary: 'Lấy chi tiết lesson progress',
+      description:
+        'Lấy thông tin chi tiết lesson progress của một lesson cụ thể.',
+      security: [{ BearerAuth: [] }],
+      parameters: [
+        {
+          in: 'path',
+          name: 'lessonId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID của lesson',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'Lấy chi tiết lesson progress thành công',
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/LessonProgressSingleResponse',
+              },
+            },
+          },
+        },
+        404: LessonNotFound,
+        401: { $ref: '#/components/responses/Unauthorized' },
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+    put: {
+      tags: ['User Lesson Progress'],
+      summary: 'Upsert lesson progress',
+      description: 'Tạo mới hoặc cập nhật toàn bộ lesson progress.',
+      security: [{ BearerAuth: [] }],
+      parameters: [
+        {
+          in: 'path',
+          name: 'lessonId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID của lesson',
+        },
+      ],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: { $ref: '#/components/schemas/LessonProgressPayload' },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description:
+            'Tạo mới hoặc cập nhật toàn bộ lesson progress thành công',
+          content: {
+            'application/json': {
+              schema: {
+                allOf: [
+                  { $ref: '#/components/schemas/LessonProgressSingleResponse' },
+                  {
+                    type: 'object',
+                    properties: {
+                      message: {
+                        type: 'string',
+                        example:
+                          'Tạo mới hoặc cập nhật toàn bộ lesson progress thành công',
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        400: ProgressBadRequest,
+        404: LessonNotFound,
+        401: { $ref: '#/components/responses/Unauthorized' },
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+  },
   '/users/me/lessons/{lessonId}/segments-progress': {
     get: {
-      tags: ['Users'],
-      summary: 'Lấy tiến độ các segment của bài học',
+      tags: ['User Segment Progress'],
+      summary: 'Lấy danh sách segment progress của một lesson',
       description:
-        'Lấy danh sách tiến độ chi tiết từng segment (user_segment_progress) trong một bài học của người dùng hiện tại.',
+        'Lấy danh sách segment progress của một lesson của người dùng hiện tại.',
       security: [
         {
           BearerAuth: [],
@@ -129,7 +292,7 @@ export default {
       ],
       responses: {
         200: {
-          description: 'Lấy tiến độ các segment thành công',
+          description: 'Lấy danh sách segment progress của lesson thành công',
           content: {
             'application/json': {
               schema: {
@@ -138,29 +301,176 @@ export default {
             },
           },
         },
-        400: {
-          description: 'ID bài học không hợp lệ',
-          content: {
-            'application/json': {
-              schema: {
-                $ref: '#/components/schemas/ErrorResponse',
-              },
-              example: {
-                success: false,
-                message: 'ID bài học không hợp lệ',
-              },
-            },
-          },
-        },
+        404: LessonNotFound,
         401: {
           $ref: '#/components/responses/Unauthorized',
-        },
-        403: {
-          $ref: '#/components/responses/Forbidden',
         },
         500: {
           $ref: '#/components/responses/ServerError',
         },
+      },
+    },
+  },
+  '/users/me/lessons/{lessonId}/segments/{segmentId}/progress': {
+    get: {
+      tags: ['User Segment Progress'],
+      summary: 'Lấy chi tiết segment progress trong một lesson',
+      description:
+        'Lấy thông tin segment progress (dictation, shadowing) của trong một lesson cụ thể.',
+      security: [{ BearerAuth: [] }],
+      parameters: [
+        {
+          in: 'path',
+          name: 'lessonId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID của lesson',
+        },
+        {
+          in: 'path',
+          name: 'segmentId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID của segment',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'Lấy chi tiết segment progress trong lesson thành công',
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/SegmentProgressSingleResponse',
+              },
+            },
+          },
+        },
+        404: LessonOrSegmentNotFound,
+        401: { $ref: '#/components/responses/Unauthorized' },
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+    put: {
+      tags: ['User Segment Progress'],
+      summary: 'Upsert segment progress',
+      description:
+        'Tạo mới hoặc cập nhật toàn bộ segment progress (cả dictation và shadowing) trong một lesson.',
+      security: [{ BearerAuth: [] }],
+      parameters: [
+        {
+          in: 'path',
+          name: 'lessonId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID của lesson',
+        },
+        {
+          in: 'path',
+          name: 'segmentId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID của segment',
+        },
+      ],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: { $ref: '#/components/schemas/SegmentProgressPayload' },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: 'Upsert segment progress thành công',
+          content: {
+            'application/json': {
+              schema: {
+                allOf: [
+                  {
+                    $ref: '#/components/schemas/SegmentProgressSingleResponse',
+                  },
+                  {
+                    type: 'object',
+                    properties: {
+                      message: {
+                        type: 'string',
+                        example: 'Upsert segment progress thành công',
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        400: ProgressBadRequest,
+        401: { $ref: '#/components/responses/Unauthorized' },
+        404: LessonOrSegmentNotFound,
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+    patch: {
+      tags: ['User Segment Progress'],
+      summary: 'Cập nhật một phần segment progress',
+      description:
+        'Cập nhật riêng block dictation hoặc shadowing của segment progress trong một lesson.',
+      security: [{ BearerAuth: [] }],
+      parameters: [
+        {
+          in: 'path',
+          name: 'lessonId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID của lesson',
+        },
+        {
+          in: 'path',
+          name: 'segmentId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID của segment',
+        },
+      ],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: {
+              $ref: '#/components/schemas/SegmentProgressPatchPayload',
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: 'Cập nhật một phần segment progress thành công',
+          content: {
+            'application/json': {
+              schema: {
+                allOf: [
+                  {
+                    $ref: '#/components/schemas/SegmentProgressSingleResponse',
+                  },
+                  {
+                    type: 'object',
+                    properties: {
+                      message: {
+                        type: 'string',
+                        example:
+                          'Cập nhật một phần segment progress thành công',
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        400: ProgressBadRequest,
+        404: LessonOrSegmentNotFound,
+        401: { $ref: '#/components/responses/Unauthorized' },
+        500: { $ref: '#/components/responses/ServerError' },
       },
     },
   },

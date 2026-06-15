@@ -51,7 +51,10 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Lấy tiến độ bài học thành công' },
+      message: {
+        type: 'string',
+        example: 'Lấy danh sách lesson progress thành công',
+      },
       data: {
         type: 'array',
         items: {
@@ -150,7 +153,7 @@ export default {
       success: { type: 'boolean', example: true },
       message: {
         type: 'string',
-        example: 'Lấy tiến độ các segment thành công',
+        example: 'Lấy danh sách segment progress của lesson thành công',
       },
       data: {
         type: 'array',
@@ -313,6 +316,98 @@ export default {
           hidden: { type: 'boolean', example: false },
         },
       },
+    },
+  },
+  LessonProgressPayload: {
+    type: 'object',
+    properties: {
+      status: {
+        type: 'string',
+        enum: ['in_progress', 'completed'],
+        example: 'in_progress',
+      },
+      progressPct: { type: 'number', example: 45.5 },
+      lastSegmentOrder: { type: 'integer', example: 5 },
+      selectedMode: {
+        type: 'string',
+        enum: ['dictation', 'shadowing'],
+        example: 'dictation',
+      },
+    },
+  },
+  LessonProgressSingleResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      message: {
+        type: 'string',
+        example: 'Lấy chi tiết lesson progress thành công',
+      },
+      data: { $ref: '#/components/schemas/UserLessonProgress' },
+    },
+  },
+  SegmentProgressPayload: {
+    type: 'object',
+    required: ['dictation', 'shadowing'],
+    properties: {
+      dictation: {
+        type: 'object',
+        properties: {
+          attemptCount: { type: 'integer', example: 3 },
+          bestScore: { type: 'number', example: 95.5 },
+          completed: { type: 'boolean', example: true },
+          hintUsedCount: { type: 'integer', example: 1 },
+        },
+      },
+      shadowing: {
+        type: 'object',
+        properties: {
+          attemptCount: { type: 'integer', example: 2 },
+          bestScore: { type: 'number', example: 88.0 },
+          latestAudioUrl: {
+            type: 'string',
+            example: 'https://cdn.minlish.com/audio/user_shadowing.mp3',
+          },
+          completed: { type: 'boolean', example: false },
+        },
+      },
+    },
+  },
+  SegmentProgressPatchPayload: {
+    type: 'object',
+    properties: {
+      dictation: {
+        type: 'object',
+        properties: {
+          attemptCount: { type: 'integer', example: 3 },
+          bestScore: { type: 'number', example: 95.5 },
+          completed: { type: 'boolean', example: true },
+          hintUsedCount: { type: 'integer', example: 1 },
+        },
+      },
+      shadowing: {
+        type: 'object',
+        properties: {
+          attemptCount: { type: 'integer', example: 2 },
+          bestScore: { type: 'number', example: 88.0 },
+          latestAudioUrl: {
+            type: 'string',
+            example: 'https://cdn.minlish.com/audio/user_shadowing.mp3',
+          },
+          completed: { type: 'boolean', example: false },
+        },
+      },
+    },
+  },
+  SegmentProgressSingleResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      message: {
+        type: 'string',
+        example: 'Lấy chi tiết segment progress thành công',
+      },
+      data: { $ref: '#/components/schemas/UserSegmentProgress' },
     },
   },
 };
