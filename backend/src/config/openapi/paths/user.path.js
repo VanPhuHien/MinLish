@@ -437,7 +437,7 @@ export default {
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/SegmentProgressPatchPayload',
+              $ref: '#/components/schemas/SegmentProgressPayload',
             },
           },
         },

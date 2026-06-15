@@ -40,7 +40,7 @@ const userSegmentProgressSchema = new mongoose.Schema(
         type: Number,
         default: 0,
       },
-      bestOverallScore: {
+      bestScore: {
         type: Number,
         default: 0,
       },
