@@ -237,9 +237,6 @@ export default {
             },
           },
         },
-        401: {
-          $ref: '#/components/responses/Unauthorized',
-        },
         404: {
           description: 'Không tìm thấy segment của bài học.',
           content: {

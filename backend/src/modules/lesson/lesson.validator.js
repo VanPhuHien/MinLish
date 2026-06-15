@@ -8,6 +8,10 @@ export const getLessonSchema = z.object({
   lessonId: objectIdSchema,
 });
 
+export const getSegmentsSchema = z.object({
+  lessonId: objectIdSchema,
+});
+
 export const listLessonsSchema = z.object({
   tagId: objectIdSchema.optional(),
   cefrLevelId: objectIdSchema.optional(),

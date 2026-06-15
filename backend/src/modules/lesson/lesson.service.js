@@ -2,6 +2,7 @@ import AppError from '../../utils/AppError.js';
 import LessonSegment from '../../models/lessonSegment.model.js';
 import Lesson from '../../models/lesson.model.js';
 import UserLessonProgress from '../../models/userLessonProgress.model.js';
+import UserSegmentProgress from '../../models/userSegmentProgress.model.js';
 
 export const listLessons = async (filters, userId) => {
   const { tagId, cefrLevelId, mode, q, page, limit } = filters;
@@ -67,8 +68,30 @@ export const getLessonById = async (lessonId, userId) => {
   return { lesson, userProgress };
 };
 
-export const getSegmentsByLessonId = async (lessonId) => {
+export const getSegmentsByLessonId = async (lessonId, userId) => {
+  // Segments belong to a lesson — reject if the lesson is missing/unpublished.
+  const lesson = await Lesson.findOne({ _id: lessonId, status: 'published' });
+  if (!lesson) throw new AppError('Không tìm thấy bài học', 404);
+
   const segments = await LessonSegment.find({ lessonId }).sort({ order: 1 });
-  if (segments.length == 0) throw new AppError('Không tìm thấy segments', 404);
-  return segments;
+
+  // Merge the current user's per-segment progress (one query, keyed by segmentId).
+  let progressMap = {};
+  if (userId && segments.length > 0) {
+    const progresses = await UserSegmentProgress.find({
+      userId,
+      lessonId,
+      segmentId: { $in: segments.map((s) => s._id) },
+    });
+    progressMap = progresses.reduce((acc, p) => {
+      acc[p.segmentId.toString()] = p;
+      return acc;
+    }, {});
+  }
+
+  // Spec LessonSegmentListResponse.data is an array of { segment, userProgress }.
+  return segments.map((segment) => ({
+    segment,
+    userProgress: progressMap[segment._id.toString()] || null,
+  }));
 };
