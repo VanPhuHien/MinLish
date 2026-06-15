@@ -151,6 +151,21 @@ export const getMyDeckTopic = async (userId, deckId, topicId) => {
   return topic;
 };
 
+export const updateMyDeckTopic = async (userId, deckId, topicId, data) => {
+  await ensureOwnedDeck(userId, deckId);
+
+  // Scope by deck so a topicId from another deck can't be hit.
+  // Slug stays stable even when the name changes.
+  const topic = await Topic.findOneAndUpdate(
+    { _id: topicId, deckId },
+    { $set: { name: data.name } },
+    { new: true }
+  );
+  if (!topic) throw new AppError('Không tìm thấy deck hoặc topic', 404);
+
+  return topic;
+};
+
 export const createMyDeckTopic = async (userId, deckId, data) => {
   await ensureOwnedDeck(userId, deckId);
 

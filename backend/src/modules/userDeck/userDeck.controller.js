@@ -60,6 +60,34 @@ export const getMyDeckTopic = async (req, res, next) => {
   }
 };
 
+export const updateMyDeckTopic = async (req, res, next) => {
+  try {
+    const paramResult = topicIdParamSchema.safeParse(req.params);
+    const bodyResult = updateTopicSchema.safeParse(req.body);
+
+    if (!paramResult.success || !bodyResult.success) {
+      const errors = [
+        ...(paramResult.success ? [] : paramResult.error.errors),
+        ...(bodyResult.success ? [] : bodyResult.error.errors),
+      ].map((e) => ({ field: e.path.join('.'), message: e.message }));
+      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+    }
+
+    const topic = await service.updateMyDeckTopic(
+      req.user.id,
+      paramResult.data.deckId,
+      paramResult.data.topicId,
+      bodyResult.data
+    );
+
+    return res
+      .status(200)
+      .json(successResponse('Cập nhật topic thành công.', topic));
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const createMyDeckTopic = async (req, res, next) => {
   try {
     const paramResult = deckIdParamSchema.safeParse(req.params);
