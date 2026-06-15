@@ -8,6 +8,25 @@ import {
 } from './userDeck.validator.js';
 import * as service from './userDeck.service.js';
 
+export const deleteMyDeck = async (req, res, next) => {
+  try {
+    const result = deckIdParamSchema.safeParse(req.params);
+    if (!result.success) {
+      const errors = result.error.errors.map((e) => ({
+        field: e.path.join('.'),
+        message: e.message,
+      }));
+      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+    }
+
+    await service.deleteMyDeck(req.user.id, result.data.deckId);
+
+    return res.status(200).json(successResponse('Xóa deck thành công.', null));
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const updateMyDeck = async (req, res, next) => {
   try {
     const paramResult = deckIdParamSchema.safeParse(req.params);

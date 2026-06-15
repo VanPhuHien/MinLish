@@ -1,5 +1,8 @@
 import crypto from 'crypto';
 import Deck from '../../models/deck.model.js';
+import Topic from '../../models/topic.model.js';
+import Card from '../../models/card.model.js';
+import UserCardState from '../../models/userCardState.model.js';
 import AppError from '../../utils/AppError.js';
 
 const MAX_USER_DECKS = 3;
@@ -67,6 +70,24 @@ export const updateMyDeck = async (userId, deckId, data) => {
   if (!deck) throw new AppError('Không tìm thấy deck', 404);
 
   return deck;
+};
+
+export const deleteMyDeck = async (userId, deckId) => {
+  const deck = await Deck.findOne({
+    _id: deckId,
+    ownerType: 'user',
+    ownerId: userId,
+  });
+  if (!deck) throw new AppError('Không tìm thấy deck', 404);
+
+  const cardIds = await Card.find({ deckId }).distinct('_id');
+
+  await Promise.all([
+    Card.deleteMany({ deckId }),
+    Topic.deleteMany({ deckId }),
+    UserCardState.deleteMany({ cardId: { $in: cardIds } }),
+  ]);
+  await deck.deleteOne();
 };
 
 export const createDeck = async (userId, data) => {

@@ -178,7 +178,6 @@ export default {
         200: jsonResponse('SuccessResponse', 'Xóa deck thành công.'),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
-        403: { $ref: '#/components/responses/Forbidden' },
         404: NotFound('Không tìm thấy deck'),
         500: { $ref: '#/components/responses/ServerError' },
       },
