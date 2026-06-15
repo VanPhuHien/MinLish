@@ -167,7 +167,20 @@ export default {
           deck: { $ref: '#/components/schemas/UserOwnedDeck' },
           topics: {
             type: 'array',
-            items: { $ref: '#/components/schemas/Topic' },
+            items: {
+              type: 'object',
+              properties: {
+                topic: { $ref: '#/components/schemas/Topic' },
+                userProgress: {
+                  type: 'object',
+                  properties: {
+                    learnedCardCount: { type: 'integer', example: 3 },
+                    totalCardCount: { type: 'integer', example: 10 },
+                    progressPct: { type: 'integer', example: 30 },
+                  },
+                },
+              },
+            },
           },
         },
       },

@@ -11,6 +11,30 @@ import {
 } from './userDeck.validator.js';
 import * as service from './userDeck.service.js';
 
+export const getMyDeckTopics = async (req, res, next) => {
+  try {
+    const result = deckIdParamSchema.safeParse(req.params);
+    if (!result.success) {
+      const errors = result.error.errors.map((e) => ({
+        field: e.path.join('.'),
+        message: e.message,
+      }));
+      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+    }
+
+    const data = await service.getMyDeckTopics(
+      req.user.id,
+      result.data.deckId
+    );
+
+    return res
+      .status(200)
+      .json(successResponse('Lấy danh sách topic thành công.', data));
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const createMyDeckTopic = async (req, res, next) => {
   try {
     const paramResult = deckIdParamSchema.safeParse(req.params);

@@ -11,6 +11,7 @@ router.put('/:deckId', protect, controller.updateMyDeck);
 router.delete('/:deckId', protect, controller.deleteMyDeck);
 
 // Topics
+router.get('/:deckId/topics', protect, controller.getMyDeckTopics);
 router.post('/:deckId/topics', protect, controller.createMyDeckTopic);
 
 export default router;
