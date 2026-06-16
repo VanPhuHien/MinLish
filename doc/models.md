@@ -112,16 +112,14 @@ cards (“Đây là dữ liệu gốc của từng flashcard/từ vựng”)
 
 user_lesson_progress
 
-| Field              | Ý nghĩa                                                 |
-| :----------------- | :------------------------------------------------------ |
-| `_id`              | ID bản ghi tiến độ.                                     |
-| `userId`           | User nào.                                               |
-| `lessonId`         | Lesson nào.                                             |
-| `status`           | Trạng thái như `in_progress`, `completed`.              |
-| `progressPct`      | Phần trăm hoàn thành lesson.                            |
-| `lastSegmentOrder` | Lần gần nhất user đang ở segment số mấy.                |
-| `selectedMode`     | Mode đang học gần nhất như `dictation` hay `shadowing`. |
-| `updatedAt`        | Cập nhật gần nhất.                                      |
+| Field         | Ý nghĩa                                                                 |
+| :------------ | :---------------------------------------------------------------------- |
+| `_id`         | ID bản ghi tiến độ.                                                     |
+| `userId`      | User nào.                                                               |
+| `lessonId`    | Lesson nào.                                                             |
+| `dictation`   | Trạng thái Dictation (`status`, `progressPct`, `lastSegmentOrder`).     |
+| `shadowing`   | Trạng thái Shadowing (`status`, `progressPct`, `lastSegmentOrder`).     |
+| `updatedAt`   | Cập nhật gần nhất.                                                      |
 
 user_segment_progress (“Bảng này lưu tiến độ của user ở mức từng segment. Vì Dictation và Shadowing diễn ra theo từng câu”)
 

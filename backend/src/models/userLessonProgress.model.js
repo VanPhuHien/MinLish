@@ -12,23 +12,35 @@ const userLessonProgressSchema = new mongoose.Schema(
       ref: 'Lesson',
       required: true,
     },
-    status: {
-      type: String,
-      enum: ['in_progress', 'completed'],
-      default: 'in_progress',
+    dictation: {
+      status: {
+        type: String,
+        enum: ['in_progress', 'completed'],
+        default: 'in_progress',
+      },
+      progressPct: {
+        type: Number,
+        default: 0,
+      },
+      lastSegmentOrder: {
+        type: Number,
+        default: 0,
+      },
     },
-    progressPct: {
-      type: Number,
-      default: 0,
-    },
-    lastSegmentOrder: {
-      type: Number,
-      default: 1,
-    },
-    selectedMode: {
-      type: String,
-      enum: ['dictation', 'shadowing'],
-      default: 'dictation',
+    shadowing: {
+      status: {
+        type: String,
+        enum: ['in_progress', 'completed'],
+        default: 'in_progress',
+      },
+      progressPct: {
+        type: Number,
+        default: 0,
+      },
+      lastSegmentOrder: {
+        type: Number,
+        default: 0,
+      },
     },
   },
   {

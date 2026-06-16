@@ -85,23 +85,41 @@ export default {
         type: 'string',
         example: '665f1f77bcf86cd799439013',
       },
-      status: {
-        type: 'string',
-        enum: ['in_progress', 'completed'],
-        example: 'in_progress',
+      dictation: {
+        type: 'object',
+        properties: {
+          status: {
+            type: 'string',
+            enum: ['in_progress', 'completed'],
+            example: 'in_progress',
+          },
+          progressPct: {
+            type: 'number',
+            example: 0,
+          },
+          lastSegmentOrder: {
+            type: 'integer',
+            example: 0,
+          },
+        },
       },
-      progressPct: {
-        type: 'number',
-        example: 35,
-      },
-      lastSegmentOrder: {
-        type: 'integer',
-        example: 4,
-      },
-      selectedMode: {
-        type: 'string',
-        enum: ['dictation', 'shadowing'],
-        example: 'dictation',
+      shadowing: {
+        type: 'object',
+        properties: {
+          status: {
+            type: 'string',
+            enum: ['in_progress', 'completed'],
+            example: 'in_progress',
+          },
+          progressPct: {
+            type: 'number',
+            example: 0,
+          },
+          lastSegmentOrder: {
+            type: 'integer',
+            example: 0,
+          },
+        },
       },
       createdAt: {
         type: 'string',

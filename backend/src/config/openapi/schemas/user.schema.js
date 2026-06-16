@@ -17,27 +17,49 @@ export default {
         example: '64c999888777666555444333',
         description: 'Lesson nào.',
       },
-      status: {
-        type: 'string',
-        enum: ['in_progress', 'completed'],
-        example: 'in_progress',
-        description: 'Trạng thái bài học (in_progress, completed).',
+      dictation: {
+        type: 'object',
+        properties: {
+          status: {
+            type: 'string',
+            enum: ['in_progress', 'completed'],
+            example: 'in_progress',
+            description: 'Trạng thái (in_progress, completed).',
+          },
+          progressPct: {
+            type: 'number',
+            example: 0,
+            description: 'Phần trăm hoàn thành.',
+          },
+          lastSegmentOrder: {
+            type: 'integer',
+            example: 0,
+            description: 'Lần gần nhất user đang ở segment số mấy.',
+          },
+        },
+        description: 'Tiến độ học dictation.',
       },
-      progressPct: {
-        type: 'number',
-        example: 45.5,
-        description: 'Phần trăm hoàn thành lesson.',
-      },
-      lastSegmentOrder: {
-        type: 'integer',
-        example: 5,
-        description: 'Lần gần nhất user đang ở segment số mấy.',
-      },
-      selectedMode: {
-        type: 'string',
-        enum: ['dictation', 'shadowing'],
-        example: 'dictation',
-        description: 'Mode đang học gần nhất như dictation hay shadowing.',
+      shadowing: {
+        type: 'object',
+        properties: {
+          status: {
+            type: 'string',
+            enum: ['in_progress', 'completed'],
+            example: 'in_progress',
+            description: 'Trạng thái (in_progress, completed).',
+          },
+          progressPct: {
+            type: 'number',
+            example: 0,
+            description: 'Phần trăm hoàn thành.',
+          },
+          lastSegmentOrder: {
+            type: 'integer',
+            example: 0,
+            description: 'Lần gần nhất user đang ở segment số mấy.',
+          },
+        },
+        description: 'Tiến độ học shadowing.',
       },
       updatedAt: {
         type: 'string',
@@ -321,17 +343,29 @@ export default {
   LessonProgressPayload: {
     type: 'object',
     properties: {
-      status: {
-        type: 'string',
-        enum: ['in_progress', 'completed'],
-        example: 'in_progress',
+      dictation: {
+        type: 'object',
+        properties: {
+          status: {
+            type: 'string',
+            enum: ['in_progress', 'completed'],
+            example: 'in_progress',
+          },
+          progressPct: { type: 'number', example: 0 },
+          lastSegmentOrder: { type: 'integer', example: 0 },
+        },
       },
-      progressPct: { type: 'number', example: 45.5 },
-      lastSegmentOrder: { type: 'integer', example: 5 },
-      selectedMode: {
-        type: 'string',
-        enum: ['dictation', 'shadowing'],
-        example: 'dictation',
+      shadowing: {
+        type: 'object',
+        properties: {
+          status: {
+            type: 'string',
+            enum: ['in_progress', 'completed'],
+            example: 'in_progress',
+          },
+          progressPct: { type: 'number', example: 0 },
+          lastSegmentOrder: { type: 'integer', example: 0 },
+        },
       },
     },
   },
