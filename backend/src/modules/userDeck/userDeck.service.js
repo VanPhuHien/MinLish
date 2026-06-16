@@ -238,6 +238,15 @@ export const listMyDeckCards = async (userId, deckId, filters) => {
   };
 };
 
+export const getMyDeckCard = async (userId, deckId, cardId) => {
+  await ensureOwnedDeck(userId, deckId);
+
+  const card = await Card.findOne({ _id: cardId, deckId });
+  if (!card) throw new AppError('Không tìm thấy deck hoặc card', 404);
+
+  return card;
+};
+
 export const createMyDeckCard = async (userId, deckId, data) => {
   await ensureOwnedDeck(userId, deckId);
 

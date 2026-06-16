@@ -24,5 +24,6 @@ router.delete(
 // Cards
 router.get('/:deckId/cards', protect, controller.listMyDeckCards);
 router.post('/:deckId/cards', protect, controller.createMyDeckCard);
+router.get('/:deckId/cards/:cardId', protect, controller.getMyDeckCard);
 
 export default router;
