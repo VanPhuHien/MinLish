@@ -6,6 +6,7 @@ import lessonPaths from './paths/lesson.path.js';
 import userPaths from './paths/user.path.js';
 import userDeckPaths from './paths/userDeck.path.js';
 import adminPaths from './paths/admin.path.js';
+import vocabularyPaths from './paths/vocabulary.path.js';
 
 import securitySchemes from './components/securitySchemes.js';
 
@@ -16,6 +17,7 @@ import lessonSchemas from './schemas/lesson.schema.js';
 import userSchemas from './schemas/user.schema.js';
 import userDeckSchemas from './schemas/userDeck.schema.js';
 import adminSchemas from './schemas/admin.schema.js';
+import vocabularySchemas from './schemas/vocabulary.schema.js';
 
 import commonResponses from './responses/common.response.js';
 
@@ -28,6 +30,7 @@ export default {
     ...userPaths,
     ...userDeckPaths,
     ...adminPaths,
+    ...vocabularyPaths,
   },
   components: {
     securitySchemes,
@@ -39,6 +42,7 @@ export default {
       ...userSchemas,
       ...userDeckSchemas,
       ...adminSchemas,
+      ...vocabularySchemas,
     },
     responses: {
       ...commonResponses,

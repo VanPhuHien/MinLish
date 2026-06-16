@@ -1,8 +1,31 @@
 import { successResponse } from '../../utils/response.js';
-import { getCardsSchema } from './vocabulary.validator.js';
+import {
+  getCardsSchema,
+  searchVocabularySchema,
+} from './vocabulary.validator.js';
 import * as service from './vocabulary.service.js';
 import User from '../../models/user.model.js';
 import AppError from '../../utils/AppError.js';
+
+export const searchVocabulary = async (req, res, next) => {
+  try {
+    const result = searchVocabularySchema.safeParse(req.query);
+    if (!result.success) {
+      const errors = result.error.errors.map((e) => ({
+        field: e.path.join('.'),
+        message: e.message,
+      }));
+      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+    }
+
+    const results = await service.searchSystemVocabularyService(result.data);
+    return res
+      .status(200)
+      .json(successResponse('Tìm kiếm từ vựng thành công.', results));
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const getCardsByUserId = async (req, res, next) => {
   try {
