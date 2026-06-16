@@ -22,6 +22,7 @@ router.delete(
 );
 
 // Cards
+router.get('/:deckId/cards', protect, controller.listMyDeckCards);
 router.post('/:deckId/cards', protect, controller.createMyDeckCard);
 
 export default router;

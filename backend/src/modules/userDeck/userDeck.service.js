@@ -207,6 +207,37 @@ export const createMyDeckTopic = async (userId, deckId, data) => {
   return topic;
 };
 
+export const listMyDeckCards = async (userId, deckId, filters) => {
+  await ensureOwnedDeck(userId, deckId);
+
+  const { topicId, q, page, limit } = filters;
+
+  const query = { deckId };
+  if (topicId) query.topicId = topicId;
+  if (q) {
+    // Escape regex metacharacters to avoid ReDoS / injection.
+    const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escaped, 'i');
+    query.$or = [{ term: regex }, { translation: regex }];
+  }
+
+  const skip = (page - 1) * limit;
+  const [cards, totalItems] = await Promise.all([
+    Card.find(query).sort({ order: 1 }).skip(skip).limit(limit),
+    Card.countDocuments(query),
+  ]);
+
+  return {
+    cards,
+    pagination: {
+      page,
+      limit,
+      totalItems,
+      totalPages: Math.ceil(totalItems / limit),
+    },
+  };
+};
+
 export const createMyDeckCard = async (userId, deckId, data) => {
   await ensureOwnedDeck(userId, deckId);
 

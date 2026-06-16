@@ -15,6 +15,33 @@ import {
 } from './userDeck.validator.js';
 import * as service from './userDeck.service.js';
 
+export const listMyDeckCards = async (req, res, next) => {
+  try {
+    const paramResult = deckIdParamSchema.safeParse(req.params);
+    const queryResult = listCardsSchema.safeParse(req.query);
+
+    if (!paramResult.success || !queryResult.success) {
+      const errors = [
+        ...(paramResult.success ? [] : paramResult.error.errors),
+        ...(queryResult.success ? [] : queryResult.error.errors),
+      ].map((e) => ({ field: e.path.join('.'), message: e.message }));
+      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+    }
+
+    const data = await service.listMyDeckCards(
+      req.user.id,
+      paramResult.data.deckId,
+      queryResult.data
+    );
+
+    return res
+      .status(200)
+      .json(successResponse('Lấy danh sách card thành công.', data));
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const createMyDeckCard = async (req, res, next) => {
   try {
     const paramResult = deckIdParamSchema.safeParse(req.params);
