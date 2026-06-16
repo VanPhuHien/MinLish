@@ -5,9 +5,9 @@ export default {
     get: {
       ...optionalBearerAuth,
       tags: ['Deck'],
-      summary: 'Lấy danh sách deck đã công khai',
+      summary: 'Lấy danh sách deck hệ thống đã công khai',
       description:
-        'Trả về danh sách deck đã công khai. Không bắt buộc đăng nhập; nếu gửi Bearer token hợp lệ thì response sẽ bao gồm deck của người dùng hiện tại.',
+        'Trả về danh sách deck hệ thống (ownerType = system) đã publish. Không bắt buộc đăng nhập. Deck cá nhân của người dùng được truy cập qua /users/me/decks.',
       parameters: [
         {
           name: 'tagId',
@@ -98,9 +98,6 @@ export default {
             },
           },
         },
-        401: {
-          $ref: '#/components/responses/Unauthorized',
-        },
         500: {
           $ref: '#/components/responses/ServerError',
         },
@@ -111,9 +108,9 @@ export default {
     get: {
       ...bearerAuth,
       tags: ['Deck'],
-      summary: 'Lấy chi tiết deck',
+      summary: 'Lấy chi tiết deck hệ thống',
       description:
-        'Trả về thông tin chi tiết của một deck. Yêu cầu đăng nhập bằng Bearer token.',
+        'Trả về chi tiết một deck hệ thống đã publish. Deck cá nhân truy cập qua /users/me/decks/{deckId}.',
       parameters: [
         {
           name: 'deckId',

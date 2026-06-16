@@ -29,7 +29,7 @@ forgot-password, reset-password tương tự
 
 ## **Decks công khai**
 
-- GET /api/v1/decks — danh sách deck đã publish; hỗ trợ filter theo tagId, cefrLevelId, q, page, limit. Không bắt buộc đăng nhập; nếu gửi Bearer token hợp lệ thì response sẽ bao gồm deck của user hiện tại.
+- GET /api/v1/decks — danh sách deck hệ thống (ownerType = system) đã publish; hỗ trợ filter theo tagId, cefrLevelId, q, page, limit. Không bắt buộc đăng nhập. Deck cá nhân của user truy cập qua /users/me/decks.
 
 # **Cần token API**
 
@@ -41,7 +41,7 @@ forgot-password, reset-password tương tự
 ## **Metadata công khai**
 
 - GET /api/v1/cefr-levels — lấy danh sách level CEFR để filter lesson/deck.
-- GET /api/v1/tags — lấy danh sách tag.
+- GET /api/v1/tags — lấy danh sách tag. Tùy chọn ?usedBy=lesson|deck để chỉ lấy tag đang được lesson/deck (đã publish) sử dụng; không truyền = tất cả tag.
 
 ## **Decks**
 
@@ -52,7 +52,7 @@ forgot-password, reset-password tương tự
 ## **Deck của user (ownerType = user)**
 
 - GET /api/v1/users/me/decks — danh sách deck do user hiện tại sở hữu; hỗ trợ filter q, page, limit.
-- POST /api/v1/users/me/decks — tạo deck mới thuộc sở hữu user hiện tại (draft mặc định).
+- POST /api/v1/users/me/decks — tạo deck mới thuộc sở hữu user hiện tại (luôn published; body chỉ gồm title, description). Tối đa 3 deck/user.
 - GET /api/v1/users/me/decks/{deckId} — chi tiết một deck của user.
 - PUT /api/v1/users/me/decks/{deckId} — cập nhật deck (chỉ chủ sở hữu).
 - DELETE /api/v1/users/me/decks/{deckId} — xóa deck kèm toàn bộ topic và card bên trong (chỉ chủ sở hữu).
@@ -68,10 +68,18 @@ forgot-password, reset-password tương tự
 ## **Cards trong deck của user**
 
 - GET /api/v1/users/me/decks/{deckId}/cards — danh sách card trong deck; hỗ trợ filter topicId, q, page, limit.
-- POST /api/v1/users/me/decks/{deckId}/cards — tạo card mới trong deck (cần chỉ định topicId).
+- POST /api/v1/users/me/decks/{deckId}/cards — tạo card mới trong deck. Body đơn giản: topicId, term, translation (bắt buộc); definition, example, pos (tùy chọn). definition lưu vào explanation.vi, example lưu vào examples.en; order tự gán.
 - GET /api/v1/users/me/decks/{deckId}/cards/{cardId} — chi tiết card.
-- PUT /api/v1/users/me/decks/{deckId}/cards/{cardId} — cập nhật term, pos, phonetics, translation, explanation, examples, imageUrl.
+- PUT /api/v1/users/me/decks/{deckId}/cards/{cardId} — cập nhật term, translation, definition, example, pos (gửi ít nhất một). Thẻ giữ nguyên topic, không hỗ trợ chuyển nhóm.
 - DELETE /api/v1/users/me/decks/{deckId}/cards/{cardId} — xóa card.
+
+## **Tra cứu từ vựng hệ thống**
+
+- GET /api/v1/vocabulary/search — tìm card trong các deck hệ thống đã publish theo term (query q bắt buộc, limit tùy chọn 1..50 mặc định 10). Trả về shape phẳng (term, translation, pos, definition, example, sourceCardId) để điền sẵn form tạo/sửa thẻ.
+
+## **Upload file (S3)**
+
+- POST /api/v1/s3/presigned-url — tạo URL PUT ký sẵn (hết hạn 60s) để client upload file trực tiếp lên S3. Body: contentType (bắt buộc), purpose (bắt buộc: shadowing-audio | deck-import | card-image), fileSize (tùy chọn). Key sinh ở server theo userId; backend không nhận bytes. Trả về uploadUrl + key + expiresIn. Lưu key vào DB sau khi upload xong.
 
 ## **Progress của user**
 

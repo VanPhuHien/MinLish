@@ -109,9 +109,6 @@ export default {
             },
           },
         },
-        401: {
-          $ref: '#/components/responses/Unauthorized',
-        },
         500: {
           $ref: '#/components/responses/ServerError',
         },
@@ -168,9 +165,6 @@ export default {
               },
             },
           },
-        },
-        401: {
-          $ref: '#/components/responses/Unauthorized',
         },
         404: {
           description: 'Không tìm thấy bài học đã công khai.',
@@ -242,9 +236,6 @@ export default {
               },
             },
           },
-        },
-        401: {
-          $ref: '#/components/responses/Unauthorized',
         },
         404: {
           description: 'Không tìm thấy segment của bài học.',
@@ -327,9 +318,6 @@ export default {
               },
             },
           },
-        },
-        401: {
-          $ref: '#/components/responses/Unauthorized',
         },
         404: {
           description: 'Không tìm thấy segment thuộc bài học này.',

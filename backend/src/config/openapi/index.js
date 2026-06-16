@@ -7,6 +7,9 @@ import userPaths from './paths/user.path.js';
 import userDeckPaths from './paths/userDeck.path.js';
 import adminPaths from './paths/admin.path.js';
 import aiPaths from './paths/ai.path.js';
+import vocabularyPaths from './paths/vocabulary.path.js';
+import metadataPaths from './paths/metadata.path.js';
+import filePaths from './paths/file.path.js';
 
 import securitySchemes from './components/securitySchemes.js';
 
@@ -18,6 +21,8 @@ import userSchemas from './schemas/user.schema.js';
 import userDeckSchemas from './schemas/userDeck.schema.js';
 import adminSchemas from './schemas/admin.schema.js';
 import aiSchemas from './schemas/ai.schema.js';
+import vocabularySchemas from './schemas/vocabulary.schema.js';
+import fileSchemas from './schemas/file.schema.js';
 
 import commonResponses from './responses/common.response.js';
 
@@ -31,6 +36,9 @@ export default {
     ...userDeckPaths,
     ...adminPaths,
     ...aiPaths,
+    ...vocabularyPaths,
+    ...metadataPaths,
+    ...filePaths,
   },
   components: {
     securitySchemes,
@@ -43,6 +51,8 @@ export default {
       ...userDeckSchemas,
       ...adminSchemas,
       ...aiSchemas,
+      ...vocabularySchemas,
+      ...fileSchemas,
     },
     responses: {
       ...commonResponses,

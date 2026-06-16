@@ -8,6 +8,7 @@ import crypto from 'crypto';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import 'dotenv';
 import sharp from 'sharp';
+import AppError from '../../utils/AppError.js';
 
 const bucketName = process.env.BUCKET_NAME;
 const s3 = new S3Client({
@@ -20,6 +21,83 @@ const s3 = new S3Client({
 
 const randomImageName = (bytes = 32) =>
   crypto.randomBytes(bytes).toString('hex');
+
+const UPLOAD_CONFIG = {
+  'shadowing-audio': {
+    prefix: 'shadowing',
+    allowedTypes: [
+      'audio/webm',
+      'audio/mpeg',
+      'audio/mp4',
+      'audio/wav',
+      'audio/ogg',
+    ],
+    maxSize: 10 * 1024 * 1024, // 10MB
+  },
+  'deck-import': {
+    prefix: 'imports',
+    allowedTypes: ['text/csv', 'application/json'],
+    maxSize: 5 * 1024 * 1024, // 5MB
+  },
+  'card-image': {
+    prefix: 'cards',
+    allowedTypes: ['image/jpeg', 'image/png', 'image/webp'],
+    maxSize: 5 * 1024 * 1024,
+  },
+};
+
+const EXT_BY_TYPE = {
+  'audio/webm': 'webm',
+  'audio/mpeg': 'mp3',
+  'audio/mp4': 'm4a',
+  'audio/wav': 'wav',
+  'audio/ogg': 'ogg',
+  'text/csv': 'csv',
+  'application/json': 'json',
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+};
+
+// Sign a one-time PUT URL so the client uploads straight to S3.
+// The key is generated server-side (scoped by userId) — never taken
+// from the client — and the contentType is baked into the signature.
+export const createUploadPresignedUrl = async (
+  { contentType, purpose, fileSize },
+  userId
+) => {
+  const config = UPLOAD_CONFIG[purpose];
+  if (!config) throw new AppError('purpose không hợp lệ', 400);
+
+  if (!config.allowedTypes.includes(contentType)) {
+    throw new AppError(
+      `contentType không được phép cho ${purpose}`,
+      400
+    );
+  }
+
+  if (fileSize !== undefined && fileSize > config.maxSize) {
+    throw new AppError(
+      `File vượt giới hạn ${config.maxSize / (1024 * 1024)}MB`,
+      400
+    );
+  }
+
+  const ext = EXT_BY_TYPE[contentType] || 'bin';
+  const key = `${config.prefix}/${userId}/${randomImageName(16)}.${ext}`;
+
+  const uploadUrl = await getSignedUrl(
+    s3,
+    new PutObjectCommand({
+      Bucket: bucketName,
+      Key: key,
+      ContentType: contentType,
+    }),
+    { expiresIn: 60 } // 60 seconds
+  );
+
+  return { uploadUrl, key, expiresIn: 60 };
+};
 
 /**
  * @param {User} data

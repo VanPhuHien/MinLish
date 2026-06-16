@@ -1,9 +1,16 @@
 import { Router } from 'express';
 import * as controller from './lesson.controller.js';
-import { protect } from '../../middlewares/auth.middleware.js';
+import { protectOptional } from '../../middlewares/auth.middleware.js';
 
 const router = Router();
 
-router.get('/:lessonId/segments', protect, controller.getSegments);
+router.get('/', protectOptional, controller.listLessons);
+router.get('/:lessonId', protectOptional, controller.getLessonById);
+router.get('/:lessonId/segments', protectOptional, controller.getSegments);
+router.get(
+  '/:lessonId/segments/:segmentId',
+  protectOptional,
+  controller.getSegmentById
+);
 
 export default router;
