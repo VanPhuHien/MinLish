@@ -77,6 +77,10 @@ forgot-password, reset-password tương tự
 
 - GET /api/v1/vocabulary/search — tìm card trong các deck hệ thống đã publish theo term (query q bắt buộc, limit tùy chọn 1..50 mặc định 10). Trả về shape phẳng (term, translation, pos, definition, example, sourceCardId) để điền sẵn form tạo/sửa thẻ.
 
+## **Upload file (S3)**
+
+- POST /api/v1/s3/presigned-url — tạo URL PUT ký sẵn (hết hạn 60s) để client upload file trực tiếp lên S3. Body: contentType (bắt buộc), purpose (bắt buộc: shadowing-audio | deck-import | card-image), fileSize (tùy chọn). Key sinh ở server theo userId; backend không nhận bytes. Trả về uploadUrl + key + expiresIn. Lưu key vào DB sau khi upload xong.
+
 ## **Progress của user**
 
 - GET /api/v1/users/me/lesson-progress — danh sách tiến độ lesson của user.
