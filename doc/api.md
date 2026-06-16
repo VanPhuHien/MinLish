@@ -41,7 +41,7 @@ forgot-password, reset-password tương tự
 ## **Metadata công khai**
 
 - GET /api/v1/cefr-levels — lấy danh sách level CEFR để filter lesson/deck.
-- GET /api/v1/tags — lấy danh sách tag.
+- GET /api/v1/tags — lấy danh sách tag. Tùy chọn ?usedBy=lesson|deck để chỉ lấy tag đang được lesson/deck (đã publish) sử dụng; không truyền = tất cả tag.
 
 ## **Decks**
 

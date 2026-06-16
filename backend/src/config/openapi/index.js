@@ -7,6 +7,7 @@ import userPaths from './paths/user.path.js';
 import userDeckPaths from './paths/userDeck.path.js';
 import adminPaths from './paths/admin.path.js';
 import vocabularyPaths from './paths/vocabulary.path.js';
+import metadataPaths from './paths/metadata.path.js';
 
 import securitySchemes from './components/securitySchemes.js';
 
@@ -31,6 +32,7 @@ export default {
     ...userDeckPaths,
     ...adminPaths,
     ...vocabularyPaths,
+    ...metadataPaths,
   },
   components: {
     securitySchemes,
