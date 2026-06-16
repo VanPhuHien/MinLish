@@ -98,76 +98,21 @@ describe('GET /api/v1/users/me/decks/:deckId/topics', () => {
         .set('Authorization', `Bearer ${validToken}`);
 
       expect(res.status).toBe(200);
-      const names = res.body.data.topics.map((t) => t.topic.name);
+      const names = res.body.data.topics.map((t) => t.name);
       expect(names).toEqual(['A', 'B', 'C']);
     });
 
-    it('computes userProgress per topic', async () => {
+    it('returns plain topics without userProgress', async () => {
       const deck = await makeMyDeck();
-      const topic = await makeTopic(deck._id, { cardCount: 10 });
-
-      // 3 cards learned (have a state row)
-      for (let i = 0; i < 3; i += 1) {
-        const card = await Card.create({
-          deckId: deck._id,
-          topicId: topic._id,
-          term: `t${i}`,
-          pos: 'noun',
-          translation: 'x',
-          order: i,
-        });
-        await UserCardState.create({
-          userId: testUserId,
-          cardId: card._id,
-          deckId: deck._id,
-          topicId: topic._id,
-        });
-      }
+      await makeTopic(deck._id, { name: 'Family', cardCount: 10 });
 
       const res = await request(app)
         .get(url(deck._id))
         .set('Authorization', `Bearer ${validToken}`);
 
-      const p = res.body.data.topics[0].userProgress;
-      expect(p.learnedCardCount).toBe(3);
-      expect(p.totalCardCount).toBe(10);
-      expect(p.progressPct).toBe(30);
-    });
-
-    it('returns progressPct 0 for a topic with no cards', async () => {
-      const deck = await makeMyDeck();
-      await makeTopic(deck._id, { cardCount: 0 });
-
-      const res = await request(app)
-        .get(url(deck._id))
-        .set('Authorization', `Bearer ${validToken}`);
-
-      expect(res.body.data.topics[0].userProgress.progressPct).toBe(0);
-    });
-
-    it("does not count another user's card states", async () => {
-      const deck = await makeMyDeck();
-      const topic = await makeTopic(deck._id, { cardCount: 4 });
-      const card = await Card.create({
-        deckId: deck._id,
-        topicId: topic._id,
-        term: 'x',
-        pos: 'noun',
-        translation: 'x',
-        order: 1,
-      });
-      await UserCardState.create({
-        userId: otherUserId,
-        cardId: card._id,
-        deckId: deck._id,
-        topicId: topic._id,
-      });
-
-      const res = await request(app)
-        .get(url(deck._id))
-        .set('Authorization', `Bearer ${validToken}`);
-
-      expect(res.body.data.topics[0].userProgress.learnedCardCount).toBe(0);
+      expect(res.status).toBe(200);
+      expect(res.body.data.topics[0].name).toBe('Family');
+      expect(res.body.data.topics[0].userProgress).toBeUndefined();
     });
   });
 

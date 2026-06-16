@@ -1,5 +1,4 @@
 import crypto from 'crypto';
-import mongoose from 'mongoose';
 import Deck from '../../models/deck.model.js';
 import Topic from '../../models/topic.model.js';
 import Card from '../../models/card.model.js';
@@ -105,41 +104,10 @@ export const deleteMyDeck = async (userId, deckId) => {
 export const getMyDeckTopics = async (userId, deckId) => {
   const deck = await ensureOwnedDeck(userId, deckId);
 
+  // Personal decks are just for studying — no progress tracking here.
   const topics = await Topic.find({ deckId }).sort({ order: 1 });
 
-  // Progress per topic in ONE aggregation (no N+1).
-  // "learned" = any card the user has a state row for (hidden counts too).
-  // Aggregate does NOT auto-cast strings to ObjectId — cast explicitly.
-  const progressRows = await UserCardState.aggregate([
-    {
-      $match: {
-        userId: new mongoose.Types.ObjectId(userId),
-        deckId: new mongoose.Types.ObjectId(deckId),
-      },
-    },
-    { $group: { _id: '$topicId', learnedCardCount: { $sum: 1 } } },
-  ]);
-
-  const learnedMap = progressRows.reduce((acc, row) => {
-    acc[row._id.toString()] = row.learnedCardCount;
-    return acc;
-  }, {});
-
-  const items = topics.map((topic) => {
-    const learnedCardCount = learnedMap[topic._id.toString()] || 0;
-    const totalCardCount = topic.cardCount;
-    const progressPct =
-      totalCardCount > 0
-        ? Math.round((learnedCardCount / totalCardCount) * 100)
-        : 0;
-
-    return {
-      topic,
-      userProgress: { learnedCardCount, totalCardCount, progressPct },
-    };
-  });
-
-  return { deck, topics: items };
+  return { deck, topics };
 };
 
 export const getMyDeckTopic = async (userId, deckId, topicId) => {
