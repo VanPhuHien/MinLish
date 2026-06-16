@@ -6,6 +6,7 @@ import lessonPaths from './paths/lesson.path.js';
 import userPaths from './paths/user.path.js';
 import userDeckPaths from './paths/userDeck.path.js';
 import adminPaths from './paths/admin.path.js';
+import aiPaths from './paths/ai.path.js';
 import vocabularyPaths from './paths/vocabulary.path.js';
 import metadataPaths from './paths/metadata.path.js';
 import filePaths from './paths/file.path.js';
@@ -19,6 +20,7 @@ import lessonSchemas from './schemas/lesson.schema.js';
 import userSchemas from './schemas/user.schema.js';
 import userDeckSchemas from './schemas/userDeck.schema.js';
 import adminSchemas from './schemas/admin.schema.js';
+import aiSchemas from './schemas/ai.schema.js';
 import vocabularySchemas from './schemas/vocabulary.schema.js';
 import fileSchemas from './schemas/file.schema.js';
 
@@ -33,6 +35,7 @@ export default {
     ...userPaths,
     ...userDeckPaths,
     ...adminPaths,
+    ...aiPaths,
     ...vocabularyPaths,
     ...metadataPaths,
     ...filePaths,
@@ -47,6 +50,7 @@ export default {
       ...userSchemas,
       ...userDeckSchemas,
       ...adminSchemas,
+      ...aiSchemas,
       ...vocabularySchemas,
       ...fileSchemas,
     },
