@@ -1,11 +1,4 @@
-import {
-  describe,
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
@@ -135,7 +128,11 @@ describe('PUT /api/v1/users/me/decks/:deckId/cards/:cardId', () => {
     it('ignores topicId in the body (no topic move)', async () => {
       const deck = await makeMyDeck();
       const topicA = await makeTopic(deck._id, { name: 'A', cardCount: 1 });
-      const topicB = await makeTopic(deck._id, { name: 'B', order: 2, cardCount: 0 });
+      const topicB = await makeTopic(deck._id, {
+        name: 'B',
+        order: 2,
+        cardCount: 0,
+      });
       const card = await makeCard(deck._id, topicA._id, { order: 1 });
 
       const res = await request(app)
@@ -157,7 +154,7 @@ describe('PUT /api/v1/users/me/decks/:deckId/cards/:cardId', () => {
   });
 
   describe('ownership / scoping', () => {
-    it("returns 404 when the deck belongs to another user", async () => {
+    it('returns 404 when the deck belongs to another user', async () => {
       const deck = await Deck.create({
         title: 'Other',
         slug: 'other-deck',

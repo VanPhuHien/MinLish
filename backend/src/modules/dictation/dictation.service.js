@@ -111,7 +111,8 @@ const recalculateLessonProgress = async (
       $set: {
         'dictation.progressPct': progressPercent,
         'dictation.lastSegmentOrder': currentSegmentOrder,
-        'dictation.status': progressPercent === 100 ? 'completed' : 'in_progress',
+        'dictation.status':
+          progressPercent === 100 ? 'completed' : 'in_progress',
         updatedAt: new Date(),
       },
     },

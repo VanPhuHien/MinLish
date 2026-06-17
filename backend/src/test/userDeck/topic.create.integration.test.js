@@ -1,11 +1,4 @@
-import {
-  describe,
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
@@ -52,7 +45,9 @@ describe('POST /api/v1/users/me/decks/:deckId/topics', () => {
   describe('authentication', () => {
     it('returns 401 without a token', async () => {
       const deck = await makeMyDeck();
-      const res = await request(app).post(url(deck._id)).send({ name: 'Family' });
+      const res = await request(app)
+        .post(url(deck._id))
+        .send({ name: 'Family' });
       expect(res.status).toBe(401);
     });
   });
@@ -206,7 +201,12 @@ describe('POST /api/v1/users/me/decks/:deckId/topics', () => {
       const res = await request(app)
         .post(url(deck._id))
         .set('Authorization', `Bearer ${validToken}`)
-        .send({ name: 'Family', order: 99, cardCount: 50, deckId: otherUserId });
+        .send({
+          name: 'Family',
+          order: 99,
+          cardCount: 50,
+          deckId: otherUserId,
+        });
 
       expect(res.status).toBe(201);
       expect(res.body.data.order).toBe(1); // auto, not 99

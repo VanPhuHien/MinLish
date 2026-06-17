@@ -1,11 +1,4 @@
-import {
-  describe,
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
@@ -33,10 +26,7 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  await Promise.all([
-    Lesson.deleteMany({}),
-    UserLessonProgress.deleteMany({}),
-  ]);
+  await Promise.all([Lesson.deleteMany({}), UserLessonProgress.deleteMany({})]);
 });
 
 const makeLesson = (over = {}) =>
@@ -145,9 +135,7 @@ describe('GET /api/v1/lessons/:lessonId', () => {
 
       expect(res.status).toBe(400);
       expect(res.body.errors).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ field: 'lessonId' }),
-        ])
+        expect.arrayContaining([expect.objectContaining({ field: 'lessonId' })])
       );
     });
   });

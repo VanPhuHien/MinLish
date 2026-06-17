@@ -11,7 +11,7 @@ export const listLessons = async (filters, userId) => {
   const query = { status: 'published' };
   if (tagId) query.tagIds = tagId;
   if (cefrLevelId) query.cefrLevelIds = cefrLevelId;
-  if (mode) query.modes = mode; 
+  if (mode) query.modes = mode;
   if (q) {
     const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const regex = new RegExp(escaped, 'i');

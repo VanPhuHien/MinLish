@@ -154,10 +154,7 @@ export const getMyDeckTopics = async (req, res, next) => {
       return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
     }
 
-    const data = await service.getMyDeckTopics(
-      req.user.id,
-      result.data.deckId
-    );
+    const data = await service.getMyDeckTopics(req.user.id, result.data.deckId);
 
     return res
       .status(200)
@@ -371,9 +368,7 @@ export const createDeck = async (req, res, next) => {
 
     const deck = await service.createDeck(req.user.id, result.data);
 
-    return res
-      .status(201)
-      .json(successResponse('Tạo deck thành công.', deck));
+    return res.status(201).json(successResponse('Tạo deck thành công.', deck));
   } catch (error) {
     next(error);
   }

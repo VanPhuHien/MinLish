@@ -1,11 +1,4 @@
-import {
-  describe,
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
@@ -114,8 +107,20 @@ describe('GET /api/v1/decks/:deckId/topics', () => {
     it('returns topics ordered by order field', async () => {
       const deck = await makeDeck();
       await Topic.insertMany([
-        { deckId: deck._id, name: 'Second', slug: 'second', order: 2, cardCount: 10 },
-        { deckId: deck._id, name: 'First', slug: 'first', order: 1, cardCount: 10 },
+        {
+          deckId: deck._id,
+          name: 'Second',
+          slug: 'second',
+          order: 2,
+          cardCount: 10,
+        },
+        {
+          deckId: deck._id,
+          name: 'First',
+          slug: 'first',
+          order: 1,
+          cardCount: 10,
+        },
       ]);
 
       const res = await request(app)
@@ -192,8 +197,16 @@ describe('GET /api/v1/decks/:deckId/topics', () => {
       const byName = Object.fromEntries(
         res.body.data.topics.map((t) => [t.topic.name, t.userProgress])
       );
-      expect(byName.A).toEqual({ learnedCardCount: 5, totalCardCount: 10, progressPct: 50 });
-      expect(byName.B).toEqual({ learnedCardCount: 2, totalCardCount: 10, progressPct: 20 });
+      expect(byName.A).toEqual({
+        learnedCardCount: 5,
+        totalCardCount: 10,
+        progressPct: 50,
+      });
+      expect(byName.B).toEqual({
+        learnedCardCount: 2,
+        totalCardCount: 10,
+        progressPct: 20,
+      });
     });
 
     it("does not count another user's card states", async () => {

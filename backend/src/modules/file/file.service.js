@@ -70,10 +70,7 @@ export const createUploadPresignedUrl = async (
   if (!config) throw new AppError('purpose không hợp lệ', 400);
 
   if (!config.allowedTypes.includes(contentType)) {
-    throw new AppError(
-      `contentType không được phép cho ${purpose}`,
-      400
-    );
+    throw new AppError(`contentType không được phép cho ${purpose}`, 400);
   }
 
   if (fileSize !== undefined && fileSize > config.maxSize) {

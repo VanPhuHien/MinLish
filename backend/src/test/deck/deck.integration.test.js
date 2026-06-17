@@ -1,11 +1,4 @@
-import {
-  describe,
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
@@ -40,7 +33,12 @@ describe('GET /api/v1/decks', () => {
   describe('response shape', () => {
     it('returns correct envelope and pagination fields', async () => {
       await Deck.insertMany([
-        { title: 'System Deck', slug: 'system-deck', ownerType: 'system', status: 'published' },
+        {
+          title: 'System Deck',
+          slug: 'system-deck',
+          ownerType: 'system',
+          status: 'published',
+        },
       ]);
 
       const res = await request(app).get('/api/v1/decks');
@@ -72,11 +70,37 @@ describe('GET /api/v1/decks', () => {
   describe('anonymous access', () => {
     it('returns only system published decks', async () => {
       await Deck.insertMany([
-        { title: 'Published A', slug: 'published-a', ownerType: 'system', status: 'published' },
-        { title: 'Published B', slug: 'published-b', ownerType: 'system', status: 'published' },
-        { title: 'Draft System', slug: 'draft-system', ownerType: 'system', status: 'draft' },
-        { title: 'Archived System', slug: 'archived-system', ownerType: 'system', status: 'archived' },
-        { title: 'User Deck', slug: 'user-deck', ownerType: 'user', ownerId: testUserId, status: 'published' },
+        {
+          title: 'Published A',
+          slug: 'published-a',
+          ownerType: 'system',
+          status: 'published',
+        },
+        {
+          title: 'Published B',
+          slug: 'published-b',
+          ownerType: 'system',
+          status: 'published',
+        },
+        {
+          title: 'Draft System',
+          slug: 'draft-system',
+          ownerType: 'system',
+          status: 'draft',
+        },
+        {
+          title: 'Archived System',
+          slug: 'archived-system',
+          ownerType: 'system',
+          status: 'archived',
+        },
+        {
+          title: 'User Deck',
+          slug: 'user-deck',
+          ownerType: 'user',
+          ownerId: testUserId,
+          status: 'published',
+        },
       ]);
 
       const res = await request(app).get('/api/v1/decks');
@@ -95,7 +119,12 @@ describe('GET /api/v1/decks', () => {
 
     it('returns empty array when no system published decks exist', async () => {
       await Deck.insertMany([
-        { title: 'Draft Only', slug: 'draft-only', ownerType: 'system', status: 'draft' },
+        {
+          title: 'Draft Only',
+          slug: 'draft-only',
+          ownerType: 'system',
+          status: 'draft',
+        },
       ]);
 
       const res = await request(app).get('/api/v1/decks');
@@ -109,10 +138,33 @@ describe('GET /api/v1/decks', () => {
   describe('authenticated access', () => {
     it('still returns only system published decks (user decks excluded)', async () => {
       await Deck.insertMany([
-        { title: 'System Deck', slug: 'system-deck', ownerType: 'system', status: 'published' },
-        { title: 'My Published', slug: 'my-published', ownerType: 'user', ownerId: testUserId, status: 'published' },
-        { title: 'My Draft', slug: 'my-draft', ownerType: 'user', ownerId: testUserId, status: 'draft' },
-        { title: 'Other User', slug: 'other-user', ownerType: 'user', ownerId: otherUserId, status: 'published' },
+        {
+          title: 'System Deck',
+          slug: 'system-deck',
+          ownerType: 'system',
+          status: 'published',
+        },
+        {
+          title: 'My Published',
+          slug: 'my-published',
+          ownerType: 'user',
+          ownerId: testUserId,
+          status: 'published',
+        },
+        {
+          title: 'My Draft',
+          slug: 'my-draft',
+          ownerType: 'user',
+          ownerId: testUserId,
+          status: 'draft',
+        },
+        {
+          title: 'Other User',
+          slug: 'other-user',
+          ownerType: 'user',
+          ownerId: otherUserId,
+          status: 'published',
+        },
       ]);
 
       const res = await request(app)
@@ -133,8 +185,19 @@ describe('GET /api/v1/decks', () => {
   describe('optional auth degradation', () => {
     it('treats an invalid Bearer token as anonymous (200, not 401)', async () => {
       await Deck.insertMany([
-        { title: 'System Deck', slug: 'system-deck', ownerType: 'system', status: 'published' },
-        { title: 'User Deck', slug: 'user-deck', ownerType: 'user', ownerId: testUserId, status: 'published' },
+        {
+          title: 'System Deck',
+          slug: 'system-deck',
+          ownerType: 'system',
+          status: 'published',
+        },
+        {
+          title: 'User Deck',
+          slug: 'user-deck',
+          ownerType: 'user',
+          ownerId: testUserId,
+          status: 'published',
+        },
       ]);
 
       const res = await request(app)
@@ -148,7 +211,12 @@ describe('GET /api/v1/decks', () => {
 
     it('treats an expired Bearer token as anonymous', async () => {
       await Deck.insertMany([
-        { title: 'System Deck', slug: 'system-deck', ownerType: 'system', status: 'published' },
+        {
+          title: 'System Deck',
+          slug: 'system-deck',
+          ownerType: 'system',
+          status: 'published',
+        },
       ]);
 
       const expiredToken = generateToken(
@@ -168,8 +236,20 @@ describe('GET /api/v1/decks', () => {
   describe('filtering', () => {
     it('filters by tagId', async () => {
       await Deck.insertMany([
-        { title: 'Tagged Deck', slug: 'tagged', ownerType: 'system', status: 'published', tagIds: [tagId] },
-        { title: 'Untagged Deck', slug: 'untagged', ownerType: 'system', status: 'published', tagIds: [] },
+        {
+          title: 'Tagged Deck',
+          slug: 'tagged',
+          ownerType: 'system',
+          status: 'published',
+          tagIds: [tagId],
+        },
+        {
+          title: 'Untagged Deck',
+          slug: 'untagged',
+          ownerType: 'system',
+          status: 'published',
+          tagIds: [],
+        },
       ]);
 
       const res = await request(app).get(`/api/v1/decks?tagId=${tagId}`);
@@ -181,8 +261,20 @@ describe('GET /api/v1/decks', () => {
 
     it('filters by cefrLevelId', async () => {
       await Deck.insertMany([
-        { title: 'CEFR Deck', slug: 'cefr-deck', ownerType: 'system', status: 'published', cefrLevelIds: [cefrId] },
-        { title: 'No Level Deck', slug: 'no-level', ownerType: 'system', status: 'published', cefrLevelIds: [] },
+        {
+          title: 'CEFR Deck',
+          slug: 'cefr-deck',
+          ownerType: 'system',
+          status: 'published',
+          cefrLevelIds: [cefrId],
+        },
+        {
+          title: 'No Level Deck',
+          slug: 'no-level',
+          ownerType: 'system',
+          status: 'published',
+          cefrLevelIds: [],
+        },
       ]);
 
       const res = await request(app).get(`/api/v1/decks?cefrLevelId=${cefrId}`);
@@ -194,8 +286,18 @@ describe('GET /api/v1/decks', () => {
 
     it('searches title by q (case-insensitive)', async () => {
       await Deck.insertMany([
-        { title: 'Travel Vocabulary', slug: 'travel-vocab', ownerType: 'system', status: 'published' },
-        { title: 'Business English', slug: 'business-english', ownerType: 'system', status: 'published' },
+        {
+          title: 'Travel Vocabulary',
+          slug: 'travel-vocab',
+          ownerType: 'system',
+          status: 'published',
+        },
+        {
+          title: 'Business English',
+          slug: 'business-english',
+          ownerType: 'system',
+          status: 'published',
+        },
       ]);
 
       const res = await request(app).get('/api/v1/decks?q=TRAVEL');
@@ -207,8 +309,20 @@ describe('GET /api/v1/decks', () => {
 
     it('searches description by q', async () => {
       await Deck.insertMany([
-        { title: 'Deck A', slug: 'deck-a', description: 'common travel phrases', ownerType: 'system', status: 'published' },
-        { title: 'Deck B', slug: 'deck-b', description: 'business terminology', ownerType: 'system', status: 'published' },
+        {
+          title: 'Deck A',
+          slug: 'deck-a',
+          description: 'common travel phrases',
+          ownerType: 'system',
+          status: 'published',
+        },
+        {
+          title: 'Deck B',
+          slug: 'deck-b',
+          description: 'business terminology',
+          ownerType: 'system',
+          status: 'published',
+        },
       ]);
 
       const res = await request(app).get('/api/v1/decks?q=business');
@@ -220,7 +334,12 @@ describe('GET /api/v1/decks', () => {
 
     it('returns empty array when no deck matches q', async () => {
       await Deck.insertMany([
-        { title: 'Travel Deck', slug: 'travel-deck', ownerType: 'system', status: 'published' },
+        {
+          title: 'Travel Deck',
+          slug: 'travel-deck',
+          ownerType: 'system',
+          status: 'published',
+        },
       ]);
 
       const res = await request(app).get('/api/v1/decks?q=xyznonexistent');
@@ -232,12 +351,35 @@ describe('GET /api/v1/decks', () => {
 
     it('can combine tagId and cefrLevelId filters', async () => {
       await Deck.insertMany([
-        { title: 'Both', slug: 'both', ownerType: 'system', status: 'published', tagIds: [tagId], cefrLevelIds: [cefrId] },
-        { title: 'Tag only', slug: 'tag-only', ownerType: 'system', status: 'published', tagIds: [tagId], cefrLevelIds: [] },
-        { title: 'Neither', slug: 'neither', ownerType: 'system', status: 'published', tagIds: [], cefrLevelIds: [] },
+        {
+          title: 'Both',
+          slug: 'both',
+          ownerType: 'system',
+          status: 'published',
+          tagIds: [tagId],
+          cefrLevelIds: [cefrId],
+        },
+        {
+          title: 'Tag only',
+          slug: 'tag-only',
+          ownerType: 'system',
+          status: 'published',
+          tagIds: [tagId],
+          cefrLevelIds: [],
+        },
+        {
+          title: 'Neither',
+          slug: 'neither',
+          ownerType: 'system',
+          status: 'published',
+          tagIds: [],
+          cefrLevelIds: [],
+        },
       ]);
 
-      const res = await request(app).get(`/api/v1/decks?tagId=${tagId}&cefrLevelId=${cefrId}`);
+      const res = await request(app).get(
+        `/api/v1/decks?tagId=${tagId}&cefrLevelId=${cefrId}`
+      );
 
       expect(res.status).toBe(200);
       expect(res.body.data.decks).toHaveLength(1);
@@ -291,9 +433,7 @@ describe('GET /api/v1/decks', () => {
       expect(res.status).toBe(400);
       expect(res.body.success).toBe(false);
       expect(res.body.errors).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ field: 'tagId' }),
-        ])
+        expect.arrayContaining([expect.objectContaining({ field: 'tagId' })])
       );
     });
 
@@ -315,9 +455,7 @@ describe('GET /api/v1/decks', () => {
       expect(res.status).toBe(400);
       expect(res.body.success).toBe(false);
       expect(res.body.errors).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ field: 'page' }),
-        ])
+        expect.arrayContaining([expect.objectContaining({ field: 'page' })])
       );
     });
 
@@ -327,9 +465,7 @@ describe('GET /api/v1/decks', () => {
       expect(res.status).toBe(400);
       expect(res.body.success).toBe(false);
       expect(res.body.errors).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ field: 'limit' }),
-        ])
+        expect.arrayContaining([expect.objectContaining({ field: 'limit' })])
       );
     });
   });

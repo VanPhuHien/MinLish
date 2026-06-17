@@ -16,6 +16,7 @@ import errorLogger from './middlewares/errorLogger.js';
 import requestLogger from './middlewares/requestLogger.js';
 import authRouter from './modules/auth/auth.router.js';
 import aiRouter from './modules/ai/ai.routes.js';
+import adminRouter from './modules/admin/admin.router.js';
 import swaggerUi from 'swagger-ui-express';
 import openapiDocument from './config/openapi/index.js';
 
@@ -45,6 +46,7 @@ app.use('/api/v1/shadowing', shadowingRouter);
 app.use('/api/v1/vocabulary', vocabularyRouter);
 app.use('/api/v1/progress', progressRouter);
 app.use('/api/v1/ai', aiRouter);
+app.use('/api/v1/admin', adminRouter);
 
 // Global Error Handler
 app.use(errorLogger);

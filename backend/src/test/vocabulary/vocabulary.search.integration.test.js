@@ -1,11 +1,4 @@
-import {
-  describe,
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
@@ -140,7 +133,10 @@ describe('GET /api/v1/vocabulary/search', () => {
     });
 
     it('excludes non-published system decks', async () => {
-      const draft = await makeSystemDeck({ status: 'draft', slug: 'draft-sys' });
+      const draft = await makeSystemDeck({
+        status: 'draft',
+        slug: 'draft-sys',
+      });
       await makeCard(draft._id, { term: 'family' });
 
       const res = await request(app)

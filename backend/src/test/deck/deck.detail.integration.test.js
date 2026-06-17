@@ -114,7 +114,6 @@ describe('GET /api/v1/decks/:deckId', () => {
       expect(res.body.success).toBe(false);
     });
 
-
     it('returns 404 for system draft deck', async () => {
       const deck = await Deck.create({
         title: 'System Draft',

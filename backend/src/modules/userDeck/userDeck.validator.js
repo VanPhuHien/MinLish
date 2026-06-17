@@ -33,9 +33,13 @@ export const updateDeckSchema = z
       .optional(),
     description: z.string().trim().max(500).optional(),
   })
-  .refine((data) => data.title !== undefined || data.description !== undefined, {
-    message: 'Cần cung cấp ít nhất một trường để cập nhật (title hoặc description)',
-  });
+  .refine(
+    (data) => data.title !== undefined || data.description !== undefined,
+    {
+      message:
+        'Cần cung cấp ít nhất một trường để cập nhật (title hoặc description)',
+    }
+  );
 
 // ---------- Topic ----------
 export const topicIdParamSchema = z.object({
@@ -91,7 +95,12 @@ export const createCardSchema = z.object({
 
 export const updateCardSchema = z
   .object({
-    term: z.string().trim().min(1, 'Từ vựng không được để trống').max(200).optional(),
+    term: z
+      .string()
+      .trim()
+      .min(1, 'Từ vựng không được để trống')
+      .max(200)
+      .optional(),
     translation: z
       .string()
       .trim()

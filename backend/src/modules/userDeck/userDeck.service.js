@@ -159,7 +159,9 @@ export const createMyDeckTopic = async (userId, deckId, data) => {
   await ensureOwnedDeck(userId, deckId);
 
   // Auto-assign order = highest existing order + 1 (append to end).
-  const last = await Topic.findOne({ deckId }).sort({ order: -1 }).select('order');
+  const last = await Topic.findOne({ deckId })
+    .sort({ order: -1 })
+    .select('order');
   const nextOrder = last ? last.order + 1 : 1;
 
   const topic = await Topic.create({
@@ -245,10 +247,7 @@ export const deleteMyDeckCard = async (userId, deckId, cardId) => {
   const card = await Card.findOne({ _id: cardId, deckId });
   if (!card) throw new AppError('Không tìm thấy deck hoặc card', 404);
 
-  await Promise.all([
-    card.deleteOne(),
-    UserCardState.deleteMany({ cardId }),
-  ]);
+  await Promise.all([card.deleteOne(), UserCardState.deleteMany({ cardId })]);
 
   // Keep counters in sync (topic + deck).
   await Promise.all([

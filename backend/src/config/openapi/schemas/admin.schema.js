@@ -17,6 +17,16 @@ export default {
         example: 'A1',
         description: 'Tên hiển thị (ví dụ: A1, A2).',
       },
+      createdAt: {
+        type: 'string',
+        description: 'Thời gian tạo.',
+        example: '2026-06-15T10:02:04.740Z',
+      },
+      updatedAt: {
+        type: 'string',
+        description: 'Thời gian cập nhật.',
+        example: '2026-06-15T10:02:04.740Z',
+      },
     },
   },
   CefrLevelsResponse: {

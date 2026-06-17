@@ -1,11 +1,4 @@
-import {
-  describe,
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
@@ -155,7 +148,7 @@ describe('POST /api/v1/users/me/decks/:deckId/cards', () => {
   });
 
   describe('ownership / scoping', () => {
-    it("returns 404 when the deck belongs to another user", async () => {
+    it('returns 404 when the deck belongs to another user', async () => {
       const deck = await Deck.create({
         title: 'Other',
         slug: 'other-deck',
@@ -210,7 +203,11 @@ describe('POST /api/v1/users/me/decks/:deckId/cards', () => {
       const res = await request(app)
         .post(url('notanid'))
         .set('Authorization', `Bearer ${validToken}`)
-        .send({ topicId: new mongoose.Types.ObjectId(), term: 'a', translation: 'b' });
+        .send({
+          topicId: new mongoose.Types.ObjectId(),
+          term: 'a',
+          translation: 'b',
+        });
 
       expect(res.status).toBe(400);
       expect(res.body.errors).toEqual(

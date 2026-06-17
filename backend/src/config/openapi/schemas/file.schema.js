@@ -38,7 +38,8 @@ export default {
           },
           key: {
             type: 'string',
-            description: 'Key của object trên S3; lưu vào DB (không lưu uploadUrl).',
+            description:
+              'Key của object trên S3; lưu vào DB (không lưu uploadUrl).',
             example: 'shadowing/665f.../a3f9.webm',
           },
           expiresIn: {
