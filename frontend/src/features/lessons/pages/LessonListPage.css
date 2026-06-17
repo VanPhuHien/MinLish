@@ -1,0 +1,184 @@
+.lessons-container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 40px var(--spacing-margin-desktop);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-family);
+  background-color: var(--color-surface);
+  min-height: calc(100vh - 180px); /* Đảm bảo chiều cao tối thiểu trừ header/footer */
+}
+
+/* Ô tìm kiếm */
+.search-section {
+  width: 100%;
+  max-width: 520px;
+  margin-bottom: 24px;
+}
+
+.search-bar-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-surface-container-high);
+  border-radius: var(--rounded-md);
+  padding: 12px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s ease;
+}
+
+.search-bar-wrapper:focus-within {
+  border-color: var(--color-outline);
+  box-shadow: 0 4px 12px rgba(137, 114, 110, 0.08);
+}
+
+.search-icon {
+  color: var(--color-on-surface-variant);
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 16px;
+  color: var(--color-on-surface);
+}
+
+.search-input::placeholder {
+  color: var(--color-surface-dim);
+}
+
+/* Danh sách Grid bài học */
+.lessons-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-gutter);
+  width: 100%;
+  margin-top: 24px;
+}
+
+/* Trạng thái Loading / Error */
+.lessons-loading,
+.lessons-error,
+.lessons-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  width: 100%;
+}
+
+.lessons-loading p,
+.lessons-error p,
+.lessons-empty p {
+  font-size: 16px;
+  color: var(--color-on-surface-variant);
+  margin-top: 16px;
+}
+
+.lessons-error p {
+  color: var(--color-error);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-surface-container);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Thanh phân trang */
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 48px;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-surface-container-high);
+  color: var(--color-on-surface);
+  transition: all 0.2s ease;
+}
+
+.num-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--rounded-full);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.num-btn:hover {
+  background-color: var(--color-surface-container-low);
+  border-color: var(--color-outline-variant);
+}
+
+.num-btn.active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 600;
+}
+
+.nav-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--rounded-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background-color: var(--color-surface-container-low);
+  border-color: var(--color-outline-variant);
+}
+
+.nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .lessons-container {
+    padding: 30px var(--spacing-margin-mobile);
+  }
+  .lessons-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .lessons-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .lessons-grid {
+    grid-template-columns: 1fr;
+  }
+}

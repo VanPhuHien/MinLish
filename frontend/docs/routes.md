@@ -55,3 +55,13 @@ Hàm điều hướng:
 - **Chức năng**:
   - Xem và chỉnh sửa thông tin cá nhân.
   - Được liên kết truy cập trực tiếp từ menu dropdown của người dùng trên Header khi đã đăng nhập thành công.
+
+### /lessons (Trang danh sách bài học)
+- **Mô tả**: Trang hiển thị danh sách các bài học công khai của hệ thống.
+- **Quyền truy cập**: Public (Công khai).
+- **Chức năng**:
+  - Tìm kiếm bài học theo tiêu đề có áp dụng cơ chế trì hoãn (debounce) để tối ưu hiệu năng gọi API.
+  - Lọc bài học linh hoạt theo cấp độ CEFR và các nhãn chủ đề.
+  - Hiển thị danh sách các bài học dưới dạng lưới (grid) có khả năng tự động co giãn kích thước (responsive), mỗi bài học biểu thị rõ các chế độ học hỗ trợ (Dictation, Shadowing).
+  - Phân trang bài học để dễ dàng quản lý số lượng bài hiển thị.
+

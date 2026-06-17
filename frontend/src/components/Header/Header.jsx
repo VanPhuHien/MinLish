@@ -55,7 +55,7 @@ function Header({ onNavigate }) {
             MinLish
           </a>
           <nav className="header-nav">
-            <a href="/" onClick={(e) => handleClick('/', e)} className="header-nav-link">
+            <a href="/lessons" onClick={(e) => handleClick('/lessons', e)} className="header-nav-link">
               Bài học
             </a>
             <a href="/" onClick={(e) => handleClick('/', e)} className="header-nav-link">

@@ -4,6 +4,7 @@ import Footer from './components/Footer/Footer'
 import LoginPage from './features/auth/pages/LoginPage'
 import SignupPage from './features/auth/pages/SignupPage'
 import VerifyEmailPage from './features/auth/pages/VerifyEmailPage'
+import LessonListPage from './features/lessons/pages/LessonListPage'
 import { useAuth } from './context/AuthContext'
 import './App.css'
 
@@ -45,6 +46,8 @@ function App() {
         return <SignupPage onNavigate={navigate} />
       case '/verify-email':
         return <VerifyEmailPage email={signupEmail} onNavigate={navigate} />
+      case '/lessons':
+        return <LessonListPage onNavigate={navigate} />
       default:
         return (
           <main className="main-content">
