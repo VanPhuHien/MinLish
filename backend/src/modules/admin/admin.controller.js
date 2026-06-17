@@ -1,57 +1,54 @@
 import { successResponse } from '../../utils/response.js';
-import * as cefrLevelService from '../cefrLevel/cefrLevel.service.js';
+import * as tagService from '../tag/tag.service.js';
 
-export const listCefrLevels = async (req, res, next) => {
+export const listTags = async (req, res, next) => {
   try {
-    const levels = await cefrLevelService.listCefrLevels();
+    const levels = await tagService.listTags();
     return res
       .status(200)
-      .json(successResponse('Lấy danh sách CEFR levels thành công', levels));
+      .json(successResponse('Lấy danh sách Tags thành công', levels));
   } catch (error) {
     next(error);
   }
 };
 
-export const getCefrLevelById = async (req, res, next) => {
+export const getTagById = async (req, res, next) => {
   try {
-    const level = await cefrLevelService.getCefrLevelById(req.params.id);
+    const level = await tagService.getTagById(req.params.id);
     return res
       .status(200)
-      .json(successResponse('Lấy chi tiết CEFR level thành công', level));
+      .json(successResponse('Lấy chi tiết Tag thành công', level));
   } catch (error) {
     next(error);
   }
 };
 
-export const createCefrLevel = async (req, res, next) => {
+export const createTag = async (req, res, next) => {
   try {
-    const level = await cefrLevelService.createCefrLevel(req.body);
+    const level = await tagService.createTag(req.body);
     return res
       .status(201)
-      .json(successResponse('Tạo mới CEFR level thành công', level));
+      .json(successResponse('Tạo mới Tag thành công', level));
   } catch (error) {
     next(error);
   }
 };
 
-export const updateCefrLevel = async (req, res, next) => {
+export const updateTag = async (req, res, next) => {
   try {
-    const level = await cefrLevelService.updateCefrLevel(
-      req.params.id,
-      req.body
-    );
+    const level = await tagService.updateTag(req.params.id, req.body);
     return res
       .status(200)
-      .json(successResponse('Cập nhật CEFR level thành công', level));
+      .json(successResponse('Cập nhật Tag thành công', level));
   } catch (error) {
     next(error);
   }
 };
 
-export const deleteCefrLevel = async (req, res, next) => {
+export const deleteTag = async (req, res, next) => {
   try {
-    await cefrLevelService.deleteCefrLevel(req.params.id);
-    return res.status(200).json(successResponse('Xóa CEFR level thành công'));
+    await tagService.deleteTag(req.params.id);
+    return res.status(200).json(successResponse('Xóa Tag thành công'));
   } catch (error) {
     next(error);
   }
