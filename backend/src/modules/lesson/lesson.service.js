@@ -20,7 +20,7 @@ export const listLessons = async (filters, userId) => {
 
   const skip = (page - 1) * limit;
   const [lessons, totalItems] = await Promise.all([
-    Lesson.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
+    Lesson.find(query).sort({ createdAt: -1, _id: -1 }).skip(skip).limit(limit),
     Lesson.countDocuments(query),
   ]);
 

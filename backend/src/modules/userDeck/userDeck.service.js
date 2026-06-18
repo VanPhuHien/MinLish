@@ -41,7 +41,7 @@ export const listMyDecks = async (userId, filters) => {
 
   const skip = (page - 1) * limit;
   const [decks, totalItems] = await Promise.all([
-    Deck.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
+    Deck.find(query).sort({ createdAt: -1, _id: -1 }).skip(skip).limit(limit),
     Deck.countDocuments(query),
   ]);
 
