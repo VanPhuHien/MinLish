@@ -107,7 +107,7 @@ export const listDecks = async (filters) => {
 
   const skip = (page - 1) * limit;
   const [decks, totalItems] = await Promise.all([
-    Deck.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
+    Deck.find(query).sort({ createdAt: -1, _id: -1 }).skip(skip).limit(limit),
     Deck.countDocuments(query),
   ]);
 
@@ -151,7 +151,7 @@ export const listAdminDecks = async (filters) => {
 
   const [decks, totalItems] = await Promise.all([
     Deck.find(query)
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: -1, _id: -1 })
       .skip(skip)
       .limit(limit)
       .populate('tagIds', 'label code') //có kèm id tag nếu ko -_id
