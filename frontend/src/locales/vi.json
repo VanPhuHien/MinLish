@@ -120,5 +120,32 @@
   "input": {
     "hidePassword": "Ẩn mật khẩu",
     "showPassword": "Hiển thị mật khẩu"
+  },
+  "flashcard": {
+    "tapToSeeMeaning": "Nhấn để xem nghĩa",
+    "tapToGoBack": "Nhấn để quay lại",
+    "gradeAgain": "Học lại",
+    "gradeHard": "Khó",
+    "gradeGood": "Tốt",
+    "gradeEasy": "Dễ",
+    "hideCard": "Ẩn thẻ",
+    "example": "Ví dụ:"
+  },
+  "quiz": {
+    "questionTitle": "Từ vựng tương ứng với nghĩa sau:",
+    "correct": "Chính xác!",
+    "incorrect": "Chưa chính xác!",
+    "detailsTitle": "Thông tin chi tiết từ vựng:"
+  },
+  "deckDetail": {
+    "backBtn": "Quay lại",
+    "loading": "Đang tải thông tin...",
+    "noData": "Không tìm thấy dữ liệu.",
+    "allNewLearned": "Chúc mừng! Bạn đã học xong tất cả các từ mới trong chủ đề này.",
+    "noNewWords": "Chủ đề này không còn từ mới nào chưa học.",
+    "selectAnotherTopic": "Hãy chọn chủ đề khác bên thanh danh sách.",
+    "wordsCount": "từ",
+    "completed": "hoàn thành",
+    "studyMode": "Chế độ học:"
   }
 }

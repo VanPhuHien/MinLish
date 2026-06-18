@@ -120,5 +120,32 @@
   "input": {
     "hidePassword": "Hide password",
     "showPassword": "Show password"
+  },
+  "flashcard": {
+    "tapToSeeMeaning": "Tap to see meaning",
+    "tapToGoBack": "Tap to go back",
+    "gradeAgain": "Again",
+    "gradeHard": "Hard",
+    "gradeGood": "Good",
+    "gradeEasy": "Easy",
+    "hideCard": "Hide",
+    "example": "Example:"
+  },
+  "quiz": {
+    "questionTitle": "Word corresponding to the meaning:",
+    "correct": "Correct!",
+    "incorrect": "Incorrect!",
+    "detailsTitle": "Vocabulary Details:"
+  },
+  "deckDetail": {
+    "backBtn": "Back",
+    "loading": "Loading details...",
+    "noData": "Data not found.",
+    "allNewLearned": "Congratulations! You've learned all new words in this topic.",
+    "noNewWords": "No new words left in this topic.",
+    "selectAnotherTopic": "Please select another topic from the sidebar list.",
+    "wordsCount": "words",
+    "completed": "completed",
+    "studyMode": "Study Mode:"
   }
 }

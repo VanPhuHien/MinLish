@@ -278,27 +278,63 @@
 
 @media (max-width: 768px) {
   .header-container {
-    padding: 16px var(--spacing-margin-mobile);
+    padding: 12px var(--spacing-margin-mobile);
   }
 
   .header-left {
-    gap: 20px;
+    gap: 16px;
   }
 
   .header-logo {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .header-nav {
-    gap: 16px;
+    gap: 12px;
   }
 
   .header-nav-link {
     font-size: 13px;
   }
 
+  .header-right {
+    gap: 8px;
+  }
+
+  .lang-toggle-btn span {
+    display: none; /* Ẩn chữ VI/EN trên mobile */
+  }
+
+  .lang-toggle-btn {
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    justify-content: center;
+  }
+
+  .lang-icon {
+    margin-right: 0;
+  }
+
+  .theme-toggle-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .header-username {
+    display: none; /* Ẩn tên user trên mobile */
+  }
+
+  .header-chevron {
+    display: none; /* Ẩn chevron trên mobile */
+  }
+
+  .header-user-btn {
+    padding: 2px;
+  }
+
   .header-btn-login {
-    padding: 8px 18px;
+    padding: 8px 16px;
     font-size: 13px;
   }
 }

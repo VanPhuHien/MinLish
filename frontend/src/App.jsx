@@ -8,6 +8,7 @@ import LessonListPage from './features/lessons/pages/LessonListPage'
 import ForgotPasswordPage from './features/auth/pages/ForgotPasswordPage'
 import ResetPasswordPage from './features/auth/pages/ResetPasswordPage'
 import DeckListPage from './features/flashcards/pages/DeckListPage'
+import DeckDetailPage from './features/flashcards/pages/DeckDetailPage'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from './context/AuthContext'
 import './App.css'
@@ -49,6 +50,18 @@ function App() {
   }
 
   const renderContent = () => {
+    const systemDeckMatch = currentPath.match(/^\/decks\/([a-fA-F0-9]{24})$/)
+    if (systemDeckMatch) {
+      const deckId = systemDeckMatch[1]
+      return <DeckDetailPage deckId={deckId} isSystem={true} onNavigate={navigate} />
+    }
+
+    const userDeckMatch = currentPath.match(/^\/profile\/decks\/([a-fA-F0-9]{24})$/)
+    if (userDeckMatch) {
+      const deckId = userDeckMatch[1]
+      return <DeckDetailPage deckId={deckId} isSystem={false} onNavigate={navigate} />
+    }
+
     switch (currentPath) {
       case '/login':
         return <LoginPage onNavigate={navigate} />
