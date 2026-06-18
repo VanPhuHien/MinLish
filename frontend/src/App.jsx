@@ -7,6 +7,7 @@ import VerifyEmailPage from './features/auth/pages/VerifyEmailPage'
 import LessonListPage from './features/lessons/pages/LessonListPage'
 import ForgotPasswordPage from './features/auth/pages/ForgotPasswordPage'
 import ResetPasswordPage from './features/auth/pages/ResetPasswordPage'
+import DeckListPage from './features/flashcards/pages/DeckListPage'
 import { useAuth } from './context/AuthContext'
 import './App.css'
 
@@ -55,6 +56,8 @@ function App() {
         return <VerifyEmailPage email={signupEmail} onNavigate={navigate} />
       case '/lessons':
         return <LessonListPage onNavigate={navigate} />
+      case '/decks':
+        return <DeckListPage onNavigate={navigate} />
       case '/forgot-password':
         return <ForgotPasswordPage onNavigate={navigate} />
       case '/reset-password':

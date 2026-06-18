@@ -60,7 +60,7 @@ function Header({ onNavigate }) {
             <a href="/lessons" onClick={(e) => handleClick('/lessons', e)} className="header-nav-link">
               Bài học
             </a>
-            <a href="/" onClick={(e) => handleClick('/', e)} className="header-nav-link">
+            <a href="/decks" onClick={(e) => handleClick('/decks', e)} className="header-nav-link">
               Từ vựng
             </a>
           </nav>

@@ -81,3 +81,14 @@ Hàm điều hướng:
   - **Bước 2: Thiết lập mật khẩu mới**: Nhập mật khẩu mới (yêu cầu ít nhất 6 ký tự) và xác nhận lại mật khẩu mới. Hỗ trợ nút bật/tắt hiển thị mật khẩu.
   - Gọi API `/auth/reset-password` để kiểm tra OTP và cập nhật mật khẩu mới. Thành công sẽ tự động chuyển hướng về trang đăng nhập `/login` sau 1.5 giây.
 
+### /decks (Trang danh sách bộ từ)
+- **Mô tả**: Trang hiển thị danh sách các bộ từ vựng (flashcard decks) của hệ thống và bộ từ cá nhân của người dùng.
+- **Quyền truy cập**: Hỗn hợp (Tab "Bộ từ hệ thống" là Public; Tab "Bộ từ của bạn" yêu cầu đăng nhập - Private).
+- **Chức năng**:
+  - Chuyển đổi linh hoạt giữa hai tab: "Bộ từ hệ thống" (ownerType = system) và "Bộ từ của bạn" (ownerType = user).
+  - Ở tab "Bộ từ hệ thống": Hỗ trợ tìm kiếm theo tiêu đề/mô tả bộ từ (có debounce) và lọc theo trình độ CEFR/Chủ đề Tags nhờ tái sử dụng component `Filters`.
+  - Ở tab "Bộ từ của bạn": Tối giản giao diện bằng cách ẩn toàn bộ thanh tìm kiếm và bộ lọc, chỉ hiển thị danh sách bộ từ cá nhân của người dùng hiện tại.
+  - Hiển thị danh sách bộ từ dạng lưới (grid) responsive thông qua component `DeckCard` hiển thị tối giản (ảnh đại diện, huy hiệu số lượng từ, các nhãn cấp độ/chủ đề, tiêu đề, và mô tả).
+  - Hỗ trợ phân trang danh sách bộ từ và xử lý các trạng thái tải dữ liệu (Loading, Error, Empty).
+
+
