@@ -231,8 +231,7 @@ export const updateAdminDeck = async (deckId, payload) => {
 export const deleteAdminDeck = async (deckId) => {
   const deck = await Deck.findById(deckId);
   if (!deck) throw new AppError('Không tìm thấy deck', 404);
-  await Topic.deleteMany({ deckId });
-  await Card.deleteMany({ deckId });
-  await Deck.findByIdAndDelete(deckId);
+  deck.status = 'archived';
+  await deck.save();
   return deck;
 };
