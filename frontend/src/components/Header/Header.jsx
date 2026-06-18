@@ -4,7 +4,7 @@ import { useTheme } from '../../context/ThemeContext'
 import { useTranslation } from 'react-i18next'
 import './Header.css'
 
-function Header({ onNavigate }) {
+function Header({ onNavigate, currentPath = window.location.pathname }) {
   const { user, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const { t, i18n } = useTranslation()
@@ -65,10 +65,18 @@ function Header({ onNavigate }) {
             MinLish
           </a>
           <nav className="header-nav">
-            <a href="/lessons" onClick={(e) => handleClick('/lessons', e)} className="header-nav-link">
+            <a
+              href="/lessons"
+              onClick={(e) => handleClick('/lessons', e)}
+              className={`header-nav-link ${currentPath.startsWith('/lessons') ? 'active' : ''}`}
+            >
               {t('header.lessons')}
             </a>
-            <a href="/decks" onClick={(e) => handleClick('/decks', e)} className="header-nav-link">
+            <a
+              href="/decks"
+              onClick={(e) => handleClick('/decks', e)}
+              className={`header-nav-link ${currentPath.startsWith('/decks') ? 'active' : ''}`}
+            >
               {t('header.vocabulary')}
             </a>
           </nav>

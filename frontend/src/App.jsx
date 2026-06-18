@@ -210,7 +210,7 @@ function App() {
 
   return (
     <>
-      <Header onNavigate={navigate} />
+      <Header onNavigate={navigate} currentPath={currentPath} />
       {renderContent()}
       <Footer onNavigate={navigate} />
     </>
