@@ -64,4 +64,20 @@ Hàm điều hướng:
   - Lọc bài học linh hoạt theo cấp độ CEFR và các nhãn chủ đề.
   - Hiển thị danh sách các bài học dưới dạng lưới (grid) có khả năng tự động co giãn kích thước (responsive), mỗi bài học biểu thị rõ các chế độ học hỗ trợ (Dictation, Shadowing).
   - Phân trang bài học để dễ dàng quản lý số lượng bài hiển thị.
+### /forgot-password (Trang quên mật khẩu)
+- **Mô tả**: Giao diện yêu cầu khôi phục mật khẩu tài khoản qua email.
+- **Quyền truy cập**: Public (Công khai).
+- **Chức năng**:
+  - Nhập Email đã đăng ký để hệ thống kiểm tra sự tồn tại của tài khoản.
+  - Sau khi xác thực hợp lệ và bấm gửi, ứng dụng sẽ gọi API `/auth/forgot-password` để gửi mã OTP 6 chữ số qua email của người dùng.
+  - Chuyển hướng sang trang đặt lại mật khẩu `/reset-password` kèm theo email đã nhập.
+
+### /reset-password (Trang đặt lại mật khẩu)
+- **Mô tả**: Giao diện xác thực mã OTP quên mật khẩu và thiết lập mật khẩu mới.
+- **Quyền truy cập**: Public (Công khai).
+- **Tham số nhận vào**: Địa chỉ email cần khôi phục mật khẩu.
+- **Chức năng**:
+  - **Bước 1: Xác thực OTP**: Nhập mã OTP 6 chữ số đã được gửi qua email (hỗ trợ tự động chuyển focus và dán mã nhanh). Đồng thời tích hợp cơ chế đếm ngược gửi lại mã OTP (cooldown).
+  - **Bước 2: Thiết lập mật khẩu mới**: Nhập mật khẩu mới (yêu cầu ít nhất 6 ký tự) và xác nhận lại mật khẩu mới. Hỗ trợ nút bật/tắt hiển thị mật khẩu.
+  - Gọi API `/auth/reset-password` để kiểm tra OTP và cập nhật mật khẩu mới. Thành công sẽ tự động chuyển hướng về trang đăng nhập `/login` sau 1.5 giây.
 

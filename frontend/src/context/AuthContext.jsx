@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { loginApi, signupApi, verifyEmailApi, resendVerifyEmailApi, logoutApi, refreshTokenApi } from '../features/auth/authApi'
+import { loginApi, signupApi, verifyEmailApi, resendVerifyEmailApi, logoutApi, refreshTokenApi, forgotPasswordApi, resetPasswordApi } from '../features/auth/authApi'
 
 const AuthContext = createContext(null)
 
@@ -138,6 +138,34 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  // Quên mật khẩu
+  const forgotPassword = async (email) => {
+    try {
+      const response = await forgotPasswordApi(email)
+      if (response.success) {
+        return { success: true, message: response.message }
+      }
+      return { success: false, message: response.message || 'Gửi yêu cầu thất bại' }
+    } catch (error) {
+      const message = error.response?.data?.message || 'Gửi yêu cầu thất bại. Vui lòng thử lại sau.'
+      return { success: false, message }
+    }
+  }
+
+  // Đặt lại mật khẩu
+  const resetPassword = async (email, otp, newPassword) => {
+    try {
+      const response = await resetPasswordApi(email, otp, newPassword)
+      if (response.success) {
+        return { success: true, message: response.message }
+      }
+      return { success: false, message: response.message || 'Đặt lại mật khẩu thất bại' }
+    } catch (error) {
+      const message = error.response?.data?.message || 'Đặt lại mật khẩu thất bại. Vui lòng thử lại sau.'
+      return { success: false, message }
+    }
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -149,6 +177,8 @@ export const AuthProvider = ({ children }) => {
         verifyEmail,
         resendOtp,
         logout,
+        forgotPassword,
+        resetPassword,
       }}
     >
       {children}

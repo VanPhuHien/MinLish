@@ -5,6 +5,8 @@ import LoginPage from './features/auth/pages/LoginPage'
 import SignupPage from './features/auth/pages/SignupPage'
 import VerifyEmailPage from './features/auth/pages/VerifyEmailPage'
 import LessonListPage from './features/lessons/pages/LessonListPage'
+import ForgotPasswordPage from './features/auth/pages/ForgotPasswordPage'
+import ResetPasswordPage from './features/auth/pages/ResetPasswordPage'
 import { useAuth } from './context/AuthContext'
 import './App.css'
 
@@ -13,6 +15,7 @@ function App() {
   const { loading } = useAuth()
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
   const [signupEmail, setSignupEmail] = useState('')
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState('')
 
   useEffect(() => {
     const handlePopState = () => {
@@ -34,7 +37,11 @@ function App() {
     window.history.pushState({}, '', path)
     setCurrentPath(path)
     if (emailParam) {
-      setSignupEmail(emailParam)
+      if (path === '/reset-password') {
+        setForgotPasswordEmail(emailParam)
+      } else {
+        setSignupEmail(emailParam)
+      }
     }
   }
 
@@ -48,6 +55,10 @@ function App() {
         return <VerifyEmailPage email={signupEmail} onNavigate={navigate} />
       case '/lessons':
         return <LessonListPage onNavigate={navigate} />
+      case '/forgot-password':
+        return <ForgotPasswordPage onNavigate={navigate} />
+      case '/reset-password':
+        return <ResetPasswordPage email={forgotPasswordEmail} onNavigate={navigate} />
       default:
         return (
           <main className="main-content">

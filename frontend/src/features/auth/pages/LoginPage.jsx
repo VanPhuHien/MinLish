@@ -44,6 +44,7 @@ function LoginPage({ onNavigate }) {
 
   const handleForgotPasswordClick = (e) => {
     e.preventDefault()
+    if (onNavigate) onNavigate('/forgot-password')
   }
 
   return (
