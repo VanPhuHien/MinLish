@@ -23,15 +23,18 @@ forgot-password, reset-password tương tự
 ## **Lessons công khai**
 
 - GET /api/v1/lessons — danh sách lesson đã publish; hỗ trợ filter theo tagId, cefrLevelId, mode, q, page, limit.
-- GET /api/v1/lessons/{lessonId} — chi tiết một lesson đã publish.
-- GET /api/v1/lessons/{lessonId}/segments — danh sách segment của lesson theo order.
-- GET /api/v1/lessons/{lessonId}/segments/{segmentId} — chi tiết một segment.
 
 ## **Decks công khai**
 
 - GET /api/v1/decks — danh sách deck hệ thống (ownerType = system) đã publish; hỗ trợ filter theo tagId, cefrLevelId, q, page, limit. Không bắt buộc đăng nhập. Deck cá nhân của user truy cập qua /users/me/decks.
 
 # **Cần token API**
+
+## **Lessons**
+
+- GET /api/v1/lessons/{lessonId} — chi tiết một lesson đã publish. Yêu cầu đăng nhập.
+- GET /api/v1/lessons/{lessonId}/segments — danh sách segment của lesson theo order. Yêu cầu đăng nhập.
+- GET /api/v1/lessons/{lessonId}/segments/{segmentId} — chi tiết một segment. Yêu cầu đăng nhập.
 
 ## **Profile**
 

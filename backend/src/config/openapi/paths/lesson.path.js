@@ -1,4 +1,5 @@
 const optionalBearerSecurity = [{}, { BearerAuth: [] }];
+const bearerSecurity = [{ BearerAuth: [] }];
 
 export default {
   '/lessons': {
@@ -120,8 +121,8 @@ export default {
       tags: ['Lesson'],
       summary: 'Lấy chi tiết một bài học đã công khai',
       description:
-        'Trả về thông tin chi tiết của một bài học đã công khai. Không bắt buộc đăng nhập; nếu gửi Bearer token hợp lệ thì response có thêm userProgress.',
-      security: optionalBearerSecurity,
+        'Trả về thông tin chi tiết của một bài học đã công khai. Yêu cầu đăng nhập.',
+      security: bearerSecurity,
       parameters: [
         {
           name: 'lessonId',
@@ -180,6 +181,9 @@ export default {
             },
           },
         },
+        401: {
+          $ref: '#/components/responses/Unauthorized',
+        },
         500: {
           $ref: '#/components/responses/ServerError',
         },
@@ -191,8 +195,8 @@ export default {
       tags: ['Lesson'],
       summary: 'Lấy danh sách segment của bài học',
       description:
-        'Trả về danh sách segment của một bài học theo thứ tự order tăng dần. Không bắt buộc đăng nhập; nếu gửi Bearer token hợp lệ thì response có thêm userProgress.',
-      security: optionalBearerSecurity,
+        'Trả về danh sách segment của một bài học theo thứ tự order tăng dần. Yêu cầu đăng nhập.',
+      security: bearerSecurity,
       parameters: [
         {
           name: 'lessonId',
@@ -251,6 +255,9 @@ export default {
             },
           },
         },
+        401: {
+          $ref: '#/components/responses/Unauthorized',
+        },
         500: {
           $ref: '#/components/responses/ServerError',
         },
@@ -262,8 +269,8 @@ export default {
       tags: ['Lesson'],
       summary: 'Lấy chi tiết một segment',
       description:
-        'Trả về thông tin chi tiết của một segment thuộc bài học công khai. Không bắt buộc đăng nhập; nếu gửi Bearer token hợp lệ thì response có thêm userProgress.',
-      security: optionalBearerSecurity,
+        'Trả về thông tin chi tiết của một segment thuộc bài học công khai. Yêu cầu đăng nhập.',
+      security: bearerSecurity,
       parameters: [
         {
           name: 'lessonId',
@@ -332,6 +339,9 @@ export default {
               },
             },
           },
+        },
+        401: {
+          $ref: '#/components/responses/Unauthorized',
         },
         500: {
           $ref: '#/components/responses/ServerError',
