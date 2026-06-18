@@ -115,12 +115,18 @@ The design style follows a **Modern Minimalist** movement with a **Tactile** twi
 ## Colors
 The palette is built on a "New Heritage" foundation. 
 
-- **Primary (Deep Coral):** Reserved strictly for high-priority actions and primary brand touchpoints. It provides a grounded, sophisticated warmth.
+- **Primary (Deep Coral):** Reserved strictly for high-priority actions and primary brand touchpoints. It provides a grounded, sophisticated warmth. In Dark Mode, this is shifted to a softer coral/peach tone (`#ffb4a9`) to maintain optimal contrast and a warm glow against dark backgrounds.
 - **Secondary (Blue):** Used for utility-based highlights, inline links, and interactive states that require distinction from the primary brand color.
-- **Surface (Cream):** The primary background color. It reduces eye strain and provides a premium, paper-like feel.
-- **Neutral (Ink):** A near-black for maximum legibility on cream surfaces.
+- **Surface (Cream):** The primary background color in Light Mode (`#fcf9f8`). It reduces eye strain and provides a premium, paper-like feel.
+- **Neutral (Ink):** A near-black (`#1c1b1b`) for maximum legibility on cream surfaces in Light Mode.
 
-Avoid using pure black (#000000) or pure white (#FFFFFF) to maintain the organic, high-end aesthetic.
+Avoid using pure black (`#000000`) or pure white (`#FFFFFF`) to maintain the organic, high-end aesthetic.
+
+### Theme Modes (Light & Dark)
+The application dynamically toggles between Light and Dark themes via a global `ThemeContext`, changing CSS color variables through the `[data-theme='dark']` selector on the root element.
+
+- **Dark Mode Background:** Built on a deep, warm dark charcoal (`#141212` for primary surface and `#0b0a0a` for lowest container) to preserve the "warm minimalism" vibe instead of a harsh pure black.
+- **Dark Mode Foreground:** Text and outline colors are shifted to softer light tones (`#e6e1e1` for text, `#d8c2be` for variant details) to minimize glare and keep reading comfortable under low-light conditions.
 
 ## Typography
 This design system uses **Inter** exclusively to ensure a systematic and utilitarian foundation that contrasts beautifully with the warm color palette. 
