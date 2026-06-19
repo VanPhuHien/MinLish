@@ -100,7 +100,12 @@
     "loading": "Loading lessons list...",
     "empty": "No lessons found matching the filters.",
     "fetchError": "Failed to fetch lessons list.",
-    "serverError": "An error occurred while connecting to the server. Please try again later."
+    "serverError": "An error occurred while connecting to the server. Please try again later.",
+    "selectModeTitle": "Choose Study Mode",
+    "selectModeSubtitle": "Select your practice method for this lesson",
+    "dictationDesc": "Practice dictation to improve sound recognition and vocabulary.",
+    "shadowingDesc": "Mimic native pronunciation to master natural intonation.",
+    "cancel": "Cancel"
   },
   "decks": {
     "systemTab": "System Decks",
