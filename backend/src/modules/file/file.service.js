@@ -3,13 +3,17 @@ import {
   PutObjectCommand,
   GetObjectCommand,
   DeleteObjectCommand,
+  HeadObjectCommand,
 } from '@aws-sdk/client-s3';
 import crypto from 'crypto';
+import mongoose from 'mongoose';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import 'dotenv';
 import sharp from 'sharp';
 import AppError from '../../utils/AppError.js';
-import { FILE } from '../../constants/codes/index.js';
+import { FILE, COMMON } from '../../constants/codes/index.js';
+import Card from '../../models/card.model.js';
+import UserSegmentProgress from '../../models/userSegmentProgress.model.js';
 
 const bucketName = process.env.BUCKET_NAME;
 const s3 = new S3Client({
@@ -22,6 +26,12 @@ const s3 = new S3Client({
 
 const randomImageName = (bytes = 32) =>
   crypto.randomBytes(bytes).toString('hex');
+
+// Build the public/CDN URL served to clients from a stored S3 key.
+export const buildPublicUrl = (key) =>
+  key
+    ? `${(process.env.S3_PUBLIC_BASE_URL || '').replace(/\/$/, '')}/${key}`
+    : null;
 
 const UPLOAD_CONFIG = {
   'shadowing-audio': {
@@ -102,6 +112,66 @@ export const createUploadPresignedUrl = async (
   );
 
   return { uploadUrl, key, expiresIn: 60 };
+};
+
+// Persist the public URL into the resource matching the purpose.
+// Each purpose targets a specific model/field and requires a resourceId.
+const persistUrlByPurpose = async ({ purpose, url, resourceId, userId }) => {
+  if (!resourceId) throw new AppError(FILE.RESOURCE_ID_REQUIRED, 400);
+  if (!mongoose.isValidObjectId(resourceId))
+    throw new AppError(FILE.RESOURCE_NOT_FOUND, 404);
+
+  if (purpose === 'card-image') {
+    const card = await Card.findByIdAndUpdate(
+      resourceId,
+      { imageUrl: url },
+      { new: true }
+    );
+    if (!card) throw new AppError(FILE.RESOURCE_NOT_FOUND, 404);
+    return;
+  }
+
+  if (purpose === 'shadowing-audio') {
+    const progress = await UserSegmentProgress.findOneAndUpdate(
+      { userId, segmentId: resourceId },
+      { 'shadowing.latestAudioUrl': url },
+      { new: true }
+    );
+    if (!progress) throw new AppError(FILE.RESOURCE_NOT_FOUND, 404);
+    return;
+  }
+
+  throw new AppError(FILE.CONFIRM_NOT_SUPPORTED, 400);
+};
+
+// Step 3 of the upload lifecycle: after the client PUTs to S3, confirm the
+// object exists, validate ownership via the key prefix, then store the public
+// URL on the target resource. card-image is admin-only.
+export const confirmUpload = async (
+  { key, purpose, resourceId },
+  { id: userId, role }
+) => {
+  const config = UPLOAD_CONFIG[purpose];
+  if (!config) throw new AppError(FILE.INVALID_PURPOSE, 400);
+
+  if (purpose === 'card-image' && role !== 'admin')
+    throw new AppError(COMMON.FORBIDDEN, 403);
+
+  // Ownership: the key must have been minted for this user (or admin) under
+  // the purpose's prefix — never trust a client-supplied key blindly.
+  if (!key.startsWith(`${config.prefix}/${userId}/`))
+    throw new AppError(FILE.KEY_OWNERSHIP_MISMATCH, 403);
+
+  // Confirm the object was actually uploaded before persisting its URL.
+  try {
+    await s3.send(new HeadObjectCommand({ Bucket: bucketName, Key: key }));
+  } catch {
+    throw new AppError(FILE.UPLOAD_NOT_FOUND, 404);
+  }
+
+  const url = buildPublicUrl(key);
+  await persistUrlByPurpose({ purpose, url, resourceId, userId });
+  return { key, url };
 };
 
 /**

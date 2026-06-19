@@ -82,7 +82,10 @@ forgot-password, reset-password tương tự
 
 ## **Upload file (S3)**
 
-- POST /api/v1/s3/presigned-url — tạo URL PUT ký sẵn (hết hạn 60s) để client upload file trực tiếp lên S3. Body: contentType (bắt buộc), purpose (bắt buộc: shadowing-audio | deck-import | card-image), fileSize (tùy chọn). Key sinh ở server theo userId; backend không nhận bytes. Trả về uploadUrl + key + expiresIn. Lưu key vào DB sau khi upload xong.
+Vòng đời upload 3 bước: (1) xin presigned PUT → (2) client PUT bytes thẳng lên S3 → (3) confirm để backend lưu URL vào resource.
+
+- POST /api/v1/s3/presigned-url — tạo URL PUT ký sẵn (hết hạn 60s) để client upload file trực tiếp lên S3. Body: contentType (bắt buộc), purpose (bắt buộc: shadowing-audio | deck-import | card-image), fileSize (tùy chọn). Key sinh ở server theo userId; backend không nhận bytes. Trả về uploadUrl + key + expiresIn.
+- POST /api/v1/s3/confirm — xác nhận sau khi PUT xong. Body: key (bắt buộc, lấy từ presigned-url), purpose (bắt buộc: shadowing-audio | card-image), resourceId (cardId cho card-image, segmentId cho shadowing-audio). Backend HeadObject xác nhận object tồn tại + validate key thuộc user (đúng prefix theo userId), rồi dựng URL public/CDN và lưu vào resource (Card.imageUrl / userSegmentProgress.shadowing.latestAudioUrl). card-image chỉ admin. Trả về { key, url }. DB lưu URL đầy đủ; client đọc lại trực tiếp field, không cần ký lại.
 
 ## **Progress của user**
 

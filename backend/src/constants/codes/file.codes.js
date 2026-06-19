@@ -4,6 +4,12 @@ export const FILE = Object.freeze({
   CONTENT_TYPE_NOT_ALLOWED: 'CONTENT_TYPE_NOT_ALLOWED',
   FILE_TOO_LARGE: 'FILE_TOO_LARGE',
   INVALID_IMAGE_FORMAT: 'INVALID_IMAGE_FORMAT',
+  UPLOAD_CONFIRMED: 'UPLOAD_CONFIRMED',
+  KEY_OWNERSHIP_MISMATCH: 'KEY_OWNERSHIP_MISMATCH',
+  UPLOAD_NOT_FOUND: 'UPLOAD_NOT_FOUND',
+  RESOURCE_ID_REQUIRED: 'RESOURCE_ID_REQUIRED',
+  RESOURCE_NOT_FOUND: 'RESOURCE_NOT_FOUND',
+  CONFIRM_NOT_SUPPORTED: 'CONFIRM_NOT_SUPPORTED',
 });
 
 export const FILE_MESSAGES = {
@@ -12,4 +18,10 @@ export const FILE_MESSAGES = {
   CONTENT_TYPE_NOT_ALLOWED: 'Content type is not allowed for this purpose',
   FILE_TOO_LARGE: 'File exceeds the allowed size limit',
   INVALID_IMAGE_FORMAT: 'Invalid file format! Only JPG/PNG images are accepted.',
+  UPLOAD_CONFIRMED: 'Upload confirmed successfully',
+  KEY_OWNERSHIP_MISMATCH: 'You do not own this upload',
+  UPLOAD_NOT_FOUND: 'Uploaded object not found',
+  RESOURCE_ID_REQUIRED: 'resourceId is required for this purpose',
+  RESOURCE_NOT_FOUND: 'Target resource not found',
+  CONFIRM_NOT_SUPPORTED: 'Confirm is not supported for this purpose',
 };

@@ -41,7 +41,7 @@ describe('POST /api/v1/s3/presigned-url', () => {
         .send({ contentType: 'audio/webm', purpose: 'shadowing-audio' });
 
       expect(res.status).toBe(200);
-      expect(res.body.message).toBe('Tạo presigned URL thành công.');
+      expect(res.body.code).toBe('PRESIGNED_URL_SUCCESS');
       expect(res.body.data.expiresIn).toBe(60);
       expect(res.body.data.key).toMatch(
         new RegExp(`^shadowing/${testUserId.toString()}/[0-9a-f]{32}\\.webm$`)
