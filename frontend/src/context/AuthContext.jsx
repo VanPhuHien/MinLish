@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }) => {
       const status = error.response?.status
       const isNotVerified =
         (status === 400 || status === 403) &&
-        message === 'Tài khoản chưa được kích hoạt, vui lòng xác thực email'
+        error.response?.data?.code === 'ACCOUNT_NOT_VERIFIED'
 
       return {
         success: false,
