@@ -4,7 +4,7 @@ import { useAuth } from '../../../../context/AuthContext'
 import { useTheme } from '../../../../context/ThemeContext'
 import './AdminHeader.css'
 
-function AdminHeader({ onNavigate }) {
+function AdminHeader({ onNavigate, onToggleMobileSidebar }) {
   const { t, i18n } = useTranslation()
   const { user, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
@@ -43,6 +43,18 @@ function AdminHeader({ onNavigate }) {
 
   return (
     <header className="admin-header">
+      <button
+        className="admin-mobile-menu-btn"
+        onClick={onToggleMobileSidebar}
+        aria-label="Toggle Menu"
+      >
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+
       <div className="admin-header-actions">
         <button
           onClick={toggleLanguage}

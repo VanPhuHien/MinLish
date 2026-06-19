@@ -54,12 +54,13 @@ const NAV_ITEMS = [
   },
 ]
 
-function AdminSidebar({ currentPath, onNavigate, isCollapsed, onToggleCollapse }) {
+function AdminSidebar({ currentPath, onNavigate, isCollapsed, onToggleCollapse, isMobileOpen, onCloseMobile }) {
   const { t } = useTranslation()
 
   const handleNav = (e, path) => {
     e.preventDefault()
     if (onNavigate) onNavigate(path)
+    if (onCloseMobile) onCloseMobile()
   }
 
   const isActive = (path) => {
@@ -68,19 +69,15 @@ function AdminSidebar({ currentPath, onNavigate, isCollapsed, onToggleCollapse }
   }
 
   return (
-    <aside className={`admin-sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+    <aside className={`admin-sidebar ${isCollapsed ? 'collapsed' : ''} ${isMobileOpen ? 'mobile-open' : ''}`}>
       <div className="admin-sidebar-brand">
         <div className="admin-sidebar-logo">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <img src="/favicon.svg" alt="MinLish Logo" className="admin-sidebar-logo-img" />
         </div>
-        {!isCollapsed && (
-          <div>
-            <div className="admin-sidebar-title">{t('admin.sidebarTitle')}</div>
-            <div className="admin-sidebar-subtitle">{t('admin.sidebarSubtitle')}</div>
-          </div>
-        )}
+        <div className="admin-sidebar-brand-text">
+          <div className="admin-sidebar-title">{t('admin.sidebarTitle')}</div>
+          <div className="admin-sidebar-subtitle">{t('admin.sidebarSubtitle')}</div>
+        </div>
       </div>
 
       <nav className="admin-sidebar-nav">
@@ -93,7 +90,7 @@ function AdminSidebar({ currentPath, onNavigate, isCollapsed, onToggleCollapse }
             title={isCollapsed ? t(item.labelKey) : undefined}
           >
             <span className="admin-nav-icon">{item.icon}</span>
-            {!isCollapsed && <span>{t(item.labelKey)}</span>}
+            <span className="admin-nav-label">{t(item.labelKey)}</span>
           </a>
         ))}
       </nav>
