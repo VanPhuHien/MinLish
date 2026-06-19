@@ -122,11 +122,6 @@ export default {
             example: 95.5,
             description: 'Điểm tốt nhất.',
           },
-          completed: {
-            type: 'boolean',
-            example: true,
-            description: 'Đã vượt qua hay chưa.',
-          },
           hintUsedCount: {
             type: 'integer',
             example: 1,
@@ -152,11 +147,6 @@ export default {
             type: 'string',
             example: 'https://cdn.minlish.com/audio/user_shadowing.mp3',
             description: 'URL audio mới nhất.',
-          },
-          completed: {
-            type: 'boolean',
-            example: false,
-            description: 'Đã vượt qua hay chưa.',
           },
         },
         description: 'Trạng thái Shadowing cho segment này.',
@@ -389,8 +379,6 @@ export default {
         type: 'object',
         properties: {
           attemptCount: { type: 'integer', example: 3 },
-          bestScore: { type: 'number', example: 95.5 },
-          completed: { type: 'boolean', example: true },
           hintUsedCount: { type: 'integer', example: 1 },
         },
       },
@@ -398,12 +386,10 @@ export default {
         type: 'object',
         properties: {
           attemptCount: { type: 'integer', example: 2 },
-          bestScore: { type: 'number', example: 88.0 },
           latestAudioUrl: {
             type: 'string',
             example: 'https://cdn.minlish.com/audio/user_shadowing.mp3',
           },
-          completed: { type: 'boolean', example: false },
         },
       },
     },
