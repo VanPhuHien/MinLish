@@ -62,6 +62,7 @@ export const listDecks = async (req, res, next) => {
       tagId: req.query.tagId,
       cefrLevelId: req.query.cefrLevelId,
       q: req.query.q,
+      status: req.query.status,
       page: parseInt(req.query.page) || 1,
       // parseInt thành công trả về số nguyên, ko thì NaN -> NaN || 1 = 1
       limit: parseInt(req.query.limit) || 10,

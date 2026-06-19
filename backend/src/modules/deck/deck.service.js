@@ -132,11 +132,12 @@ export const listDecks = async (filters) => {
 };
 
 export const listAdminDecks = async (filters) => {
-  const { tagId, cefrLevelId, q, page, limit } = filters;
+  const { tagId, cefrLevelId, q, status, page, limit } = filters;
 
   const query = {};
   if (tagId) query.tagIds = tagId;
   if (cefrLevelId) query.cefrLevelIds = cefrLevelId;
+  if (status) query.status = status;
   if (q) {
     const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     // /[.*+?^${}()|[\]\\]/g
