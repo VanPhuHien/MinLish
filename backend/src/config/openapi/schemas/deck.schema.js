@@ -81,9 +81,10 @@ export default {
         type: 'boolean',
         example: true,
       },
+      code: { type: 'string', example: 'DECK_LIST_SUCCESS' },
       message: {
         type: 'string',
-        example: 'Lấy danh sách deck thành công.',
+        example: 'Decks retrieved successfully',
       },
       data: {
         type: 'object',
@@ -128,9 +129,10 @@ export default {
         type: 'boolean',
         example: true,
       },
+      code: { type: 'string', example: 'DECK_DETAIL_SUCCESS' },
       message: {
         type: 'string',
-        example: 'Lấy chi tiết deck thành công.',
+        example: 'Deck detail retrieved successfully',
       },
       data: {
         $ref: '#/components/schemas/Deck',
@@ -209,9 +211,10 @@ export default {
         type: 'boolean',
         example: true,
       },
+      code: { type: 'string', example: 'DECK_TOPICS_SUCCESS' },
       message: {
         type: 'string',
-        example: 'Lấy danh sách topic trong deck thành công.',
+        example: 'Deck topics retrieved successfully',
       },
       data: {
         type: 'object',
@@ -421,9 +424,10 @@ export default {
         type: 'boolean',
         example: true,
       },
+      code: { type: 'string', example: 'TOPIC_CARDS_SUCCESS' },
       message: {
         type: 'string',
-        example: 'Lấy danh sách card trong topic thành công.',
+        example: 'Topic cards retrieved successfully',
       },
       data: {
         type: 'object',

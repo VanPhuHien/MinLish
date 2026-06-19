@@ -1,5 +1,6 @@
 import { successResponse } from '../../utils/response.js';
 import AppError from '../../utils/AppError.js';
+import { LESSON, COMMON } from '../../constants/codes/index.js';
 import {
   getLessonSchema,
   listLessonsSchema,
@@ -16,7 +17,7 @@ export const listLessons = async (req, res, next) => {
         field: e.path.join('.'),
         message: e.message,
       }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const userId = req.user?.id ?? null;
@@ -24,7 +25,7 @@ export const listLessons = async (req, res, next) => {
 
     return res
       .status(200)
-      .json(successResponse('Lấy danh sách bài học thành công.', data));
+      .json(successResponse(LESSON.LESSON_LIST_SUCCESS, data));
   } catch (error) {
     next(error);
   }
@@ -38,7 +39,7 @@ export const getLessonById = async (req, res, next) => {
         field: e.path.join('.'),
         message: e.message,
       }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const userId = req.user?.id ?? null;
@@ -46,7 +47,7 @@ export const getLessonById = async (req, res, next) => {
 
     return res
       .status(200)
-      .json(successResponse('Lấy chi tiết bài học thành công.', data));
+      .json(successResponse(LESSON.LESSON_DETAIL_SUCCESS, data));
   } catch (error) {
     next(error);
   }
@@ -60,7 +61,7 @@ export const getSegments = async (req, res, next) => {
         field: e.path.join('.'),
         message: e.message,
       }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const userId = req.user?.id ?? null;
@@ -71,7 +72,7 @@ export const getSegments = async (req, res, next) => {
 
     return res
       .status(200)
-      .json(successResponse('Lấy segments thành công', data));
+      .json(successResponse(LESSON.SEGMENT_LIST_SUCCESS, data));
   } catch (err) {
     next(err);
   }
@@ -85,7 +86,7 @@ export const getSegmentById = async (req, res, next) => {
         field: e.path.join('.'),
         message: e.message,
       }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const userId = req.user?.id ?? null;
@@ -94,7 +95,7 @@ export const getSegmentById = async (req, res, next) => {
 
     return res
       .status(200)
-      .json(successResponse('Lấy chi tiết segment thành công', data));
+      .json(successResponse(LESSON.SEGMENT_DETAIL_SUCCESS, data));
   } catch (err) {
     next(err);
   }

@@ -87,11 +87,12 @@ export default {
               },
               example: {
                 success: false,
-                message: 'Dữ liệu không hợp lệ',
+                code: 'INVALID_DATA',
+                message: 'Invalid request data',
                 errors: [
                   {
                     field: 'page',
-                    message: 'page phải là số nguyên lớn hơn hoặc bằng 1',
+                    message: 'page must be an integer >= 1',
                   },
                 ],
               },
@@ -144,11 +145,12 @@ export default {
               },
               example: {
                 success: false,
-                message: 'Dữ liệu không hợp lệ',
+                code: 'INVALID_DATA',
+                message: 'Invalid request data',
                 errors: [
                   {
                     field: 'deckId',
-                    message: 'deckId không đúng định dạng ObjectId',
+                    message: 'deckId is not a valid ObjectId',
                   },
                 ],
               },
@@ -167,7 +169,8 @@ export default {
               },
               example: {
                 success: false,
-                message: 'Không tìm thấy deck',
+                code: 'DECK_NOT_FOUND',
+                message: 'Deck not found',
               },
             },
           },
@@ -218,11 +221,12 @@ export default {
               },
               example: {
                 success: false,
-                message: 'Dữ liệu không hợp lệ',
+                code: 'INVALID_DATA',
+                message: 'Invalid request data',
                 errors: [
                   {
                     field: 'deckId',
-                    message: 'deckId không đúng định dạng ObjectId',
+                    message: 'deckId is not a valid ObjectId',
                   },
                 ],
               },
@@ -241,7 +245,8 @@ export default {
               },
               example: {
                 success: false,
-                message: 'Không tìm thấy deck hoặc topic',
+                code: 'DECK_OR_TOPIC_NOT_FOUND',
+                message: 'Deck or topic not found',
               },
             },
           },
@@ -303,11 +308,12 @@ export default {
               },
               example: {
                 success: false,
-                message: 'Dữ liệu không hợp lệ',
+                code: 'INVALID_DATA',
+                message: 'Invalid request data',
                 errors: [
                   {
                     field: 'topicId',
-                    message: 'topicId không đúng định dạng ObjectId',
+                    message: 'topicId is not a valid ObjectId',
                   },
                 ],
               },
@@ -326,7 +332,8 @@ export default {
               },
               example: {
                 success: false,
-                message: 'Không tìm thấy deck, topic hoặc card',
+                code: 'DECK_OR_TOPIC_NOT_FOUND',
+                message: 'Deck or topic not found',
               },
             },
           },

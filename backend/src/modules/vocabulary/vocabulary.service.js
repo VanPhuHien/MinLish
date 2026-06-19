@@ -4,6 +4,7 @@ import Topic from '../../models/topic.model.js';
 import Deck from '../../models/deck.model.js';
 import UserCardState from '../../models/userCardState.model.js';
 import AppError from '../../utils/AppError.js';
+import { VOCABULARY } from '../../constants/codes/index.js';
 
 // Search published SYSTEM-deck vocabulary by term, to prefill the
 // "create card" form. Returns a flat shape matching the create payload.
@@ -84,10 +85,7 @@ export const createManualCardService = async (body) => {
   } = body;
 
   if (!deckId || !topicId || !term || !translation)
-    throw new AppError(
-      'Thiếu các trường bắt buộc (deckId, topicId, term, translation)',
-      400
-    );
+    throw new AppError(VOCABULARY.MISSING_REQUIRED_FIELDS, 400);
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -98,12 +96,12 @@ export const createManualCardService = async (body) => {
       //.session(session) nằm trong transaction;
       // do mặc định ngoài transaction
     ]);
-    if (!deck) throw new AppError('Không tìm thấy deck', 404);
+    if (!deck) throw new AppError(VOCABULARY.DECK_NOT_FOUND, 404);
 
-    if (!topic) throw new AppError('Không tìm thấy topic', 404);
+    if (!topic) throw new AppError(VOCABULARY.TOPIC_NOT_FOUND, 404);
 
     if (topic.deckId.toString() !== deck._id.toString())
-      throw new AppError('Topic không thuộc về Deck này', 400);
+      throw new AppError(VOCABULARY.TOPIC_NOT_IN_DECK, 400);
 
     const existingCard = await Card.findOne({
       topicId: topic._id,
@@ -114,7 +112,12 @@ export const createManualCardService = async (body) => {
     }).session(session);
 
     if (existingCard)
-      throw new AppError(`Từ vựng "${term}" đã tồn tại trong topic này!`, 409); // Conflict
+      throw new AppError(
+        VOCABULARY.VOCAB_ALREADY_EXISTS,
+        409,
+        [],
+        `Vocabulary "${term}" already exists in this topic`
+      ); // Conflict
 
     const lastCard = await Card.findOne({ topicId: topic._id })
       .sort({ order: -1 })
@@ -178,26 +181,23 @@ export const updateCardService = async (cardId, updateData, currentUserId) => {
   } = updateData;
 
   const card = await Card.findById(cardId);
-  if (!card) throw new AppError('Không tìm thấy từ vựng này.', 404);
+  if (!card) throw new AppError(VOCABULARY.VOCAB_NOT_FOUND, 404);
 
   const deck = await Deck.findById(card.deckId);
-  if (!deck) throw new AppError('Không tìm thấy bộ từ vựng chứa từ này.', 404);
+  if (!deck) throw new AppError(VOCABULARY.VOCAB_DECK_NOT_FOUND, 404);
 
   const topic = await Topic.findById(card.topicId);
-  if (!topic) throw new AppError('Không tìm thấy chủ đề chứa từ này.', 404);
+  if (!topic) throw new AppError(VOCABULARY.VOCAB_TOPIC_NOT_FOUND, 404);
 
   if (topic.deckId.toString() !== deck._id.toString())
-    throw new AppError('Topic không thuộc về Deck này', 400);
+    throw new AppError(VOCABULARY.TOPIC_NOT_IN_DECK, 400);
 
   const isUserOwner =
     deck.ownerType === 'user' &&
     deck.ownerId.toString() === currentUserId.toString();
 
   if (!isUserOwner)
-    throw new AppError(
-      'Bạn không có quyền cập nhật từ này vì nó thuộc về hệ thống hoặc người dùng khác.',
-      403
-    );
+    throw new AppError(VOCABULARY.VOCAB_UPDATE_FORBIDDEN, 403);
 
   // Kiểm tra trùng term trong cùng topic (nếu có update term)
   if (term) {
@@ -207,7 +207,12 @@ export const updateCardService = async (cardId, updateData, currentUserId) => {
       _id: { $ne: cardId }, // loại trừ chính card đang update
     });
     if (duplicate)
-      throw new AppError(`Từ vựng "${term}" đã tồn tại trong chủ đề này.`, 409);
+      throw new AppError(
+        VOCABULARY.VOCAB_ALREADY_EXISTS,
+        409,
+        [],
+        `Vocabulary "${term}" already exists in this topic`
+      );
   }
 
   // Lọc undefined để tránh $set ghi undefined làm mất data trong MongoDB
@@ -241,26 +246,23 @@ export const updateCardService = async (cardId, updateData, currentUserId) => {
 
 export const deleteCardService = async (cardId, currentUserId) => {
   const card = await Card.findById(cardId);
-  if (!card) throw new AppError('Không tìm thấy từ vựng này.', 404);
+  if (!card) throw new AppError(VOCABULARY.VOCAB_NOT_FOUND, 404);
 
   const deck = await Deck.findById(card.deckId);
-  if (!deck) throw new AppError('Không tìm thấy bộ từ vựng chứa từ này.', 404);
+  if (!deck) throw new AppError(VOCABULARY.VOCAB_DECK_NOT_FOUND, 404);
 
   const topic = await Topic.findById(card.topicId);
-  if (!topic) throw new AppError('Không tìm thấy chủ đề chứa từ này.', 404);
+  if (!topic) throw new AppError(VOCABULARY.VOCAB_TOPIC_NOT_FOUND, 404);
 
   if (topic.deckId.toString() !== deck._id.toString())
-    throw new AppError('Topic không thuộc về Deck này', 400);
+    throw new AppError(VOCABULARY.TOPIC_NOT_IN_DECK, 400);
 
   const isUserOwner =
     deck.ownerType === 'user' &&
     deck.ownerId.toString() === currentUserId.toString();
 
   if (!isUserOwner) {
-    throw new AppError(
-      'Bạn không có quyền xóa từ này vì nó thuộc về hệ thống hoặc người dùng khác.',
-      403
-    );
+    throw new AppError(VOCABULARY.VOCAB_DELETE_FORBIDDEN, 403);
   }
 
   const session = await mongoose.startSession();

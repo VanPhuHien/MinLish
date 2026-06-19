@@ -149,9 +149,10 @@ export default {
         type: 'boolean',
         example: true,
       },
+      code: { type: 'string', example: 'LESSON_LIST_SUCCESS' },
       message: {
         type: 'string',
-        example: 'Lấy danh sách bài học thành công.',
+        example: 'Lessons retrieved successfully',
       },
       data: {
         type: 'object',
@@ -194,9 +195,10 @@ export default {
         type: 'boolean',
         example: true,
       },
+      code: { type: 'string', example: 'LESSON_DETAIL_SUCCESS' },
       message: {
         type: 'string',
-        example: 'Lấy chi tiết bài học thành công.',
+        example: 'Lesson detail retrieved successfully',
       },
       data: {
         $ref: '#/components/schemas/LessonItem',
@@ -318,9 +320,10 @@ export default {
         type: 'boolean',
         example: true,
       },
+      code: { type: 'string', example: 'SEGMENT_LIST_SUCCESS' },
       message: {
         type: 'string',
-        example: 'Lấy segments thành công',
+        example: 'Segments retrieved successfully',
       },
       data: {
         type: 'array',
@@ -337,9 +340,10 @@ export default {
         type: 'boolean',
         example: true,
       },
+      code: { type: 'string', example: 'SEGMENT_DETAIL_SUCCESS' },
       message: {
         type: 'string',
-        example: 'Lấy chi tiết segment thành công',
+        example: 'Segment detail retrieved successfully',
       },
       data: {
         $ref: '#/components/schemas/LessonSegmentItem',

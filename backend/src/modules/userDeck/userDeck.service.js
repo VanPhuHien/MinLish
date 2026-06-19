@@ -4,6 +4,7 @@ import Topic from '../../models/topic.model.js';
 import Card from '../../models/card.model.js';
 import UserCardState from '../../models/userCardState.model.js';
 import AppError from '../../utils/AppError.js';
+import { USER_DECK } from '../../constants/codes/index.js';
 
 const MAX_USER_DECKS = 3;
 
@@ -14,7 +15,7 @@ const ensureOwnedDeck = async (userId, deckId) => {
     ownerType: 'user',
     ownerId: userId,
   });
-  if (!deck) throw new AppError('Không tìm thấy deck', 404);
+  if (!deck) throw new AppError(USER_DECK.DECK_NOT_FOUND, 404);
   return deck;
 };
 
@@ -62,7 +63,7 @@ export const getMyDeckById = async (userId, deckId) => {
     ownerType: 'user',
     ownerId: userId,
   });
-  if (!deck) throw new AppError('Không tìm thấy deck', 404);
+  if (!deck) throw new AppError(USER_DECK.DECK_NOT_FOUND, 404);
 
   return deck;
 };
@@ -78,7 +79,7 @@ export const updateMyDeck = async (userId, deckId, data) => {
     { $set: update },
     { new: true }
   );
-  if (!deck) throw new AppError('Không tìm thấy deck', 404);
+  if (!deck) throw new AppError(USER_DECK.DECK_NOT_FOUND, 404);
 
   return deck;
 };
@@ -89,7 +90,7 @@ export const deleteMyDeck = async (userId, deckId) => {
     ownerType: 'user',
     ownerId: userId,
   });
-  if (!deck) throw new AppError('Không tìm thấy deck', 404);
+  if (!deck) throw new AppError(USER_DECK.DECK_NOT_FOUND, 404);
 
   const cardIds = await Card.find({ deckId }).distinct('_id');
 
@@ -114,7 +115,7 @@ export const getMyDeckTopic = async (userId, deckId, topicId) => {
   await ensureOwnedDeck(userId, deckId);
 
   const topic = await Topic.findOne({ _id: topicId, deckId });
-  if (!topic) throw new AppError('Không tìm thấy deck hoặc topic', 404);
+  if (!topic) throw new AppError(USER_DECK.DECK_OR_TOPIC_NOT_FOUND, 404);
 
   return topic;
 };
@@ -129,7 +130,7 @@ export const updateMyDeckTopic = async (userId, deckId, topicId, data) => {
     { $set: { name: data.name } },
     { new: true }
   );
-  if (!topic) throw new AppError('Không tìm thấy deck hoặc topic', 404);
+  if (!topic) throw new AppError(USER_DECK.DECK_OR_TOPIC_NOT_FOUND, 404);
 
   return topic;
 };
@@ -138,7 +139,7 @@ export const deleteMyDeckTopic = async (userId, deckId, topicId) => {
   await ensureOwnedDeck(userId, deckId);
 
   const topic = await Topic.findOne({ _id: topicId, deckId });
-  if (!topic) throw new AppError('Không tìm thấy deck hoặc topic', 404);
+  if (!topic) throw new AppError(USER_DECK.DECK_OR_TOPIC_NOT_FOUND, 404);
 
   const cardIds = await Card.find({ deckId, topicId }).distinct('_id');
 
@@ -212,7 +213,7 @@ export const getMyDeckCard = async (userId, deckId, cardId) => {
   await ensureOwnedDeck(userId, deckId);
 
   const card = await Card.findOne({ _id: cardId, deckId });
-  if (!card) throw new AppError('Không tìm thấy deck hoặc card', 404);
+  if (!card) throw new AppError(USER_DECK.DECK_OR_CARD_NOT_FOUND, 404);
 
   return card;
 };
@@ -221,7 +222,7 @@ export const updateMyDeckCard = async (userId, deckId, cardId, data) => {
   await ensureOwnedDeck(userId, deckId);
 
   const card = await Card.findOne({ _id: cardId, deckId });
-  if (!card) throw new AppError('Không tìm thấy deck hoặc card', 404);
+  if (!card) throw new AppError(USER_DECK.DECK_OR_CARD_NOT_FOUND, 404);
 
   // Map flat request fields onto the card document.
   // Card stays in its topic — moving between topics is not supported.
@@ -245,7 +246,7 @@ export const deleteMyDeckCard = async (userId, deckId, cardId) => {
   await ensureOwnedDeck(userId, deckId);
 
   const card = await Card.findOne({ _id: cardId, deckId });
-  if (!card) throw new AppError('Không tìm thấy deck hoặc card', 404);
+  if (!card) throw new AppError(USER_DECK.DECK_OR_CARD_NOT_FOUND, 404);
 
   await Promise.all([card.deleteOne(), UserCardState.deleteMany({ cardId })]);
 
@@ -261,7 +262,7 @@ export const createMyDeckCard = async (userId, deckId, data) => {
 
   // Topic must belong to this deck (block cross-deck topicId).
   const topic = await Topic.findOne({ _id: data.topicId, deckId });
-  if (!topic) throw new AppError('Không tìm thấy deck hoặc topic', 404);
+  if (!topic) throw new AppError(USER_DECK.DECK_OR_TOPIC_NOT_FOUND, 404);
 
   // Auto-assign order = highest existing order in this topic + 1.
   const last = await Card.findOne({ deckId, topicId: data.topicId })
@@ -295,7 +296,12 @@ export const createDeck = async (userId, data) => {
     ownerId: userId,
   });
   if (ownedCount >= MAX_USER_DECKS) {
-    throw new AppError(`Bạn chỉ được tạo tối đa ${MAX_USER_DECKS} bộ thẻ`, 400);
+    throw new AppError(
+      USER_DECK.MAX_DECKS_REACHED,
+      400,
+      [],
+      `You can create at most ${MAX_USER_DECKS} decks`
+    );
   }
 
   // User decks are personal and always published

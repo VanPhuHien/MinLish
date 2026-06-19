@@ -9,6 +9,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import 'dotenv';
 import sharp from 'sharp';
 import AppError from '../../utils/AppError.js';
+import { FILE } from '../../constants/codes/index.js';
 
 const bucketName = process.env.BUCKET_NAME;
 const s3 = new S3Client({
@@ -67,16 +68,23 @@ export const createUploadPresignedUrl = async (
   userId
 ) => {
   const config = UPLOAD_CONFIG[purpose];
-  if (!config) throw new AppError('purpose không hợp lệ', 400);
+  if (!config) throw new AppError(FILE.INVALID_PURPOSE, 400);
 
   if (!config.allowedTypes.includes(contentType)) {
-    throw new AppError(`contentType không được phép cho ${purpose}`, 400);
+    throw new AppError(
+      FILE.CONTENT_TYPE_NOT_ALLOWED,
+      400,
+      [],
+      `Content type is not allowed for "${purpose}"`
+    );
   }
 
   if (fileSize !== undefined && fileSize > config.maxSize) {
     throw new AppError(
-      `File vượt giới hạn ${config.maxSize / (1024 * 1024)}MB`,
-      400
+      FILE.FILE_TOO_LARGE,
+      400,
+      [],
+      `File exceeds the ${config.maxSize / (1024 * 1024)}MB limit`
     );
   }
 
@@ -127,10 +135,7 @@ export const getImagePresignedUrl = async (data) => {
  */
 export const deleteOldAndInsertNewImageInS3 = async (data, file) => {
   if (!checkValidImageExtensionFile(file))
-    throw new AppError(
-      'Định dạng file không hợp lệ! Chỉ chấp nhận ảnh JPG/PNG.',
-      400
-    );
+    throw new AppError(FILE.INVALID_IMAGE_FORMAT, 400);
 
   const oldKey = resolveAvatarKey(data);
   if (oldKey) {

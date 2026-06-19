@@ -18,24 +18,25 @@ const jsonResponse = (ref, description) => ({
   },
 });
 
-const simpleSuccess = (message) => ({
+const simpleSuccess = (code, message) => ({
   description: message,
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/SuccessResponse' },
-      example: { success: true, message },
+      example: { success: true, code, message },
     },
   },
 });
 
 const validationError = (fieldExample, messageExample) => ({
-  description: 'Dữ liệu không hợp lệ.',
+  description: 'Invalid request data.',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
       example: {
         success: false,
-        message: 'Dữ liệu không hợp lệ',
+        code: 'INVALID_DATA',
+        message: 'Invalid request data',
         errors: [{ field: fieldExample, message: messageExample }],
       },
     },
@@ -56,18 +57,19 @@ export default {
       requestBody: jsonBody('SignupPayload'),
       responses: {
         201: simpleSuccess(
-          'Đăng ký thành công. Vui lòng kiểm tra email để kích hoạt tài khoản.'
+          'SIGNUP_SUCCESS',
+          'Account created successfully. An activation OTP has been sent to your email.'
         ),
-        400: validationError('email', 'Email đã được đăng ký'),
+        400: validationError('email', 'Email is already registered'),
         429: {
-          description: 'Quá số lần đăng ký cho phép.',
+          description: 'Too many signup attempts.',
           content: {
             'application/json': {
               schema: { $ref: '#/components/schemas/ErrorResponse' },
               example: {
                 success: false,
-                message:
-                  'Bạn đã đăng ký quá số lần cho phép. Vui lòng thử lại sau.',
+                code: 'TOO_MANY_REQUESTS',
+                message: 'Too many signup attempts. Please try again later.',
               },
             },
           },
@@ -87,28 +89,30 @@ export default {
         'Xác thực email + password. Trả về accessToken trong body; đặt refreshToken vào httpOnly cookie (SameSite=strict, maxAge 7 ngày).',
       requestBody: jsonBody('LoginPayload'),
       responses: {
-        200: jsonResponse('LoginResponse', 'Đăng nhập thành công.'),
+        200: jsonResponse('LoginResponse', 'Login successful.'),
         400: {
-          description: 'Sai email/mật khẩu hoặc tài khoản chưa kích hoạt.',
+          description: 'Wrong email/password or account not activated.',
           content: {
             'application/json': {
               schema: { $ref: '#/components/schemas/ErrorResponse' },
               example: {
                 success: false,
-                message: 'Email hoặc mật khẩu không chính xác',
+                code: 'INVALID_CREDENTIALS',
+                message: 'Invalid email or password',
               },
             },
           },
         },
         429: {
-          description: 'Đăng nhập sai quá nhiều lần.',
+          description: 'Too many failed login attempts.',
           content: {
             'application/json': {
               schema: { $ref: '#/components/schemas/ErrorResponse' },
               example: {
                 success: false,
+                code: 'TOO_MANY_REQUESTS',
                 message:
-                  'Bạn đã đăng nhập sai quá nhiều lần. Vui lòng thử lại sau 15 phút.',
+                  'Too many failed login attempts. Please try again in 15 minutes.',
               },
             },
           },
@@ -127,7 +131,7 @@ export default {
       description:
         'Dùng refreshToken trong httpOnly cookie để cấp accessToken mới. Cookie phải được gửi kèm request (credentials: include).',
       responses: {
-        200: jsonResponse('RefreshResponse', 'Làm mới token thành công.'),
+        200: jsonResponse('RefreshResponse', 'Token refreshed successfully.'),
         401: { $ref: '#/components/responses/Unauthorized' },
         500: { $ref: '#/components/responses/ServerError' },
       },
@@ -143,7 +147,7 @@ export default {
       description:
         'Xóa refreshToken cookie. Client tự xóa accessToken ở localStorage. Không yêu cầu Bearer token.',
       responses: {
-        200: simpleSuccess('Đăng xuất thành công'),
+        200: simpleSuccess('LOGOUT_SUCCESS', 'Logged out successfully'),
         500: { $ref: '#/components/responses/ServerError' },
       },
     },
@@ -159,10 +163,13 @@ export default {
         'Gửi lại mã OTP 6 chữ số về email để kích hoạt tài khoản. OTP được lưu Redis và hết hạn theo cấu hình.',
       requestBody: jsonBody('ResendVerifyEmailPayload'),
       responses: {
-        200: simpleSuccess('Mã OTP kích hoạt đã được gửi đến email.'),
+        200: simpleSuccess(
+          'VERIFICATION_EMAIL_SENT',
+          'Account activation OTP has been sent'
+        ),
         400: validationError(
           'email',
-          'Email không hợp lệ hoặc tài khoản đã được kích hoạt'
+          'Invalid email or account already activated'
         ),
         500: { $ref: '#/components/responses/ServerError' },
       },
@@ -177,15 +184,16 @@ export default {
         'Nhập email + OTP để kích hoạt tài khoản (isVerified = true). OTP lấy từ email sau khi gọi /auth/verify-email/send.',
       requestBody: jsonBody('VerifyEmailPayload'),
       responses: {
-        200: simpleSuccess('Kích hoạt tài khoản thành công.'),
+        200: simpleSuccess('EMAIL_VERIFIED', 'Account activated successfully'),
         400: {
-          description: 'OTP không hợp lệ hoặc đã hết hạn.',
+          description: 'OTP is invalid or has expired.',
           content: {
             'application/json': {
               schema: { $ref: '#/components/schemas/ErrorResponse' },
               example: {
                 success: false,
-                message: 'Mã OTP không hợp lệ hoặc đã hết hạn',
+                code: 'INVALID_OTP',
+                message: 'OTP is invalid or has expired',
               },
             },
           },
@@ -205,8 +213,11 @@ export default {
         'Gửi mã OTP 6 chữ số về email để xác thực trước khi đặt lại mật khẩu.',
       requestBody: jsonBody('ForgotPasswordPayload'),
       responses: {
-        200: simpleSuccess('Mã OTP đặt lại mật khẩu đã được gửi đến email.'),
-        400: validationError('email', 'Email không tồn tại trong hệ thống'),
+        200: simpleSuccess(
+          'PASSWORD_RESET_OTP_SENT',
+          'Password reset OTP has been sent'
+        ),
+        400: validationError('email', 'No account found with this email'),
         500: { $ref: '#/components/responses/ServerError' },
       },
     },
@@ -220,16 +231,20 @@ export default {
         'Xác thực OTP và đặt mật khẩu mới. OTP phải lấy từ /auth/forgot-password trước.',
       requestBody: jsonBody('ResetPasswordPayload'),
       responses: {
-        200: simpleSuccess('Đặt lại mật khẩu thành công.'),
+        200: simpleSuccess(
+          'PASSWORD_RESET_SUCCESS',
+          'Password reset successfully'
+        ),
         400: {
           description:
-            'OTP không hợp lệ, đã hết hạn, hoặc mật khẩu không đủ độ dài.',
+            'OTP is invalid, expired, or the password is too short.',
           content: {
             'application/json': {
               schema: { $ref: '#/components/schemas/ErrorResponse' },
               example: {
                 success: false,
-                message: 'Mã OTP không hợp lệ hoặc đã hết hạn',
+                code: 'INVALID_OTP',
+                message: 'OTP is invalid or has expired',
               },
             },
           },

@@ -1,5 +1,6 @@
 import { successResponse } from '../../utils/response.js';
 import AppError from '../../utils/AppError.js';
+import { FILE, COMMON } from '../../constants/codes/index.js';
 import { presignedUrlSchema } from './file.validator.js';
 import * as service from './file.service.js';
 
@@ -11,7 +12,7 @@ export const createPresignedUrl = async (req, res, next) => {
         field: e.path.join('.'),
         message: e.message,
       }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const data = await service.createUploadPresignedUrl(
@@ -21,7 +22,7 @@ export const createPresignedUrl = async (req, res, next) => {
 
     return res
       .status(200)
-      .json(successResponse('Tạo presigned URL thành công.', data));
+      .json(successResponse(FILE.PRESIGNED_URL_SUCCESS, data));
   } catch (error) {
     next(error);
   }

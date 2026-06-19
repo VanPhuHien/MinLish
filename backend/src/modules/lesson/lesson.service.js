@@ -1,4 +1,5 @@
 import AppError from '../../utils/AppError.js';
+import { LESSON } from '../../constants/codes/index.js';
 import LessonSegment from '../../models/lessonSegment.model.js';
 import Lesson from '../../models/lesson.model.js';
 import UserLessonProgress from '../../models/userLessonProgress.model.js';
@@ -57,7 +58,7 @@ export const listLessons = async (filters, userId) => {
 export const getLessonById = async (lessonId, userId) => {
   // Only published lessons are publicly visible.
   const lesson = await Lesson.findOne({ _id: lessonId, status: 'published' });
-  if (!lesson) throw new AppError('Không tìm thấy bài học', 404);
+  if (!lesson) throw new AppError(LESSON.LESSON_NOT_FOUND, 404);
 
   // Attach the current user's progress when authenticated.
   let userProgress = null;
@@ -71,7 +72,7 @@ export const getLessonById = async (lessonId, userId) => {
 export const getSegmentsByLessonId = async (lessonId, userId) => {
   // Segments belong to a lesson — reject if the lesson is missing/unpublished.
   const lesson = await Lesson.findOne({ _id: lessonId, status: 'published' });
-  if (!lesson) throw new AppError('Không tìm thấy bài học', 404);
+  if (!lesson) throw new AppError(LESSON.LESSON_NOT_FOUND, 404);
 
   const segments = await LessonSegment.find({ lessonId }).sort({ startMs: 1 });
 
@@ -99,10 +100,10 @@ export const getSegmentsByLessonId = async (lessonId, userId) => {
 export const getSegmentById = async (lessonId, segmentId, userId) => {
   // Don't serve segments of missing/unpublished lessons.
   const lesson = await Lesson.findOne({ _id: lessonId, status: 'published' });
-  if (!lesson) throw new AppError('Không tìm thấy segment', 404);
+  if (!lesson) throw new AppError(LESSON.SEGMENT_NOT_FOUND, 404);
 
   const segment = await LessonSegment.findOne({ _id: segmentId, lessonId });
-  if (!segment) throw new AppError('Không tìm thấy segment', 404);
+  if (!segment) throw new AppError(LESSON.SEGMENT_NOT_FOUND, 404);
 
   let userProgress = null;
   if (userId) {

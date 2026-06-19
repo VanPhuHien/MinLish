@@ -33,9 +33,10 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
+      code: { type: 'string', example: 'CEFR_LIST_SUCCESS' },
       message: {
         type: 'string',
-        example: 'Lấy danh sách CEFR levels thành công',
+        example: 'CEFR levels retrieved successfully',
       },
       data: {
         type: 'array',
@@ -93,7 +94,8 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Lấy danh sách tag thành công' },
+      code: { type: 'string', example: 'TAG_LIST_SUCCESS' },
+      message: { type: 'string', example: 'Tags retrieved successfully' },
       data: {
         type: 'array',
         items: {

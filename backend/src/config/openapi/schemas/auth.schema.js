@@ -76,7 +76,8 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Đăng nhập thành công' },
+      code: { type: 'string', example: 'LOGIN_SUCCESS' },
+      message: { type: 'string', example: 'Login successful' },
       data: {
         type: 'object',
         properties: {
@@ -95,7 +96,8 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Làm mới token thành công' },
+      code: { type: 'string', example: 'TOKEN_REFRESHED' },
+      message: { type: 'string', example: 'Token refreshed successfully' },
       data: {
         type: 'object',
         properties: {

@@ -1,6 +1,6 @@
 export default {
   BadRequest: {
-    description: 'Dữ liệu không hợp lệ',
+    description: 'Invalid request data',
     content: {
       'application/json': {
         schema: {
@@ -8,13 +8,14 @@ export default {
         },
         example: {
           success: false,
-          message: 'Dữ liệu yêu cầu không hợp lệ. Vui lòng kiểm tra lại!',
+          code: 'INVALID_DATA',
+          message: 'Invalid request data',
         },
       },
     },
   },
   Unauthorized: {
-    description: 'Chưa đăng nhập hoặc token không hợp lệ',
+    description: 'Not authenticated or token is invalid',
     content: {
       'application/json': {
         schema: {
@@ -22,13 +23,14 @@ export default {
         },
         example: {
           success: false,
-          message: 'Chưa đăng nhập hoặc token không hợp lệ',
+          code: 'UNAUTHORIZED',
+          message: 'Not authenticated or token is invalid',
         },
       },
     },
   },
   Forbidden: {
-    description: 'Không có quyền truy cập',
+    description: 'You do not have permission to access this resource',
     content: {
       'application/json': {
         schema: {
@@ -36,13 +38,14 @@ export default {
         },
         example: {
           success: false,
-          message: 'Không có quyền truy cập',
+          code: 'FORBIDDEN',
+          message: 'You do not have permission to access this resource',
         },
       },
     },
   },
   ServerError: {
-    description: 'Lỗi server',
+    description: 'Internal server error',
     content: {
       'application/json': {
         schema: {
@@ -50,7 +53,8 @@ export default {
         },
         example: {
           success: false,
-          message: 'Lỗi server',
+          code: 'INTERNAL_ERROR',
+          message: 'Internal server error',
         },
       },
     },

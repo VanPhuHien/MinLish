@@ -64,9 +64,10 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
+      code: { type: 'string', example: 'MY_DECK_LIST_SUCCESS' },
       message: {
         type: 'string',
-        example: 'Lấy danh sách deck của bạn thành công.',
+        example: 'Your decks retrieved successfully',
       },
       data: {
         type: 'object',
@@ -94,7 +95,8 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Lấy chi tiết deck thành công.' },
+      code: { type: 'string', example: 'DECK_DETAIL_SUCCESS' },
+      message: { type: 'string', example: 'Deck detail retrieved successfully' },
       data: { $ref: '#/components/schemas/UserOwnedDeck' },
     },
   },
@@ -102,7 +104,8 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Tạo deck thành công.' },
+      code: { type: 'string', example: 'DECK_CREATE_SUCCESS' },
+      message: { type: 'string', example: 'Deck created successfully' },
       data: { $ref: '#/components/schemas/UserOwnedDeck' },
     },
   },
@@ -110,7 +113,8 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Cập nhật deck thành công.' },
+      code: { type: 'string', example: 'DECK_UPDATE_SUCCESS' },
+      message: { type: 'string', example: 'Deck updated successfully' },
       data: { $ref: '#/components/schemas/UserOwnedDeck' },
     },
   },
@@ -137,7 +141,8 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Lấy danh sách topic thành công.' },
+      code: { type: 'string', example: 'TOPIC_LIST_SUCCESS' },
+      message: { type: 'string', example: 'Topics retrieved successfully' },
       data: {
         type: 'object',
         properties: {
@@ -154,7 +159,8 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Thao tác thành công.' },
+      code: { type: 'string', example: 'TOPIC_CREATE_SUCCESS' },
+      message: { type: 'string', example: 'Topic created successfully' },
       data: { $ref: '#/components/schemas/Topic' },
     },
   },
@@ -210,7 +216,8 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Lấy danh sách card thành công.' },
+      code: { type: 'string', example: 'CARD_LIST_SUCCESS' },
+      message: { type: 'string', example: 'Cards retrieved successfully' },
       data: {
         type: 'object',
         properties: {
@@ -235,7 +242,8 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Thao tác thành công.' },
+      code: { type: 'string', example: 'CARD_CREATE_SUCCESS' },
+      message: { type: 'string', example: 'Card created successfully' },
       data: { $ref: '#/components/schemas/Card' },
     },
   },

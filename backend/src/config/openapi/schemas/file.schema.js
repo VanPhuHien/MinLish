@@ -26,7 +26,8 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Tạo presigned URL thành công.' },
+      code: { type: 'string', example: 'PRESIGNED_URL_SUCCESS' },
+      message: { type: 'string', example: 'Presigned URL created successfully' },
       data: {
         type: 'object',
         properties: {

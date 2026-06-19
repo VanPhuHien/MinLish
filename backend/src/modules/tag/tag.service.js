@@ -2,6 +2,7 @@ import Tag from '../../models/tag.model.js';
 import Lesson from '../../models/lesson.model.js';
 import Deck from '../../models/deck.model.js';
 import AppError from '../../utils/AppError.js';
+import { TAG, COMMON } from '../../constants/codes/index.js';
 import { generateSlug } from '../../utils/generate.js';
 
 export const listTags = async ({ usedBy } = {}) => {
@@ -26,7 +27,7 @@ export const listTags = async ({ usedBy } = {}) => {
 export const getTagById = async (id) => {
   const level = await Tag.findById(id);
   if (!level) {
-    throw new AppError('Không tìm thấy Tag', 404);
+    throw new AppError(TAG.TAG_NOT_FOUND, 404);
   }
   return level;
 };
@@ -38,10 +39,10 @@ const checkDuplicateTag = async (payload, excludeId = null) => {
   if (label) {
     conditions.push({ label });
   } else {
-    throw new AppError('Dữ liệu không hợp lệ', 400, [
+    throw new AppError(COMMON.INVALID_DATA, 400, [
       {
         field: 'label',
-        message: 'Trường label là bắt buộc',
+        message: 'The label field is required',
       },
     ]);
   }
@@ -54,10 +55,10 @@ const checkDuplicateTag = async (payload, excludeId = null) => {
 
   const existing = await Tag.findOne(query);
   if (existing) {
-    throw new AppError('Dữ liệu đã tồn tại', 409, [
+    throw new AppError(TAG.TAG_LABEL_EXISTS, 409, [
       {
         field: 'label',
-        message: 'Label Tag này đã tồn tại',
+        message: 'This tag label already exists',
       },
     ]);
   }
@@ -72,7 +73,7 @@ export const createTag = async (payload) => {
 export const updateTag = async (id, payload) => {
   const level = await Tag.findById(id);
   if (!level) {
-    throw new AppError('Không tìm thấy Tag', 404);
+    throw new AppError(TAG.TAG_NOT_FOUND, 404);
   }
   await checkDuplicateTag(payload, id);
   payload.code = generateSlug(payload.label);
@@ -86,7 +87,7 @@ export const updateTag = async (id, payload) => {
 export const deleteTag = async (id) => {
   const level = await Tag.findByIdAndDelete(id); //trả về document vừa bị xóa
   if (!level) {
-    throw new AppError('Không tìm thấy Tag', 404);
+    throw new AppError(TAG.TAG_NOT_FOUND, 404);
   }
   return level;
 };

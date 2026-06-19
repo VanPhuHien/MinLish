@@ -26,7 +26,8 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Tìm kiếm từ vựng thành công.' },
+      code: { type: 'string', example: 'VOCAB_SEARCH_SUCCESS' },
+      message: { type: 'string', example: 'Vocabulary search successful' },
       data: {
         type: 'array',
         items: { $ref: '#/components/schemas/VocabularySearchItem' },

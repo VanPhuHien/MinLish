@@ -1,5 +1,8 @@
-export const successResponse = (message, data = null) => ({
+import { MESSAGES } from '../constants/codes/index.js';
+
+export const successResponse = (code, data = null, message) => ({
   success: true,
-  message,
+  code,
+  message: message ?? MESSAGES[code] ?? code,
   ...(data !== null && { data }),
 });

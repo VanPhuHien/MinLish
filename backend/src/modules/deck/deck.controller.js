@@ -1,5 +1,6 @@
 import { successResponse } from '../../utils/response.js';
 import AppError from '../../utils/AppError.js';
+import { DECK, COMMON } from '../../constants/codes/index.js';
 import {
   getDeckSchema,
   getTopicCardsSchema,
@@ -15,7 +16,7 @@ export const getDeckById = async (req, res, next) => {
         field: e.path.join('.'),
         message: e.message,
       }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const userId = req.user.id;
@@ -23,7 +24,7 @@ export const getDeckById = async (req, res, next) => {
 
     return res
       .status(200)
-      .json(successResponse('Lấy chi tiết deck thành công.', deck));
+      .json(successResponse(DECK.DECK_DETAIL_SUCCESS, deck));
   } catch (error) {
     next(error);
   }
@@ -37,7 +38,7 @@ export const getDeckTopics = async (req, res, next) => {
         field: e.path.join('.'),
         message: e.message,
       }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const userId = req.user.id;
@@ -46,7 +47,7 @@ export const getDeckTopics = async (req, res, next) => {
     return res
       .status(200)
       .json(
-        successResponse('Lấy danh sách topic trong deck thành công.', data)
+        successResponse(DECK.DECK_TOPICS_SUCCESS, data)
       );
   } catch (error) {
     next(error);
@@ -61,7 +62,7 @@ export const getTopicCards = async (req, res, next) => {
         field: e.path.join('.'),
         message: e.message,
       }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const userId = req.user.id;
@@ -71,7 +72,7 @@ export const getTopicCards = async (req, res, next) => {
     return res
       .status(200)
       .json(
-        successResponse('Lấy danh sách card trong topic thành công.', data)
+        successResponse(DECK.TOPIC_CARDS_SUCCESS, data)
       );
   } catch (error) {
     next(error);
@@ -86,7 +87,7 @@ export const listDecks = async (req, res, next) => {
         field: e.path.join('.'),
         message: e.message,
       }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const userId = req.user?.id ?? null;
@@ -94,7 +95,7 @@ export const listDecks = async (req, res, next) => {
 
     return res
       .status(200)
-      .json(successResponse('Lấy danh sách deck thành công.', data));
+      .json(successResponse(DECK.DECK_LIST_SUCCESS, data));
   } catch (error) {
     next(error);
   }

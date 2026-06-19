@@ -1,5 +1,6 @@
 import { successResponse } from '../../utils/response.js';
 import AppError from '../../utils/AppError.js';
+import { USER_DECK, COMMON } from '../../constants/codes/index.js';
 import {
   createDeckSchema,
   updateDeckSchema,
@@ -25,7 +26,7 @@ export const listMyDeckCards = async (req, res, next) => {
         ...(paramResult.success ? [] : paramResult.error.errors),
         ...(queryResult.success ? [] : queryResult.error.errors),
       ].map((e) => ({ field: e.path.join('.'), message: e.message }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const data = await service.listMyDeckCards(
@@ -36,7 +37,7 @@ export const listMyDeckCards = async (req, res, next) => {
 
     return res
       .status(200)
-      .json(successResponse('Lấy danh sách card thành công.', data));
+      .json(successResponse(USER_DECK.CARD_LIST_SUCCESS, data));
   } catch (error) {
     next(error);
   }
@@ -50,7 +51,7 @@ export const getMyDeckCard = async (req, res, next) => {
         field: e.path.join('.'),
         message: e.message,
       }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const card = await service.getMyDeckCard(
@@ -61,7 +62,7 @@ export const getMyDeckCard = async (req, res, next) => {
 
     return res
       .status(200)
-      .json(successResponse('Lấy chi tiết card thành công.', card));
+      .json(successResponse(USER_DECK.CARD_DETAIL_SUCCESS, card));
   } catch (error) {
     next(error);
   }
@@ -77,7 +78,7 @@ export const updateMyDeckCard = async (req, res, next) => {
         ...(paramResult.success ? [] : paramResult.error.errors),
         ...(bodyResult.success ? [] : bodyResult.error.errors),
       ].map((e) => ({ field: e.path.join('.'), message: e.message }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const card = await service.updateMyDeckCard(
@@ -89,7 +90,7 @@ export const updateMyDeckCard = async (req, res, next) => {
 
     return res
       .status(200)
-      .json(successResponse('Cập nhật card thành công.', card));
+      .json(successResponse(USER_DECK.CARD_UPDATE_SUCCESS, card));
   } catch (error) {
     next(error);
   }
@@ -103,7 +104,7 @@ export const deleteMyDeckCard = async (req, res, next) => {
         field: e.path.join('.'),
         message: e.message,
       }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     await service.deleteMyDeckCard(
@@ -112,7 +113,9 @@ export const deleteMyDeckCard = async (req, res, next) => {
       result.data.cardId
     );
 
-    return res.status(200).json(successResponse('Xóa card thành công.', null));
+    return res
+      .status(200)
+      .json(successResponse(USER_DECK.CARD_DELETE_SUCCESS, null));
   } catch (error) {
     next(error);
   }
@@ -128,7 +131,7 @@ export const createMyDeckCard = async (req, res, next) => {
         ...(paramResult.success ? [] : paramResult.error.errors),
         ...(bodyResult.success ? [] : bodyResult.error.errors),
       ].map((e) => ({ field: e.path.join('.'), message: e.message }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const card = await service.createMyDeckCard(
@@ -137,7 +140,9 @@ export const createMyDeckCard = async (req, res, next) => {
       bodyResult.data
     );
 
-    return res.status(201).json(successResponse('Tạo card thành công.', card));
+    return res
+      .status(201)
+      .json(successResponse(USER_DECK.CARD_CREATE_SUCCESS, card));
   } catch (error) {
     next(error);
   }
@@ -151,14 +156,14 @@ export const getMyDeckTopics = async (req, res, next) => {
         field: e.path.join('.'),
         message: e.message,
       }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const data = await service.getMyDeckTopics(req.user.id, result.data.deckId);
 
     return res
       .status(200)
-      .json(successResponse('Lấy danh sách topic thành công.', data));
+      .json(successResponse(USER_DECK.TOPIC_LIST_SUCCESS, data));
   } catch (error) {
     next(error);
   }
@@ -172,7 +177,7 @@ export const getMyDeckTopic = async (req, res, next) => {
         field: e.path.join('.'),
         message: e.message,
       }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const topic = await service.getMyDeckTopic(
@@ -183,7 +188,7 @@ export const getMyDeckTopic = async (req, res, next) => {
 
     return res
       .status(200)
-      .json(successResponse('Lấy chi tiết topic thành công.', topic));
+      .json(successResponse(USER_DECK.TOPIC_DETAIL_SUCCESS, topic));
   } catch (error) {
     next(error);
   }
@@ -199,7 +204,7 @@ export const updateMyDeckTopic = async (req, res, next) => {
         ...(paramResult.success ? [] : paramResult.error.errors),
         ...(bodyResult.success ? [] : bodyResult.error.errors),
       ].map((e) => ({ field: e.path.join('.'), message: e.message }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const topic = await service.updateMyDeckTopic(
@@ -211,7 +216,7 @@ export const updateMyDeckTopic = async (req, res, next) => {
 
     return res
       .status(200)
-      .json(successResponse('Cập nhật topic thành công.', topic));
+      .json(successResponse(USER_DECK.TOPIC_UPDATE_SUCCESS, topic));
   } catch (error) {
     next(error);
   }
@@ -225,7 +230,7 @@ export const deleteMyDeckTopic = async (req, res, next) => {
         field: e.path.join('.'),
         message: e.message,
       }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     await service.deleteMyDeckTopic(
@@ -234,7 +239,9 @@ export const deleteMyDeckTopic = async (req, res, next) => {
       result.data.topicId
     );
 
-    return res.status(200).json(successResponse('Xóa topic thành công.', null));
+    return res
+      .status(200)
+      .json(successResponse(USER_DECK.TOPIC_DELETE_SUCCESS, null));
   } catch (error) {
     next(error);
   }
@@ -250,7 +257,7 @@ export const createMyDeckTopic = async (req, res, next) => {
         ...(paramResult.success ? [] : paramResult.error.errors),
         ...(bodyResult.success ? [] : bodyResult.error.errors),
       ].map((e) => ({ field: e.path.join('.'), message: e.message }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const topic = await service.createMyDeckTopic(
@@ -261,7 +268,7 @@ export const createMyDeckTopic = async (req, res, next) => {
 
     return res
       .status(201)
-      .json(successResponse('Tạo topic thành công.', topic));
+      .json(successResponse(USER_DECK.TOPIC_CREATE_SUCCESS, topic));
   } catch (error) {
     next(error);
   }
@@ -275,12 +282,14 @@ export const deleteMyDeck = async (req, res, next) => {
         field: e.path.join('.'),
         message: e.message,
       }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     await service.deleteMyDeck(req.user.id, result.data.deckId);
 
-    return res.status(200).json(successResponse('Xóa deck thành công.', null));
+    return res
+      .status(200)
+      .json(successResponse(USER_DECK.DECK_DELETE_SUCCESS, null));
   } catch (error) {
     next(error);
   }
@@ -296,7 +305,7 @@ export const updateMyDeck = async (req, res, next) => {
         ...(paramResult.success ? [] : paramResult.error.errors),
         ...(bodyResult.success ? [] : bodyResult.error.errors),
       ].map((e) => ({ field: e.path.join('.'), message: e.message }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const deck = await service.updateMyDeck(
@@ -307,7 +316,7 @@ export const updateMyDeck = async (req, res, next) => {
 
     return res
       .status(200)
-      .json(successResponse('Cập nhật deck thành công.', deck));
+      .json(successResponse(USER_DECK.DECK_UPDATE_SUCCESS, deck));
   } catch (error) {
     next(error);
   }
@@ -321,14 +330,14 @@ export const getMyDeckById = async (req, res, next) => {
         field: e.path.join('.'),
         message: e.message,
       }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const deck = await service.getMyDeckById(req.user.id, result.data.deckId);
 
     return res
       .status(200)
-      .json(successResponse('Lấy chi tiết deck thành công.', deck));
+      .json(successResponse(USER_DECK.DECK_DETAIL_SUCCESS, deck));
   } catch (error) {
     next(error);
   }
@@ -342,14 +351,14 @@ export const listMyDecks = async (req, res, next) => {
         field: e.path.join('.'),
         message: e.message,
       }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const data = await service.listMyDecks(req.user.id, result.data);
 
     return res
       .status(200)
-      .json(successResponse('Lấy danh sách deck của bạn thành công.', data));
+      .json(successResponse(USER_DECK.MY_DECK_LIST_SUCCESS, data));
   } catch (error) {
     next(error);
   }
@@ -363,12 +372,14 @@ export const createDeck = async (req, res, next) => {
         field: e.path.join('.'),
         message: e.message,
       }));
-      return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
     }
 
     const deck = await service.createDeck(req.user.id, result.data);
 
-    return res.status(201).json(successResponse('Tạo deck thành công.', deck));
+    return res
+      .status(201)
+      .json(successResponse(USER_DECK.DECK_CREATE_SUCCESS, deck));
   } catch (error) {
     next(error);
   }

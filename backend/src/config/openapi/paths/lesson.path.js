@@ -99,11 +99,12 @@ export default {
               },
               example: {
                 success: false,
-                message: 'Dữ liệu không hợp lệ',
+                code: 'INVALID_DATA',
+                message: 'Invalid request data',
                 errors: [
                   {
                     field: 'page',
-                    message: 'page phải là số nguyên lớn hơn hoặc bằng 1',
+                    message: 'page must be an integer >= 1',
                   },
                 ],
               },
@@ -156,11 +157,12 @@ export default {
               },
               example: {
                 success: false,
-                message: 'Dữ liệu không hợp lệ',
+                code: 'INVALID_DATA',
+                message: 'Invalid request data',
                 errors: [
                   {
                     field: 'lessonId',
-                    message: 'lessonId không đúng định dạng ObjectId',
+                    message: 'lessonId is not a valid ObjectId',
                   },
                 ],
               },
@@ -176,7 +178,8 @@ export default {
               },
               example: {
                 success: false,
-                message: 'Không tìm thấy bài học',
+                code: 'LESSON_NOT_FOUND',
+                message: 'Lesson not found',
               },
             },
           },
@@ -230,11 +233,12 @@ export default {
               },
               example: {
                 success: false,
-                message: 'Dữ liệu không hợp lệ',
+                code: 'INVALID_DATA',
+                message: 'Invalid request data',
                 errors: [
                   {
                     field: 'lessonId',
-                    message: 'lessonId không đúng định dạng ObjectId',
+                    message: 'lessonId is not a valid ObjectId',
                   },
                 ],
               },
@@ -250,7 +254,8 @@ export default {
               },
               example: {
                 success: false,
-                message: 'Không tìm thấy segments',
+                code: 'LESSON_NOT_FOUND',
+                message: 'Lesson not found',
               },
             },
           },
@@ -315,11 +320,12 @@ export default {
               },
               example: {
                 success: false,
-                message: 'Dữ liệu không hợp lệ',
+                code: 'INVALID_DATA',
+                message: 'Invalid request data',
                 errors: [
                   {
                     field: 'segmentId',
-                    message: 'segmentId không đúng định dạng ObjectId',
+                    message: 'segmentId is not a valid ObjectId',
                   },
                 ],
               },
@@ -335,7 +341,8 @@ export default {
               },
               example: {
                 success: false,
-                message: 'Không tìm thấy segment',
+                code: 'SEGMENT_NOT_FOUND',
+                message: 'Segment not found',
               },
             },
           },
