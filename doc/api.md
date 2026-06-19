@@ -82,10 +82,9 @@ forgot-password, reset-password tương tự
 
 ## **Upload file (S3)**
 
-Vòng đời upload 3 bước: (1) xin presigned PUT → (2) client PUT bytes thẳng lên S3 → (3) confirm để backend lưu URL vào resource.
+Vòng đời upload 2 bước: (1) xin presigned PUT → (2) client PUT bytes thẳng lên S3. Sau đó gửi `url` (trả về từ bước 1) trực tiếp vào body của endpoint cập nhật resource; backend validate quyền sở hữu + HeadObject tại đó, không cần bước confirm riêng.
 
-- POST /api/v1/s3/presigned-url — tạo URL PUT ký sẵn (hết hạn 60s) để client upload file trực tiếp lên S3. Body: contentType (bắt buộc), purpose (bắt buộc: shadowing-audio | deck-import | card-image), fileSize (tùy chọn). Key sinh ở server theo userId; backend không nhận bytes. Trả về uploadUrl + key + expiresIn.
-- POST /api/v1/s3/confirm — xác nhận sau khi PUT xong. Body: key (bắt buộc, lấy từ presigned-url), purpose (bắt buộc: shadowing-audio | card-image), resourceId (cardId cho card-image, segmentId cho shadowing-audio). Backend HeadObject xác nhận object tồn tại + validate key thuộc user (đúng prefix theo userId), rồi dựng URL public/CDN và lưu vào resource (Card.imageUrl / userSegmentProgress.shadowing.latestAudioUrl). card-image chỉ admin. Trả về { key, url }. DB lưu URL đầy đủ; client đọc lại trực tiếp field, không cần ký lại.
+- POST /api/v1/s3/presigned-url — tạo URL PUT ký sẵn (hết hạn 60s) để client upload file trực tiếp lên S3. Body: contentType (bắt buộc), purpose (bắt buộc: shadowing-audio | deck-import | card-image), fileSize (bắt buộc, bytes). Key sinh ở server theo userId; backend không nhận bytes. `fileSize` được bake vào chữ ký → S3 reject upload sai kích thước. Trả về uploadUrl + key + url (public/CDN) + expiresIn. Client dùng url này để gửi kèm khi cập nhật resource. **Phân quyền theo purpose:** `card-image` yêu cầu role `admin` (403 nếu user thường); `shadowing-audio` và `deck-import` cho phép mọi user đã xác thực.
 
 ## **Progress của user**
 

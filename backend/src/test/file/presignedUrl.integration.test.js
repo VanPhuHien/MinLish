@@ -8,6 +8,10 @@ const validToken = generateToken(
   { id: testUserId, role: 'user', type: 'ACCESS' },
   '15m'
 );
+const adminToken = generateToken(
+  { id: testUserId, role: 'admin', type: 'ACCESS' },
+  '15m'
+);
 
 const url = '/api/v1/s3/presigned-url';
 
@@ -38,7 +42,7 @@ describe('POST /api/v1/s3/presigned-url', () => {
       const res = await request(app)
         .post(url)
         .set('Authorization', `Bearer ${validToken}`)
-        .send({ contentType: 'audio/webm', purpose: 'shadowing-audio' });
+        .send({ contentType: 'audio/webm', purpose: 'shadowing-audio', fileSize: 1024 * 1024 });
 
       expect(res.status).toBe(200);
       expect(res.body.code).toBe('PRESIGNED_URL_SUCCESS');
@@ -50,11 +54,11 @@ describe('POST /api/v1/s3/presigned-url', () => {
       expect(res.body.data.uploadUrl).toContain(res.body.data.key);
     });
 
-    it('scopes the key by purpose and content type (card image)', async () => {
+    it('signs an upload URL for card image when admin', async () => {
       const res = await request(app)
         .post(url)
-        .set('Authorization', `Bearer ${validToken}`)
-        .send({ contentType: 'image/png', purpose: 'card-image' });
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({ contentType: 'image/png', purpose: 'card-image', fileSize: 512 * 1024 });
 
       expect(res.status).toBe(200);
       expect(res.body.data.key).toMatch(
@@ -76,6 +80,18 @@ describe('POST /api/v1/s3/presigned-url', () => {
     });
   });
 
+  describe('authorization', () => {
+    it('returns 403 when user role requests card-image purpose', async () => {
+      const res = await request(app)
+        .post(url)
+        .set('Authorization', `Bearer ${validToken}`)
+        .send({ contentType: 'image/png', purpose: 'card-image', fileSize: 512 * 1024 });
+
+      expect(res.status).toBe(403);
+      expect(res.body.code).toBe('FORBIDDEN');
+    });
+  });
+
   describe('input validation', () => {
     it('returns 400 for an invalid purpose', async () => {
       const res = await request(app)
@@ -89,11 +105,23 @@ describe('POST /api/v1/s3/presigned-url', () => {
       );
     });
 
+    it('returns 400 when fileSize is missing', async () => {
+      const res = await request(app)
+        .post(url)
+        .set('Authorization', `Bearer ${validToken}`)
+        .send({ contentType: 'audio/webm', purpose: 'shadowing-audio' });
+
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toEqual(
+        expect.arrayContaining([expect.objectContaining({ field: 'fileSize' })])
+      );
+    });
+
     it('returns 400 when contentType is not allowed for the purpose', async () => {
       const res = await request(app)
         .post(url)
         .set('Authorization', `Bearer ${validToken}`)
-        .send({ contentType: 'image/png', purpose: 'shadowing-audio' });
+        .send({ contentType: 'image/png', purpose: 'shadowing-audio', fileSize: 1024 });
 
       expect(res.status).toBe(400);
     });
