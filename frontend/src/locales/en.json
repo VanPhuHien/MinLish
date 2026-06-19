@@ -167,7 +167,7 @@
     "searchPlaceholder": "Search decks...",
     "filterCefr": "All levels",
     "filterTag": "All categories",
-    "filterStatus": "All",
+    "filterStatus": "All status",
     "clearFilter": "Clear filters",
     "topics": "Topics",
     "cards": "Cards",
@@ -205,7 +205,20 @@
     "creating": "Creating...",
     "createSuccess": "Deck created successfully!",
     "createError": "Failed to create deck. Please try again.",
-    "overviewEmpty": "Overview page is under construction..."
+    "overviewEmpty": "Overview page is under construction...",
+    "tagPickerTitle": "Select Deck Tags",
+    "createNewTag": "Create new tag",
+    "newTagPlaceholder": "Enter new tag name...",
+    "applyBtn": "Apply",
+    "addTagBtn": "Add custom tag...",
+    "createTagError": "Failed to create tag. Please try again.",
+    "searchTagPlaceholder": "Search tags...",
+    "noTagsFound": "No tags found",
+    "noTagsAvailable": "No tags available",
+    "editTag": "Edit tag",
+    "deleteTag": "Delete tag",
+    "confirmDeleteTag": "Delete this tag?",
+    "deleteBtn": "Delete"
   },
   "api": {
     "success": {

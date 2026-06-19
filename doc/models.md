@@ -106,7 +106,6 @@ cards (“Đây là dữ liệu gốc của từng flashcard/từ vựng”)
 | `explanation.vi / explanation.en` | Giải thích                                     |
 | `examples.vi / examples.en`       | Ví dụ câu dùng từ.                             |
 | `imageUrl`                        | Ảnh minh họa từ                                |
-| `quizOptions`                     | `[{word, isCorrect}]` — 4 lựa chọn trắc nghiệm. Đúng 1 option có `isCorrect = true`. Chỉ có ở deck hệ thống. |
 | `createdAt`                       | Ngày tạo.                                      |
 | `updatedAt`                       | Ngày cập nhật.                                 |
 

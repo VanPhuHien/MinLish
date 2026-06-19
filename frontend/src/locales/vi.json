@@ -167,7 +167,7 @@
     "searchPlaceholder": "Tìm kiếm bộ từ...",
     "filterCefr": "Tất cả trình độ",
     "filterTag": "Tất cả danh mục",
-    "filterStatus": "Tất cả",
+    "filterStatus": "Tất cả trạng thái",
     "clearFilter": "Xóa lọc",
     "topics": "Topics",
     "cards": "Cards",
@@ -205,7 +205,20 @@
     "creating": "Đang tạo...",
     "createSuccess": "Tạo bộ từ vựng thành công!",
     "createError": "Tạo bộ từ vựng thất bại. Vui lòng thử lại.",
-    "overviewEmpty": "Trang tổng quan đang được xây dựng..."
+    "overviewEmpty": "Trang tổng quan đang được xây dựng...",
+    "tagPickerTitle": "Chọn thẻ bộ từ vựng",
+    "createNewTag": "Tạo thẻ mới",
+    "newTagPlaceholder": "Nhập tên thẻ mới...",
+    "applyBtn": "Áp dụng",
+    "addTagBtn": "Thêm thẻ tùy chỉnh...",
+    "createTagError": "Tạo thẻ thất bại. Vui lòng thử lại.",
+    "searchTagPlaceholder": "Tìm kiếm thẻ...",
+    "noTagsFound": "Không tìm thấy thẻ nào phù hợp",
+    "noTagsAvailable": "Chưa có thẻ nào",
+    "editTag": "Sửa thẻ",
+    "deleteTag": "Xóa thẻ",
+    "confirmDeleteTag": "Xác nhận xóa thẻ này?",
+    "deleteBtn": "Xóa"
   },
   "api": {
     "success": {

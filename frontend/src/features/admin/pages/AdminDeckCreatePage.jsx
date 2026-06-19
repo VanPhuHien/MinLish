@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import Input from '../../../components/Input/Input'
+import TagPickerModal from '../components/TagPickerModal/TagPickerModal'
 import { createAdminDeckApi, listCefrLevelsApi, listTagsApi } from '../adminApi'
 import './AdminDeckCreatePage.css'
 
@@ -13,12 +14,13 @@ function AdminDeckCreatePage({ onNavigate }) {
   const [selectedCefr, setSelectedCefr] = useState([])
   const [selectedTags, setSelectedTags] = useState([])
   const [status, setStatus] = useState('draft')
-  const [tagInput, setTagInput] = useState('')
 
   // Meta data
   const [cefrLevels, setCefrLevels] = useState([])
   const [availableTags, setAvailableTags] = useState([])
-  const [tagSuggestions, setTagSuggestions] = useState([])
+
+  // Modal state
+  const [isTagModalOpen, setIsTagModalOpen] = useState(false)
 
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -41,26 +43,15 @@ function AdminDeckCreatePage({ onNavigate }) {
     )
   }
 
-  const handleTagInputChange = (val) => {
-    setTagInput(val)
-    if (val.trim()) {
-      const lower = val.toLowerCase()
-      setTagSuggestions(
-        availableTags.filter(
-          (tag) =>
-            tag.label.toLowerCase().includes(lower) &&
-            !selectedTags.find((s) => s._id === tag._id)
-        )
-      )
-    } else {
-      setTagSuggestions([])
-    }
+  const handleTagModalApply = (tags) => {
+    setSelectedTags(tags)
   }
 
-  const addTag = (tag) => {
-    setSelectedTags((prev) => (prev.find((t) => t._id === tag._id) ? prev : [...prev, tag]))
-    setTagInput('')
-    setTagSuggestions([])
+  const handleTagsChange = (newTags) => {
+    // Đồng bộ danh sách available tags khi modal thực hiện CRUD
+    setAvailableTags(newTags)
+    // Loại bỏ khỏi selectedTags những tag đã bị xóa
+    setSelectedTags((prev) => prev.filter((t) => newTags.find((nt) => nt._id === t._id)))
   }
 
   const removeTag = (id) => {
@@ -239,43 +230,38 @@ function AdminDeckCreatePage({ onNavigate }) {
             {/* Tags */}
             <div className="admin-classify-group">
               <label className="admin-classify-label">{t('admin.tagLabel')}</label>
-              <div className="admin-tag-chips">
-                {selectedTags.map((tag) => (
-                  <span key={tag._id} className="admin-tag-chip">
-                    {tag.label}
-                    <button
-                      type="button"
-                      className="admin-tag-chip-remove"
-                      onClick={() => removeTag(tag._id)}
-                    >
-                      ×
-                    </button>
-                  </span>
-                ))}
-              </div>
-              <div className="admin-tag-input-wrap">
-                <input
-                  type="text"
-                  className="admin-tag-input"
-                  placeholder={t('admin.tagInputPlaceholder')}
-                  value={tagInput}
-                  onChange={(e) => handleTagInputChange(e.target.value)}
-                />
-                {tagSuggestions.length > 0 && (
-                  <div className="admin-tag-suggestions">
-                    {tagSuggestions.map((tag) => (
+
+              {/* Selected Tags Display */}
+              {selectedTags.length > 0 && (
+                <div className="admin-tag-chips">
+                  {selectedTags.map((tag) => (
+                    <span key={tag._id} className="admin-tag-chip">
+                      {tag.label}
                       <button
-                        key={tag._id}
                         type="button"
-                        className="admin-tag-suggestion-item"
-                        onClick={() => addTag(tag)}
+                        className="admin-tag-chip-remove"
+                        onClick={() => removeTag(tag._id)}
                       >
-                        {tag.label}
+                        ×
                       </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Add Tag Button */}
+              <button
+                type="button"
+                className="admin-tag-picker-btn"
+                onClick={() => setIsTagModalOpen(true)}
+              >
+                <span>{t('admin.addTagBtn')}</span>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="16" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="8" y1="12" x2="16" y2="12" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </button>
             </div>
 
             {/* Status */}
@@ -318,6 +304,16 @@ function AdminDeckCreatePage({ onNavigate }) {
           </div>
         </div>
       </div>
+
+      {/* Tag Picker Modal */}
+      <TagPickerModal
+        isOpen={isTagModalOpen}
+        onClose={() => setIsTagModalOpen(false)}
+        availableTags={availableTags}
+        selectedTags={selectedTags}
+        onApply={handleTagModalApply}
+        onTagsChange={handleTagsChange}
+      />
     </div>
   )
 }

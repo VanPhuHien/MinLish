@@ -479,19 +479,38 @@ export default {
     properties: {
       success: { type: 'boolean', example: true },
       message: { type: 'string', example: 'Lấy danh sách card thành công' },
-      data: {
-        type: 'array',
-        items: { $ref: '#/components/schemas/Card' },
-      },
-      pagination: {
-        type: 'object',
-        properties: {
-          totalItems: { type: 'integer', example: 100 },
-          page: { type: 'integer', example: 1 },
-          limit: { type: 'integer', example: 10 },
-          totalPages: { type: 'integer', example: 10 },
+     data: {
+      type: 'object',
+      properties: {
+        cards: {
+          type: 'array',
+          items: {
+            $ref: '#/components/schemas/Card'
+          }
         },
-      },
+        pagination: {
+          type: 'object',
+          properties: {
+            totalItems: {
+              type: 'integer',
+              example: 100
+            },
+            page: {
+              type: 'integer',
+              example: 1
+            },
+            limit: {
+              type: 'integer',
+              example: 10
+            },
+            totalPages: {
+              type: 'integer',
+              example: 10
+            }
+          }
+        }
+      }
+    }
     },
   },
   CardResponse: {
@@ -512,11 +531,6 @@ export default {
         type: 'string',
         example: '665f1f77bcf86cd799439041',
         description: 'ID của topic chứa card.',
-      },
-      order: {
-        type: 'integer',
-        example: 1,
-        description: 'Thứ tự hiển thị. Nếu bỏ trống hệ thống tự thêm vào cuối.',
       },
       term: { type: 'string', example: 'family', description: 'Từ vựng.' },
       pos: { type: 'string', example: 'noun', description: 'Từ loại.' },

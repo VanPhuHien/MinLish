@@ -201,3 +201,75 @@ export const reorderDeckTopics = async (req, res, next) => {
     next(error);
   }
 };
+
+export const listDeckCards = async (req, res, next) => {
+  try {
+    const filters = {
+      topicId: req.query.topicId,
+      q: req.query.q,
+      page: parseInt(req.query.page) || 1,
+      limit: parseInt(req.query.limit) || 10,
+    };
+    const data = await deckService.listAdminDeckCards(req.params.deckId, filters);
+    return res
+      .status(200)
+      .json(successResponse('Lấy danh sách card thành công', data));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createDeckCard = async (req, res, next) => {
+  try {
+    const card = await deckService.createAdminDeckCard(
+      req.params.deckId,
+      req.body
+    );
+    return res
+      .status(201)
+      .json(successResponse('Tạo mới card thành công', card));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getDeckCardById = async (req, res, next) => {
+  try {
+    const card = await deckService.getAdminDeckCard(
+      req.params.deckId,
+      req.params.cardId
+    );
+    return res
+      .status(200)
+      .json(successResponse('Lấy chi tiết card thành công', card));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateDeckCard = async (req, res, next) => {
+  try {
+    const card = await deckService.updateAdminDeckCard(
+      req.params.deckId,
+      req.params.cardId,
+      req.body
+    );
+    return res
+      .status(200)
+      .json(successResponse('Cập nhật card thành công', card));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteDeckCard = async (req, res, next) => {
+  try {
+    await deckService.deleteAdminDeckCard(
+      req.params.deckId,
+      req.params.cardId
+    );
+    return res.status(200).json(successResponse('Xóa card thành công'));
+  } catch (error) {
+    next(error);
+  }
+};

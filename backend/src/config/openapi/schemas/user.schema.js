@@ -218,7 +218,7 @@ export default {
         properties: {
           easeFactor: { type: 'number', example: 2.5 },
           interval: { type: 'integer', example: 6 },
-          lastGrade: { type: 'integer', example: 4 },
+          lastGrade: { type: 'integer', example: 3 },
           nextReviewAt: {
             type: 'string',
             format: 'date-time',

@@ -93,8 +93,7 @@ Vòng đời upload 2 bước: (1) xin presigned PUT → (2) client PUT bytes th
 - PUT /api/v1/users/me/lesson-progress/{lessonId} — upsert toàn bộ tiến độ lesson.
 - GET /api/v1/users/me/lessons/{lessonId}/segments-progress — lấy toàn bộ tiến độ segment của một lesson.
 - GET /api/v1/users/me/lessons/{lessonId}/segments/{segmentId}/progress — lấy tiến độ một segment.
-- PUT /api/v1/users/me/lessons/{lessonId}/segments/{segmentId}/progress — upsert tiến độ segment.
-- PATCH /api/v1/users/me/lessons/{lessonId}/segments/{segmentId}/progress — cập nhật block dictation và shadowing.
+- PATCH /api/v1/users/me/lessons/{lessonId}/segments/{segmentId}/progress - upsert/cập nhật một phần block dictation hoặc shadowing (nếu chưa có sẽ tự tạo mới tiến độ cho câu này).
 - GET /api/v1/users/me/card-states — danh sách trạng thái card; hỗ trợ deckId, topicId, due, starred, page, limit.
 - GET /api/v1/users/me/card-states/{cardId} — lấy trạng thái một card.
 - PUT /api/v1/users/me/card-states/{cardId} — upsert toàn bộ state card.
