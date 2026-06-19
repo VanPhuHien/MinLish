@@ -313,17 +313,6 @@ export default {
         type: 'string',
         example: 'https://example.com/images/family.jpg',
       },
-      quizOptions: {
-        type: 'array',
-        description: '4 lựa chọn trắc nghiệm cho card. Luôn có đúng 1 option isCorrect = true.',
-        items: {
-          type: 'object',
-          properties: {
-            word: { type: 'string', example: 'nephew' },
-            isCorrect: { type: 'boolean', example: true },
-          },
-        },
-      },
       createdAt: {
         type: 'string',
         format: 'date-time',

@@ -83,10 +83,18 @@ export const getTopicCards = async (deckId, topicId, userId) => {
     return acc;
   }, {});
 
-  const items = cards.map((card) => ({
-    card,
-    userCardState: stateMap[card._id.toString()] || null,
-  }));
+  const items = await Promise.all(
+    cards.map(async (card) => {
+      const quizOptions = await generateQuizOptions(topicId, card.term, card._id);
+      return {
+        card: {
+          ...card.toObject(),
+          quizOptions,
+        },
+        userCardState: stateMap[card._id.toString()] || null,
+      };
+    })
+  );
 
   return { cards: items };
 };
@@ -378,4 +386,187 @@ export const reorderAdminDeckTopics = async (deckId, topics) => {
   if (bulkOps.length > 0) {
     await Topic.bulkWrite(bulkOps); // Chạy tất cả update trong một lần gọi MongoDB
   }
+};
+
+export const generateQuizOptions = async (topicId, currentTerm, excludeCardId = null) => {
+  const matchQuery = {
+    topicId: new mongoose.Types.ObjectId(topicId),
+    term: { $ne: currentTerm },
+  };
+  if (excludeCardId) {
+    matchQuery._id = { $ne: new mongoose.Types.ObjectId(excludeCardId) };
+  }
+  const randomCards = await Card.aggregate([
+    { $match: matchQuery },
+    { $sample: { size: 3 } },
+    { $project: { term: 1 } },// Chỉ giữ lại field term và _id (defauld id nếu không truyền _id :0)
+  ]);
+
+  const options = randomCards.map((c) => ({
+    word: c.term,
+    isCorrect: false,
+  }));
+  if (options.length < 3) {
+    const excludeTerms = options.map(o => o.word);
+    excludeTerms.push(currentTerm);
+    const extraCards = await Card.aggregate([
+      { $match: { term: { $nin: excludeTerms } } },
+      { $sample: { size: 3 - options.length } },
+      { $project: { term: 1 } },
+    ]);
+    extraCards.forEach(c => {
+      options.push({ word: c.term, isCorrect: false });
+    });
+  }
+  options.push({
+    word: currentTerm,
+    isCorrect: true,
+  });
+
+  // Shuffle array
+  for (let i = options.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));// Thuật toán Fisher-Yates shuffle (0 <= j <= i)
+    [options[i], options[j]] = [options[j], options[i]];
+  }
+  return options;
+};
+
+export const listAdminDeckCards = async (deckId, filters) => {
+  const deck = await Deck.findById(deckId);
+  if(!deck) throw new AppError('Không tìm thấy deck', 404);
+  
+  const { topicId, q, page, limit } = filters;
+  const query = { deckId };
+  if (topicId) query.topicId = topicId;
+  if (q) {
+    const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escaped, 'i');
+    query.$or = [{ term: regex }, { translation: regex }];
+  }
+
+  const skip = (page - 1) * limit;
+  const [cards, totalItems] = await Promise.all([
+    Card.find(query).sort({ order: 1 }).skip(skip).limit(limit),
+    Card.countDocuments(query),
+  ]);
+  return {
+    cards,
+    pagination: {
+      page,
+      limit,
+      totalItems,
+      totalPages: Math.ceil(totalItems / limit),
+    },
+  };
+};
+
+const validateCardData = (data) => {
+  const errors = [];
+  if (!data.topicId)
+    errors.push({ field: 'topicId', message: 'Trường topicId là bắt buộc' });
+  if (!data.term)
+    errors.push({ field: 'term', message: 'Trường term là bắt buộc' });
+  if (!data.pos)
+    errors.push({ field: 'pos', message: 'Trường pos là bắt buộc' });
+  if (!data.translation)
+    errors.push({ field: 'translation', message: 'Trường translation là bắt buộc' });
+  if (errors.length > 0) {
+    throw new AppError('Dữ liệu không hợp lệ', 400, errors);
+  }
+};
+
+const validateTopicInDeck = async (deckId, topicId) => {
+  const topic = await Topic.findById(topicId);
+  if (!topic) {
+    throw new AppError('Không tìm thấy topic', 404);
+  }
+  if (topic.deckId.toString() !== deckId.toString()) {
+    throw new AppError('Dữ liệu không hợp lệ', 400, [
+      {
+        field: 'topicId',
+        message: 'Topic này không thuộc về deck hiện tại'
+      }
+    ]);
+  }
+  return topic;
+};
+
+export const createAdminDeckCard = async (deckId, data) => {
+  validateCardData(data);
+  const deck = await Deck.findById(deckId);
+  if (!deck) throw new AppError('Không tìm thấy deck', 404);
+  await validateTopicInDeck(deckId, data.topicId);
+
+  const last = await Card.findOne({ deckId, topicId: data.topicId })
+    .sort({ order: -1 })
+    .select('order');
+  const nextOrder = last ? last.order + 1 : 1;
+
+  const card = await Card.create({
+    deckId,
+    topicId: data.topicId,
+    order: nextOrder,
+    term: data.term,
+    translation: data.translation,
+    pos: data.pos || '',
+    phonetics: data.phonetics || [],
+    explanation: data.explanation || { vi: '', en: '' },
+    examples: data.examples || { vi: '', en: '' },
+    imageUrl: data.imageUrl || '',
+    // default '', []: tránh Client (hoặc do lỗi logic) gửi lên field: null
+  });
+  await Promise.all([
+    Topic.updateOne({ _id: data.topicId }, { $inc: { cardCount: 1 } }),
+    Deck.updateOne({ _id: deckId }, { $inc: { cardCount: 1 } }),
+  ]);
+  return card;
+};
+
+export const getAdminDeckCard = async (deckId, cardId) => {
+  const card = await Card.findOne({ _id: cardId, deckId });
+  if (!card) throw new AppError('Không tìm thấy deck hoặc card', 404);
+  return card;
+};
+
+export const updateAdminDeckCard = async (deckId, cardId, data) => {
+  const card = await Card.findOne({ _id: cardId, deckId });
+  if (!card) throw new AppError('Không tìm thấy deck hoặc card', 404);
+  validateCardData(data);
+  await validateTopicInDeck(deckId, data.topicId);
+
+  const set = {};
+  if (data.topicId !== undefined) set.topicId = data.topicId;
+  if (data.term !== undefined)// Check có gửi field hay ko != ! check falsy
+    set.term = data.term;
+  if (data.translation !== undefined) set.translation = data.translation;
+  if (data.pos !== undefined) set.pos = data.pos;
+  if (data.phonetics !== undefined) set.phonetics = data.phonetics;
+  if (data.explanation !== undefined) set.explanation = data.explanation;
+  if (data.examples !== undefined) set.examples = data.examples;
+  if (data.imageUrl !== undefined) set.imageUrl = data.imageUrl;
+
+  const updated = await Card.findOneAndUpdate(
+    { _id: cardId, deckId },
+    { $set: set },
+    { new: true }
+  );
+
+  if (set.topicId && set.topicId.toString() !== card.topicId.toString()) {
+    await Promise.all([
+      Topic.updateOne({ _id: card.topicId }, { $inc: { cardCount: -1 } }),
+      Topic.updateOne({ _id: set.topicId }, { $inc: { cardCount: 1 } }),
+    ]);
+  }
+
+  return updated;
+};
+
+export const deleteAdminDeckCard = async (deckId, cardId) => {
+  const card = await Card.findOne({ _id: cardId, deckId });
+  if (!card) throw new AppError('Không tìm thấy deck hoặc card', 404);
+  await Promise.all([card.deleteOne(), UserCardState.deleteMany({ cardId })]);
+  await Promise.all([
+    Topic.updateOne({ _id: card.topicId }, { $inc: { cardCount: -1 } }),
+    Deck.updateOne({ _id: deckId }, { $inc: { cardCount: -1 } }),
+  ]);
 };

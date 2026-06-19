@@ -409,36 +409,10 @@ const DeckOrCardNotFound = {
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
-      examples: {
-        DeckNotFound: {
-          summary: 'Lỗi sai deck ID',
-          value: { success: false, message: 'Không tìm thấy deck' },
-        },
-        CardNotFound: {
-          summary: 'Lỗi sai card ID',
-          value: { success: false, message: 'Không tìm thấy card' },
-        },
-      },
-    },
-  },
-};
-
-const CardConflict = {
-  description: 'Dữ liệu đã tồn tại (Order)',
-  content: {
-    'application/json': {
-      schema: { $ref: '#/components/schemas/ErrorResponse' },
-      examples: {
-        DuplicateOrder: {
-          summary: 'Trùng thứ tự',
-          value: {
-            success: false,
-            message: 'Dữ liệu đã tồn tại',
-            errors: [
-              { field: 'order', message: 'Order này đã tồn tại trong topic' },
-            ],
-          },
-        },
+      example: {
+        
+         success: false, message: 'Không tìm thấy deck hoặc card',
+      
       },
     },
   },
@@ -462,19 +436,6 @@ const CardBadRequest = {
               {
                 field: 'translation',
                 message: 'Trường translation là bắt buộc',
-              },
-            ],
-          },
-        },
-        InvalidData: {
-          summary: 'Dữ liệu sai định dạng',
-          value: {
-            success: false,
-            message: 'Dữ liệu không hợp lệ',
-            errors: [
-              {
-                field: 'order',
-                message: 'Trường order phải là số nguyên lớn hơn hoặc bằng 1',
               },
             ],
           },
@@ -1952,7 +1913,6 @@ export default {
           },
         },
         400: CardBadRequest,
-        409: CardConflict,
         404: DeckNotFound,
         401: { $ref: '#/components/responses/Unauthorized' },
         403: { $ref: '#/components/responses/Forbidden' },
@@ -2050,7 +2010,6 @@ export default {
           },
         },
         400: CardBadRequest,
-        409: CardConflict,
         404: DeckOrCardNotFound,
         401: { $ref: '#/components/responses/Unauthorized' },
         403: { $ref: '#/components/responses/Forbidden' },
