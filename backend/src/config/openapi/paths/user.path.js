@@ -87,7 +87,8 @@ const CardStateNotFound = {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
       example: {
         success: false,
-        message: 'Không tìm thấy user card state',
+        code: 'CARD_STATE_NOT_FOUND',
+        message: 'User card state not found',
       },
     },
   },
@@ -129,11 +130,21 @@ const CardStateBadRequest = {
 };
 
 const CardStatePatchBadRequest = {
-  description: 'Dữ liệu đầu vào không hợp lệ',
+  description: 'Dữ liệu đầu vào không hợp lệ hoặc thiếu dữ liệu khi tạo mới',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
       examples: {
+        MissingFields: {
+          summary: 'Thiếu deckId và topicId khi tạo mới',
+          value: {
+            success: false,
+            code: 'CARD_STATE_CREATE_MISSING_DATA',
+            message:
+              'deckId and topicId are required when creating a new card state',
+            errors: [],
+          },
+        },
         InvalidGrade: {
           summary: 'Điểm đánh giá không hợp lệ',
           value: {
@@ -336,6 +347,13 @@ export default {
         },
         {
           in: 'query',
+          name: 'hidden',
+          schema: { type: 'boolean' },
+          description:
+            'Lọc theo trạng thái bị ẩn của thẻ (có cờ "hidden" = true/false)',
+        },
+        {
+          in: 'query',
           name: 'page',
           schema: { type: 'integer', default: 1 },
           description: 'Trang hiện tại',
@@ -391,63 +409,11 @@ export default {
         500: { $ref: '#/components/responses/ServerError' },
       },
     },
-    put: {
-      tags: ['User Card States'],
-      summary: 'Upsert state của một card',
-      description:
-        'Ghi đè toàn bộ state của một card. Nếu chưa có sẽ tự động tạo mới. Dùng khi học card lần đầu hoặc reset toàn bộ state',
-      security: [{ BearerAuth: [] }],
-      parameters: [
-        {
-          in: 'path',
-          name: 'cardId',
-          required: true,
-          schema: { type: 'string' },
-          description: 'ID của card',
-        },
-      ],
-      requestBody: {
-        required: true,
-        content: {
-          'application/json': {
-            schema: { $ref: '#/components/schemas/CardStatePayload' },
-          },
-        },
-      },
-      responses: {
-        200: {
-          description: 'Upsert card state thành công',
-          content: {
-            'application/json': {
-              schema: {
-                allOf: [
-                  { $ref: '#/components/schemas/CardStateResponse' },
-                  {
-                    type: 'object',
-                    properties: {
-                      message: {
-                        type: 'string',
-                        example: 'Upsert card state thành công',
-                      },
-                    },
-                  },
-                ],
-              },
-            },
-          },
-        },
-        400: CardStateBadRequest,
-        404: CardStateNotFound,
-        401: { $ref: '#/components/responses/Unauthorized' },
-        403: { $ref: '#/components/responses/Forbidden' },
-        500: { $ref: '#/components/responses/ServerError' },
-      },
-    },
     patch: {
       tags: ['User Card States'],
-      summary: 'Cập nhật một phần state của một card',
+      summary: 'Upsert / Cập nhật state của một card',
       description:
-        'Chỉ cập nhật những trường được gửi lên (như cập nhật srs hoặc cờ flags). Dùng khi chỉ update 1 trong 2 hoặc cả 2, không bắt buộc phải update cả 2',
+        'Cập nhật một phần state của một card. Nếu card chưa có state, sẽ tự động tạo mới (bắt buộc phải có deckId và topicId trong body khi tạo mới).',
       security: [{ BearerAuth: [] }],
       parameters: [
         {
@@ -477,9 +443,13 @@ export default {
                   {
                     type: 'object',
                     properties: {
+                      code: {
+                        type: 'string',
+                        example: 'CARD_STATE_UPSERT_SUCCESS',
+                      },
                       message: {
                         type: 'string',
-                        example: 'Cập nhật card state thành công',
+                        example: 'Successfully created/updated card state',
                       },
                     },
                   },

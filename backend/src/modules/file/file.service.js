@@ -32,7 +32,10 @@ export const buildPublicUrl = (key) =>
     : null;
 
 const legacyBase = () =>
-  (process.env.S3_LEGACY_BASE_URL || 'https://assets.parroto.app').replace(/\/$/, '');
+  (process.env.S3_LEGACY_BASE_URL || 'https://assets.parroto.app').replace(
+    /\/$/,
+    ''
+  );
 
 export const validateMediaUrl = async (url, purpose, userId, currentUrl) => {
   const config = UPLOAD_CONFIG[purpose];
@@ -104,7 +107,6 @@ export const createUploadPresignedUrl = async (
 
   return { uploadUrl, key, url: buildPublicUrl(key), expiresIn: 60 };
 };
-
 
 /**
  * @param {User} data

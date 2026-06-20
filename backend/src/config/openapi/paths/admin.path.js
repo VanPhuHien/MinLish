@@ -410,9 +410,8 @@ const DeckOrCardNotFound = {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
       example: {
-        
-         success: false, message: 'Không tìm thấy deck hoặc card',
-      
+        success: false,
+        message: 'Không tìm thấy deck hoặc card',
       },
     },
   },

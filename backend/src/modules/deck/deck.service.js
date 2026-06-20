@@ -86,7 +86,11 @@ export const getTopicCards = async (deckId, topicId, userId) => {
 
   const items = await Promise.all(
     cards.map(async (card) => {
-      const quizOptions = await generateQuizOptions(topicId, card.term, card._id);
+      const quizOptions = await generateQuizOptions(
+        topicId,
+        card.term,
+        card._id
+      );
       return {
         card: {
           ...card.toObject(),
@@ -383,7 +387,11 @@ export const reorderAdminDeckTopics = async (deckId, topics) => {
   }
 };
 
-export const generateQuizOptions = async (topicId, currentTerm, excludeCardId = null) => {
+export const generateQuizOptions = async (
+  topicId,
+  currentTerm,
+  excludeCardId = null
+) => {
   const matchQuery = {
     topicId: new mongoose.Types.ObjectId(topicId),
     term: { $ne: currentTerm },
@@ -394,7 +402,7 @@ export const generateQuizOptions = async (topicId, currentTerm, excludeCardId = 
   const randomCards = await Card.aggregate([
     { $match: matchQuery },
     { $sample: { size: 3 } },
-    { $project: { term: 1 } },// Chỉ giữ lại field term và _id (defauld id nếu không truyền _id :0)
+    { $project: { term: 1 } }, // Chỉ giữ lại field term và _id (defauld id nếu không truyền _id :0)
   ]);
 
   const options = randomCards.map((c) => ({
@@ -402,14 +410,14 @@ export const generateQuizOptions = async (topicId, currentTerm, excludeCardId = 
     isCorrect: false,
   }));
   if (options.length < 3) {
-    const excludeTerms = options.map(o => o.word);
+    const excludeTerms = options.map((o) => o.word);
     excludeTerms.push(currentTerm);
     const extraCards = await Card.aggregate([
       { $match: { term: { $nin: excludeTerms } } },
       { $sample: { size: 3 - options.length } },
       { $project: { term: 1 } },
     ]);
-    extraCards.forEach(c => {
+    extraCards.forEach((c) => {
       options.push({ word: c.term, isCorrect: false });
     });
   }
@@ -420,7 +428,7 @@ export const generateQuizOptions = async (topicId, currentTerm, excludeCardId = 
 
   // Shuffle array
   for (let i = options.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));// Thuật toán Fisher-Yates shuffle (0 <= j <= i)
+    const j = Math.floor(Math.random() * (i + 1)); // Thuật toán Fisher-Yates shuffle (0 <= j <= i)
     [options[i], options[j]] = [options[j], options[i]];
   }
   return options;
@@ -428,8 +436,8 @@ export const generateQuizOptions = async (topicId, currentTerm, excludeCardId = 
 
 export const listAdminDeckCards = async (deckId, filters) => {
   const deck = await Deck.findById(deckId);
-  if(!deck) throw new AppError('Không tìm thấy deck', 404);
-  
+  if (!deck) throw new AppError('Không tìm thấy deck', 404);
+
   const { topicId, q, page, limit } = filters;
   const query = { deckId };
   if (topicId) query.topicId = topicId;
@@ -464,7 +472,10 @@ const validateCardData = (data) => {
   if (!data.pos)
     errors.push({ field: 'pos', message: 'Trường pos là bắt buộc' });
   if (!data.translation)
-    errors.push({ field: 'translation', message: 'Trường translation là bắt buộc' });
+    errors.push({
+      field: 'translation',
+      message: 'Trường translation là bắt buộc',
+    });
   if (errors.length > 0) {
     throw new AppError('Dữ liệu không hợp lệ', 400, errors);
   }
@@ -479,8 +490,8 @@ const validateTopicInDeck = async (deckId, topicId) => {
     throw new AppError('Dữ liệu không hợp lệ', 400, [
       {
         field: 'topicId',
-        message: 'Topic này không thuộc về deck hiện tại'
-      }
+        message: 'Topic này không thuộc về deck hiện tại',
+      },
     ]);
   }
   return topic;
@@ -531,7 +542,8 @@ export const updateAdminDeckCard = async (deckId, cardId, data) => {
 
   const set = {};
   if (data.topicId !== undefined) set.topicId = data.topicId;
-  if (data.term !== undefined)// Check có gửi field hay ko != ! check falsy
+  if (data.term !== undefined)
+    // Check có gửi field hay ko != ! check falsy
     set.term = data.term;
   if (data.translation !== undefined) set.translation = data.translation;
   if (data.pos !== undefined) set.pos = data.pos;

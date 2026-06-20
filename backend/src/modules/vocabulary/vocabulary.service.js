@@ -196,8 +196,7 @@ export const updateCardService = async (cardId, updateData, currentUserId) => {
     deck.ownerType === 'user' &&
     deck.ownerId.toString() === currentUserId.toString();
 
-  if (!isUserOwner)
-    throw new AppError(VOCABULARY.VOCAB_UPDATE_FORBIDDEN, 403);
+  if (!isUserOwner) throw new AppError(VOCABULARY.VOCAB_UPDATE_FORBIDDEN, 403);
 
   // Kiểm tra trùng term trong cùng topic (nếu có update term)
   if (term) {

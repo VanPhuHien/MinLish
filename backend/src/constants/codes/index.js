@@ -8,6 +8,10 @@ import { DECK, DECK_MESSAGES } from './deck.codes.js';
 import { USER_DECK, USER_DECK_MESSAGES } from './userDeck.codes.js';
 import { VOCABULARY, VOCABULARY_MESSAGES } from './vocabulary.codes.js';
 import { ADMIN, ADMIN_MESSAGES } from './admin.codes.js';
+import {
+  USER_CARD_STATE,
+  USER_CARD_STATE_MESSAGES,
+} from './userCardState.codes.js';
 
 export {
   COMMON,
@@ -20,8 +24,8 @@ export {
   USER_DECK,
   VOCABULARY,
   ADMIN,
+  USER_CARD_STATE,
 };
-
 
 export const MESSAGES = {
   ...COMMON_MESSAGES,
@@ -34,4 +38,5 @@ export const MESSAGES = {
   ...USER_DECK_MESSAGES,
   ...VOCABULARY_MESSAGES,
   ...ADMIN_MESSAGES,
+  ...USER_CARD_STATE_MESSAGES,
 };

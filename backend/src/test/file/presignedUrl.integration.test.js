@@ -42,7 +42,11 @@ describe('POST /api/v1/s3/presigned-url', () => {
       const res = await request(app)
         .post(url)
         .set('Authorization', `Bearer ${validToken}`)
-        .send({ contentType: 'audio/webm', purpose: 'shadowing-audio', fileSize: 1024 * 1024 });
+        .send({
+          contentType: 'audio/webm',
+          purpose: 'shadowing-audio',
+          fileSize: 1024 * 1024,
+        });
 
       expect(res.status).toBe(200);
       expect(res.body.code).toBe('PRESIGNED_URL_SUCCESS');
@@ -58,7 +62,11 @@ describe('POST /api/v1/s3/presigned-url', () => {
       const res = await request(app)
         .post(url)
         .set('Authorization', `Bearer ${adminToken}`)
-        .send({ contentType: 'image/png', purpose: 'card-image', fileSize: 512 * 1024 });
+        .send({
+          contentType: 'image/png',
+          purpose: 'card-image',
+          fileSize: 512 * 1024,
+        });
 
       expect(res.status).toBe(200);
       expect(res.body.data.key).toMatch(
@@ -85,7 +93,11 @@ describe('POST /api/v1/s3/presigned-url', () => {
       const res = await request(app)
         .post(url)
         .set('Authorization', `Bearer ${validToken}`)
-        .send({ contentType: 'image/png', purpose: 'card-image', fileSize: 512 * 1024 });
+        .send({
+          contentType: 'image/png',
+          purpose: 'card-image',
+          fileSize: 512 * 1024,
+        });
 
       expect(res.status).toBe(403);
       expect(res.body.code).toBe('FORBIDDEN');
@@ -121,7 +133,11 @@ describe('POST /api/v1/s3/presigned-url', () => {
       const res = await request(app)
         .post(url)
         .set('Authorization', `Bearer ${validToken}`)
-        .send({ contentType: 'image/png', purpose: 'shadowing-audio', fileSize: 1024 });
+        .send({
+          contentType: 'image/png',
+          purpose: 'shadowing-audio',
+          fileSize: 1024,
+        });
 
       expect(res.status).toBe(400);
     });

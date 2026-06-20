@@ -233,7 +233,12 @@ export default {
       parameters: [deckIdParam],
       requestBody: jsonBody('UserTopicCreateRequest'),
       responses: {
-        201: jsonResponseWithCode('UserTopicMutationResponse', 'Topic created successfully', 'TOPIC_CREATE_SUCCESS', 'Topic created successfully'),
+        201: jsonResponseWithCode(
+          'UserTopicMutationResponse',
+          'Topic created successfully',
+          'TOPIC_CREATE_SUCCESS',
+          'Topic created successfully'
+        ),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
         404: NotFound('Không tìm thấy deck'),
@@ -250,7 +255,12 @@ export default {
         'Trả về chi tiết một topic trong deck do người dùng hiện tại sở hữu.',
       parameters: [deckIdParam, topicIdParam],
       responses: {
-        200: jsonResponseWithCode('UserTopicMutationResponse', 'Topic detail retrieved successfully', 'TOPIC_DETAIL_SUCCESS', 'Topic detail retrieved successfully'),
+        200: jsonResponseWithCode(
+          'UserTopicMutationResponse',
+          'Topic detail retrieved successfully',
+          'TOPIC_DETAIL_SUCCESS',
+          'Topic detail retrieved successfully'
+        ),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
         404: NotFound('Không tìm thấy deck hoặc topic'),
@@ -266,7 +276,12 @@ export default {
       parameters: [deckIdParam, topicIdParam],
       requestBody: jsonBody('UserTopicUpdateRequest'),
       responses: {
-        200: jsonResponseWithCode('UserTopicMutationResponse', 'Topic updated successfully', 'TOPIC_UPDATE_SUCCESS', 'Topic updated successfully'),
+        200: jsonResponseWithCode(
+          'UserTopicMutationResponse',
+          'Topic updated successfully',
+          'TOPIC_UPDATE_SUCCESS',
+          'Topic updated successfully'
+        ),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
         404: NotFound('Không tìm thấy deck hoặc topic'),
@@ -281,7 +296,10 @@ export default {
         'Xóa một topic trong deck do người dùng hiện tại sở hữu cùng toàn bộ card bên trong.',
       parameters: [deckIdParam, topicIdParam],
       responses: {
-        200: simpleSuccess('TOPIC_DELETE_SUCCESS', 'Topic deleted successfully'),
+        200: simpleSuccess(
+          'TOPIC_DELETE_SUCCESS',
+          'Topic deleted successfully'
+        ),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
         404: NotFound('Không tìm thấy deck hoặc topic'),
@@ -335,7 +353,12 @@ export default {
       parameters: [deckIdParam],
       requestBody: jsonBody('UserCardCreateRequest'),
       responses: {
-        201: jsonResponseWithCode('UserCardMutationResponse', 'Card created successfully', 'CARD_CREATE_SUCCESS', 'Card created successfully'),
+        201: jsonResponseWithCode(
+          'UserCardMutationResponse',
+          'Card created successfully',
+          'CARD_CREATE_SUCCESS',
+          'Card created successfully'
+        ),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
         404: NotFound('Không tìm thấy deck hoặc topic'),
@@ -352,7 +375,12 @@ export default {
         'Trả về chi tiết một card trong deck do người dùng hiện tại sở hữu.',
       parameters: [deckIdParam, cardIdParam],
       responses: {
-        200: jsonResponseWithCode('UserCardMutationResponse', 'Card detail retrieved successfully', 'CARD_DETAIL_SUCCESS', 'Card detail retrieved successfully'),
+        200: jsonResponseWithCode(
+          'UserCardMutationResponse',
+          'Card detail retrieved successfully',
+          'CARD_DETAIL_SUCCESS',
+          'Card detail retrieved successfully'
+        ),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
         404: NotFound('Không tìm thấy deck hoặc card'),
@@ -368,7 +396,12 @@ export default {
       parameters: [deckIdParam, cardIdParam],
       requestBody: jsonBody('UserCardUpdateRequest'),
       responses: {
-        200: jsonResponseWithCode('UserCardMutationResponse', 'Card updated successfully', 'CARD_UPDATE_SUCCESS', 'Card updated successfully'),
+        200: jsonResponseWithCode(
+          'UserCardMutationResponse',
+          'Card updated successfully',
+          'CARD_UPDATE_SUCCESS',
+          'Card updated successfully'
+        ),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
         404: NotFound('Không tìm thấy deck hoặc card'),

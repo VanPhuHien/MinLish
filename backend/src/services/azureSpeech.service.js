@@ -3,7 +3,9 @@ import { config } from '../config/env.js';
 export const evaluatePronunciation = async (audioUrl, referenceText) => {
   try {
     if (!config.azureSpeechKey || !config.azureSpeechRegion) {
-      console.warn('Azure Speech API keys not configured. Returning default score 0.');
+      console.warn(
+        'Azure Speech API keys not configured. Returning default score 0.'
+      );
       return 0;
     }
 
@@ -32,7 +34,7 @@ export const evaluatePronunciation = async (audioUrl, referenceText) => {
       method: 'POST',
       headers: {
         'Ocp-Apim-Subscription-Key': config.azureSpeechKey,
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'audio/wav',
         'Pronunciation-Assessment': pronunciationAssessmentHeader,
       },
@@ -44,11 +46,15 @@ export const evaluatePronunciation = async (audioUrl, referenceText) => {
       return 0; // Return 0 khi fail để không crash app
     }
     const result = await azureResponse.json();
-    
+
     if (result.NBest && result.NBest.length > 0) {
       const best = result.NBest[0];
-      const pronScore = best.PronScore !== undefined ? best.PronScore : 
-                        (best.PronunciationAssessment ? best.PronunciationAssessment.PronScore : undefined);
+      const pronScore =
+        best.PronScore !== undefined
+          ? best.PronScore
+          : best.PronunciationAssessment
+            ? best.PronunciationAssessment.PronScore
+            : undefined;
 
       if (pronScore !== undefined) {
         return pronScore;

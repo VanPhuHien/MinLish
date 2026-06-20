@@ -211,7 +211,10 @@ export const listDeckCards = async (req, res, next) => {
       page: parseInt(req.query.page) || 1,
       limit: parseInt(req.query.limit) || 10,
     };
-    const data = await deckService.listAdminDeckCards(req.params.deckId, filters);
+    const data = await deckService.listAdminDeckCards(
+      req.params.deckId,
+      filters
+    );
     return res
       .status(200)
       .json(successResponse('Lấy danh sách card thành công', data));
@@ -265,10 +268,7 @@ export const updateDeckCard = async (req, res, next) => {
 
 export const deleteDeckCard = async (req, res, next) => {
   try {
-    await deckService.deleteAdminDeckCard(
-      req.params.deckId,
-      req.params.cardId
-    );
+    await deckService.deleteAdminDeckCard(req.params.deckId, req.params.cardId);
     return res.status(200).json(successResponse('Xóa card thành công'));
   } catch (error) {
     next(error);

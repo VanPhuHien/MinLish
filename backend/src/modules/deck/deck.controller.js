@@ -46,9 +46,7 @@ export const getDeckTopics = async (req, res, next) => {
 
     return res
       .status(200)
-      .json(
-        successResponse(DECK.DECK_TOPICS_SUCCESS, data)
-      );
+      .json(successResponse(DECK.DECK_TOPICS_SUCCESS, data));
   } catch (error) {
     next(error);
   }
@@ -71,9 +69,7 @@ export const getTopicCards = async (req, res, next) => {
 
     return res
       .status(200)
-      .json(
-        successResponse(DECK.TOPIC_CARDS_SUCCESS, data)
-      );
+      .json(successResponse(DECK.TOPIC_CARDS_SUCCESS, data));
   } catch (error) {
     next(error);
   }
@@ -93,9 +89,7 @@ export const listDecks = async (req, res, next) => {
     const userId = req.user?.id ?? null;
     const data = await service.listDecks(result.data, userId);
 
-    return res
-      .status(200)
-      .json(successResponse(DECK.DECK_LIST_SUCCESS, data));
+    return res.status(200).json(successResponse(DECK.DECK_LIST_SUCCESS, data));
   } catch (error) {
     next(error);
   }

@@ -19,8 +19,7 @@ export const DECK_MESSAGES = {
   DECK_LIST_SUCCESS: 'Decks retrieved successfully',
   DECK_NOT_FOUND: 'Deck not found',
   DECK_OR_TOPIC_NOT_FOUND: 'Deck or topic not found',
-  DECK_SLUG_EXISTS:
-    'Deck slug already exists. Please change the slug or title',
+  DECK_SLUG_EXISTS: 'Deck slug already exists. Please change the slug or title',
   TOPIC_SLUG_EXISTS:
     'Topic slug already exists. Please change the slug or title',
   TOPIC_NAME_REQUIRED: 'The name field is required',

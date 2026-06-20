@@ -18,4 +18,8 @@ router.patch(
   '/me/lessons/:lessonId/segments/:segmentId/progress',
   controller.updateSegmentProgress
 );
+
+router.get('/me/card-states', controller.getCardStates);
+router.get('/me/card-states/:cardId', controller.getCardState);
+router.patch('/me/card-states/:cardId', controller.upsertCardState);
 export default router;

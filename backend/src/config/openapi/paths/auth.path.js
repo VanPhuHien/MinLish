@@ -236,8 +236,7 @@ export default {
           'Password reset successfully'
         ),
         400: {
-          description:
-            'OTP is invalid, expired, or the password is too short.',
+          description: 'OTP is invalid, expired, or the password is too short.',
           content: {
             'application/json': {
               schema: { $ref: '#/components/schemas/ErrorResponse' },

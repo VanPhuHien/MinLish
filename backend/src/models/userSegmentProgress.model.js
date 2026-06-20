@@ -45,7 +45,6 @@ const userSegmentProgressSchema = new mongoose.Schema(
         type: String,
         default: '',
       },
-
     },
   },
   {

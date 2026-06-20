@@ -75,7 +75,7 @@ const cardSchema = new mongoose.Schema(
     imageUrl: {
       type: String,
       default: '',
-    }
+    },
   },
   {
     timestamps: true,

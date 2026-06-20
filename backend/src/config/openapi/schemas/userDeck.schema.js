@@ -96,7 +96,10 @@ export default {
     properties: {
       success: { type: 'boolean', example: true },
       code: { type: 'string', example: 'DECK_DETAIL_SUCCESS' },
-      message: { type: 'string', example: 'Deck detail retrieved successfully' },
+      message: {
+        type: 'string',
+        example: 'Deck detail retrieved successfully',
+      },
       data: { $ref: '#/components/schemas/UserOwnedDeck' },
     },
   },

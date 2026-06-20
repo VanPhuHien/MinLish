@@ -479,38 +479,38 @@ export default {
     properties: {
       success: { type: 'boolean', example: true },
       message: { type: 'string', example: 'Lấy danh sách card thành công' },
-     data: {
-      type: 'object',
-      properties: {
-        cards: {
-          type: 'array',
-          items: {
-            $ref: '#/components/schemas/Card'
-          }
+      data: {
+        type: 'object',
+        properties: {
+          cards: {
+            type: 'array',
+            items: {
+              $ref: '#/components/schemas/Card',
+            },
+          },
+          pagination: {
+            type: 'object',
+            properties: {
+              totalItems: {
+                type: 'integer',
+                example: 100,
+              },
+              page: {
+                type: 'integer',
+                example: 1,
+              },
+              limit: {
+                type: 'integer',
+                example: 10,
+              },
+              totalPages: {
+                type: 'integer',
+                example: 10,
+              },
+            },
+          },
         },
-        pagination: {
-          type: 'object',
-          properties: {
-            totalItems: {
-              type: 'integer',
-              example: 100
-            },
-            page: {
-              type: 'integer',
-              example: 1
-            },
-            limit: {
-              type: 'integer',
-              example: 10
-            },
-            totalPages: {
-              type: 'integer',
-              example: 10
-            }
-          }
-        }
-      }
-    }
+      },
     },
   },
   CardResponse: {

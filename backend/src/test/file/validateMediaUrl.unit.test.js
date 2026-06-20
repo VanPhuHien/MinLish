@@ -15,16 +15,18 @@ vi.mock('@aws-sdk/client-s3', async (importOriginal) => {
 
 vi.mock('@aws-sdk/s3-request-presigner', () => ({ getSignedUrl: vi.fn() }));
 
-const { validateMediaUrl } = await import(
-  '../../modules/file/file.service.js'
-);
+const { validateMediaUrl } = await import('../../modules/file/file.service.js');
 
 const BASE = 'https://s3.example.com';
 const LEGACY = 'https://assets.parroto.app';
 const USER_ID = 'user123';
 
 const s3Url = (purpose, userId = USER_ID, file = 'abc.webp') => {
-  const prefix = { 'card-image': 'cards', 'shadowing-audio': 'shadowing', 'deck-import': 'imports' };
+  const prefix = {
+    'card-image': 'cards',
+    'shadowing-audio': 'shadowing',
+    'deck-import': 'imports',
+  };
   return `${BASE}/${prefix[purpose]}/${userId}/${file}`;
 };
 
@@ -97,7 +99,10 @@ describe('validateMediaUrl', () => {
           'card-image',
           USER_ID
         )
-      ).rejects.toMatchObject({ code: 'KEY_OWNERSHIP_MISMATCH', statusCode: 403 });
+      ).rejects.toMatchObject({
+        code: 'KEY_OWNERSHIP_MISMATCH',
+        statusCode: 403,
+      });
       expect(mockS3Send).not.toHaveBeenCalled();
     });
 
@@ -109,7 +114,10 @@ describe('validateMediaUrl', () => {
           'card-image',
           USER_ID
         )
-      ).rejects.toMatchObject({ code: 'KEY_OWNERSHIP_MISMATCH', statusCode: 403 });
+      ).rejects.toMatchObject({
+        code: 'KEY_OWNERSHIP_MISMATCH',
+        statusCode: 403,
+      });
       expect(mockS3Send).not.toHaveBeenCalled();
     });
 
@@ -120,7 +128,10 @@ describe('validateMediaUrl', () => {
           'card-image',
           USER_ID
         )
-      ).rejects.toMatchObject({ code: 'KEY_OWNERSHIP_MISMATCH', statusCode: 403 });
+      ).rejects.toMatchObject({
+        code: 'KEY_OWNERSHIP_MISMATCH',
+        statusCode: 403,
+      });
       expect(mockS3Send).not.toHaveBeenCalled();
     });
 

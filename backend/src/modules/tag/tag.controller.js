@@ -16,9 +16,7 @@ export const listTags = async (req, res, next) => {
     }
 
     const tags = await service.listTags(result.data);
-    return res
-      .status(200)
-      .json(successResponse(TAG.TAG_LIST_SUCCESS, tags));
+    return res.status(200).json(successResponse(TAG.TAG_LIST_SUCCESS, tags));
   } catch (error) {
     next(error);
   }

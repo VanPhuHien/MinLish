@@ -1,7 +1,13 @@
 export const UPLOAD_CONFIG = Object.freeze({
   'shadowing-audio': {
     prefix: 'shadowing',
-    allowedTypes: ['audio/webm', 'audio/mpeg', 'audio/mp4', 'audio/wav', 'audio/ogg'],
+    allowedTypes: [
+      'audio/webm',
+      'audio/mpeg',
+      'audio/mp4',
+      'audio/wav',
+      'audio/ogg',
+    ],
     maxSize: 10 * 1024 * 1024, // 10MB
   },
   'deck-import': {

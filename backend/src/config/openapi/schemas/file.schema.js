@@ -17,7 +17,8 @@ export default {
       },
       fileSize: {
         type: 'integer',
-        description: 'Kích thước file (byte). Bắt buộc — được bake vào chữ ký để S3 reject upload sai kích thước.',
+        description:
+          'Kích thước file (byte). Bắt buộc — được bake vào chữ ký để S3 reject upload sai kích thước.',
         example: 245678,
       },
     },
@@ -27,13 +28,17 @@ export default {
     properties: {
       success: { type: 'boolean', example: true },
       code: { type: 'string', example: 'PRESIGNED_URL_SUCCESS' },
-      message: { type: 'string', example: 'Presigned URL created successfully' },
+      message: {
+        type: 'string',
+        example: 'Presigned URL created successfully',
+      },
       data: {
         type: 'object',
         properties: {
           uploadUrl: {
             type: 'string',
-            description: 'URL PUT ký sẵn để upload bytes trực tiếp lên S3 (hết hạn 60s).',
+            description:
+              'URL PUT ký sẵn để upload bytes trực tiếp lên S3 (hết hạn 60s).',
             example:
               'https://bucket.s3.region.amazonaws.com/shadowing/<userId>/<rand>.webm?X-Amz-Signature=...',
           },

@@ -243,9 +243,10 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
+      code: { type: 'string', example: 'CARD_STATE_LIST_SUCCESS' },
       message: {
         type: 'string',
-        example: 'Lấy danh sách user card states thành công',
+        example: 'Successfully retrieved user card states',
       },
       data: {
         type: 'array',
@@ -268,46 +269,21 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
+      code: { type: 'string', example: 'CARD_STATE_DETAIL_SUCCESS' },
       message: {
         type: 'string',
-        example: 'Lấy chi tiết user card state thành công',
+        example: 'Successfully retrieved user card state details',
       },
       data: {
         $ref: '#/components/schemas/UserCardState',
       },
     },
   },
-  CardStatePayload: {
-    type: 'object',
-    required: ['deckId', 'topicId'],
-    properties: {
-      deckId: { type: 'string', example: '64c333444555666777888999' },
-      topicId: { type: 'string', example: '64d444555666777888999000' },
-      srs: {
-        type: 'object',
-        properties: {
-          lastGrade: {
-            type: 'integer',
-            minimum: 0,
-            maximum: 3,
-            example: 3,
-            description:
-              'Điểm đánh giá (0-3: 0=Again, 1=Hard, 2=Good, 3=Easy). Backend sẽ dùng để tính toán easeFactor, interval, nextReviewAt.',
-          },
-        },
-      },
-      flags: {
-        type: 'object',
-        properties: {
-          starred: { type: 'boolean', example: false },
-          hidden: { type: 'boolean', example: false },
-        },
-      },
-    },
-  },
   CardStatePatchPayload: {
     type: 'object',
     properties: {
+      deckId: { type: 'string', example: '64c333444555666777888999' },
+      topicId: { type: 'string', example: '64d444555666777888999000' },
       srs: {
         type: 'object',
         properties: {
