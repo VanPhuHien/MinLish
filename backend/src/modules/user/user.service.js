@@ -70,6 +70,7 @@ export const updateSegmentProgress = async (
 
     const attempt = data.shadowing.attemptCount || 1;
     const finalScore = Math.max(0, Math.round(aiScore) - (attempt - 1) * 10);
+    //console.log(`[DEBUG] AI Score: ${aiScore}, Attempt: ${attempt}, Final Score: ${finalScore}`);
     max['shadowing.bestScore'] = finalScore;
   }
   set.updatedAt = new Date();

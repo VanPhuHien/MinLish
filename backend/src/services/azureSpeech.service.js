@@ -40,19 +40,23 @@ export const evaluatePronunciation = async (audioUrl, referenceText) => {
     });
     if (!azureResponse.ok) {
       const errText = await azureResponse.text();
-      console.error('Azure API Error:', errText);
+      //console.error('Azure API Error:', errText);
       return 0; // Return 0 khi fail để không crash app
     }
-    const result = await azureResponse.json(); // 4. Extract PronunciationScore
+    const result = await azureResponse.json();
+    
     if (result.NBest && result.NBest.length > 0) {
-      const pronAssessment = result.NBest[0].PronunciationAssessment;
-      if (pronAssessment && pronAssessment.PronScore !== undefined) {
-        return pronAssessment.PronScore;
+      const best = result.NBest[0];
+      const pronScore = best.PronScore !== undefined ? best.PronScore : 
+                        (best.PronunciationAssessment ? best.PronunciationAssessment.PronScore : undefined);
+
+      if (pronScore !== undefined) {
+        return pronScore;
       }
     }
     return 0;
   } catch (error) {
-    console.error('Error in evaluatePronunciation:', error);
+    //console.error('[AzureSpeech] Error in evaluatePronunciation:', error);
     return 0;
   }
 };
