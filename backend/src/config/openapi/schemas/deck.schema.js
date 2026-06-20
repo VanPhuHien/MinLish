@@ -316,6 +316,22 @@ export default {
         type: 'string',
         example: 'https://example.com/images/family.jpg',
       },
+      quizOptions: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            word: { type: 'string' },
+            isCorrect: { type: 'boolean' },
+          },
+        },
+        example: [
+          { word: 'household', isCorrect: false },
+          { word: 'extended family', isCorrect: false },
+          { word: 'stepmother', isCorrect: true },
+          { word: 'father-in-law', isCorrect: false },
+        ],
+      },
       createdAt: {
         type: 'string',
         format: 'date-time',

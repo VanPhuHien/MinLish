@@ -240,6 +240,60 @@ export default {
       },
     },
   },
+  PopulatedUserCardState: {
+    type: 'object',
+    properties: {
+      _id: {
+        type: 'string',
+        example: '64f111222333444555666777',
+      },
+      userId: {
+        type: 'string',
+        example: '64a000111222333444555666',
+      },
+      cardId: {
+        $ref: '#/components/schemas/Card',
+      },
+      deckId: {
+        type: 'string',
+        example: '64c333444555666777888999',
+      },
+      topicId: {
+        type: 'string',
+        example: '64d444555666777888999000',
+      },
+      srs: {
+        type: 'object',
+        properties: {
+          easeFactor: { type: 'number', example: 2.5 },
+          interval: { type: 'integer', example: 6 },
+          lastGrade: { type: 'integer', example: 3 },
+          nextReviewAt: {
+            type: 'string',
+            format: 'date-time',
+            example: '2023-10-18T09:00:00.000Z',
+          },
+        },
+      },
+      flags: {
+        type: 'object',
+        properties: {
+          starred: { type: 'boolean', example: false },
+          hidden: { type: 'boolean', example: false },
+        },
+      },
+      createdAt: {
+        type: 'string',
+        format: 'date-time',
+        example: '2023-10-01T08:00:00.000Z',
+      },
+      updatedAt: {
+        type: 'string',
+        format: 'date-time',
+        example: '2023-10-15T09:00:00.000Z',
+      },
+    },
+  },
   CardStatesResponse: {
     type: 'object',
     properties: {
@@ -252,7 +306,7 @@ export default {
       data: {
         type: 'array',
         items: {
-          $ref: '#/components/schemas/UserCardState',
+          $ref: '#/components/schemas/PopulatedUserCardState',
         },
       },
       pagination: {
@@ -276,7 +330,7 @@ export default {
         example: 'Successfully retrieved user card state details',
       },
       data: {
-        $ref: '#/components/schemas/UserCardState',
+        $ref: '#/components/schemas/PopulatedUserCardState',
       },
     },
   },

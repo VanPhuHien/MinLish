@@ -10,6 +10,8 @@ import {
 } from '../../constants/codes/index.js';
 import { evaluatePronunciation } from '../../services/azureSpeech.service.js';
 import { calculateNextSRS } from '../../utils/srs.util.js';
+import { generateQuizOptions } from '../deck/deck.service.js';
+
 export const getLessonSegmentsProgress = async (userId, lessonId) => {
   const lesson = await Lesson.findById(lessonId);
   if (!lesson) {
@@ -119,8 +121,22 @@ export const getCardStates = async (userId, queryParams) => {
     ).filter((state) => state.cardId != null),
     UserCardState.countDocuments(filter),
   ]);
+  const items = await Promise.all(
+    data.map(async (state) => {
+      const stateObj = state.toObject();
+      if (stateObj.cardId) {
+        stateObj.cardId.quizOptions = await generateQuizOptions(
+          stateObj.topicId || stateObj.cardId.topicId,
+          stateObj.cardId.term,
+          stateObj.cardId._id
+        );
+      }
+      return stateObj;
+    })
+  );
+
   return {
-    data,
+    data: items,
     pagination: {
       totalItems,
       page,
@@ -137,7 +153,16 @@ export const getCardState = async (userId, cardId) => {
   if (!cardState) {
     throw new AppError(USER_CARD_STATE.CARD_STATE_NOT_FOUND, 404);
   }
-  return cardState;
+  const stateObj = cardState.toObject();
+  if (stateObj.cardId) {
+    stateObj.cardId.quizOptions = await generateQuizOptions(
+      stateObj.topicId || stateObj.cardId.topicId,
+      stateObj.cardId.term,
+      stateObj.cardId._id
+    );
+  }
+
+  return stateObj;
 };
 
 export const upsertCardState = async (userId, cardId, data) => {
