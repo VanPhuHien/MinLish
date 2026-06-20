@@ -110,7 +110,13 @@ export const getCardStates = async (userId, queryParams) => {
   }
   const skip = (page - 1) * limit;
   const [data, totalItems] = await Promise.all([
-    UserCardState.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 }),
+    (
+      await UserCardState.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .populate('cardId')
+    ).filter((state) => state.cardId != null),
     UserCardState.countDocuments(filter),
   ]);
   return {
@@ -125,7 +131,9 @@ export const getCardStates = async (userId, queryParams) => {
 };
 
 export const getCardState = async (userId, cardId) => {
-  const cardState = await UserCardState.findOne({ userId, cardId });
+  const cardState = await UserCardState.findOne({ userId, cardId }).populate(
+    'cardId'
+  );
   if (!cardState) {
     throw new AppError(USER_CARD_STATE.CARD_STATE_NOT_FOUND, 404);
   }
