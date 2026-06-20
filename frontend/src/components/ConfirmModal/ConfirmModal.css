@@ -108,12 +108,13 @@
 }
 
 .confirm-danger {
-  background-color: var(--color-error);
-  color: var(--color-on-error);
+  background-color: var(--color-danger);
+  color: var(--color-on-danger);
 }
 
 .confirm-danger:hover {
-  background-color: #a81515; /* Sáng hơn màu error một chút khi hover */
+  background-color: var(--color-danger-container);
+  color: var(--color-on-danger-container);
 }
 
 /* Animations */
@@ -125,24 +126,4 @@
 @keyframes confirmModalSlideUp {
   from { transform: translateY(15px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
-}
-
-/* Dark Mode support */
-[data-theme='dark'] .btn-confirm {
-  background-color: var(--color-primary-fixed-dim, #ffb4a9);
-  color: var(--color-on-primary-fixed, #410001);
-}
-
-[data-theme='dark'] .btn-confirm:hover {
-  background-color: var(--color-primary-fixed, #ffdad5);
-}
-
-[data-theme='dark'] .confirm-danger {
-  background-color: var(--color-error);
-  color: var(--color-on-error);
-}
-
-[data-theme='dark'] .confirm-danger:hover {
-  background-color: var(--color-error-container);
-  color: var(--color-error);
 }
