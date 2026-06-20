@@ -1,5 +1,6 @@
 import cookieParser from 'cookie-parser';
 import progressRouter from './modules/progress/progress.router.js';
+import gamificationRouter from './modules/gamification/gamification.router.js';
 import vocabularyRouter from './modules/vocabulary/vocabulary.router.js';
 import shadowingRouter from './modules/shadowing/shadowing.router.js';
 import dictationRouter from './modules/dictation/dictation.router.js';
@@ -47,6 +48,7 @@ app.use('/api/v1/dictation', dictationRouter);
 app.use('/api/v1/shadowing', shadowingRouter);
 app.use('/api/v1/vocabulary', vocabularyRouter);
 app.use('/api/v1/progress', progressRouter);
+app.use('/api/v1/gamification', gamificationRouter);
 app.use('/api/v1/ai', aiRouter);
 app.use('/api/v1/admin', adminRouter);
 

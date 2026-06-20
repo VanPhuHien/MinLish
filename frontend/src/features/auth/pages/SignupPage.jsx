@@ -112,8 +112,14 @@ function SignupPage({ onNavigate }) {
             value={email}
             onChange={(e) => {
               setEmail(e.target.value)
+              e.target.setCustomValidity('')
               if (errors.email) setErrors((prev) => ({ ...prev, email: '' }))
               if (generalError) setGeneralError('')
+            }}
+            onInvalid={(e) => {
+              if (!e.target.validity.valid) {
+                e.target.setCustomValidity(t('auth.emailInvalidError'))
+              }
             }}
             error={errors.email}
             disabled={isSubmitting}

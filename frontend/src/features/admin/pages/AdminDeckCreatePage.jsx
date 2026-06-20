@@ -78,17 +78,17 @@ function AdminDeckCreatePage({ onNavigate }) {
         status,
       }
       const res = await createAdminDeckApi(payload)
-      if (res.data || res.status === 'success') {
-        setSuccessMsg(t('admin.createSuccess'))
+      if (res.success) {
+        setSuccessMsg(res.message) // Message đã được dịch tự động từ code
         setTimeout(() => {
           if (onNavigate) onNavigate('/admin/decks')
         }, 1200)
       } else {
-        setErrorMsg(res.message || t('admin.createError'))
+        setErrorMsg(res.message)
         setIsSubmitting(false)
       }
-    } catch {
-      setErrorMsg(t('admin.createError'))
+    } catch (error) {
+      setErrorMsg(error.response?.data?.message || error.message)
       setIsSubmitting(false)
     }
   }

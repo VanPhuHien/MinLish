@@ -12,6 +12,7 @@ import {
   USER_CARD_STATE,
   USER_CARD_STATE_MESSAGES,
 } from './userCardState.codes.js';
+import { GAMIFICATION, GAMIFICATION_MESSAGES } from './gamification.codes.js';
 
 export {
   COMMON,
@@ -25,6 +26,7 @@ export {
   VOCABULARY,
   ADMIN,
   USER_CARD_STATE,
+  GAMIFICATION,
 };
 
 export const MESSAGES = {
@@ -39,4 +41,5 @@ export const MESSAGES = {
   ...VOCABULARY_MESSAGES,
   ...ADMIN_MESSAGES,
   ...USER_CARD_STATE_MESSAGES,
+  ...GAMIFICATION_MESSAGES,
 };

@@ -9,6 +9,7 @@ import ForgotPasswordPage from './features/auth/pages/ForgotPasswordPage'
 import ResetPasswordPage from './features/auth/pages/ResetPasswordPage'
 import DeckListPage from './features/flashcards/pages/DeckListPage'
 import DeckDetailPage from './features/flashcards/pages/DeckDetailPage'
+import UserDeckDetailPage from './features/flashcards/pages/UserDeckDetailPage'
 import AdminLayout from './features/admin/layout/AdminLayout'
 import AdminDeckListPage from './features/admin/pages/AdminDeckListPage'
 import AdminDeckCreatePage from './features/admin/pages/AdminDeckCreatePage'
@@ -106,7 +107,7 @@ function App() {
     const userDeckMatch = currentPath.match(/^\/profile\/decks\/([a-fA-F0-9]{24})$/)
     if (userDeckMatch) {
       const deckId = userDeckMatch[1]
-      return <DeckDetailPage deckId={deckId} isSystem={false} onNavigate={navigate} />
+      return <UserDeckDetailPage deckId={deckId} onNavigate={navigate} />
     }
 
     switch (currentPath) {

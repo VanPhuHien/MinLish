@@ -87,8 +87,14 @@ function ForgotPasswordPage({ onNavigate }) {
             value={email}
             onChange={(e) => {
               setEmail(e.target.value)
+              e.target.setCustomValidity('')
               if (fieldError) setFieldError('')
               if (error) setError('')
+            }}
+            onInvalid={(e) => {
+              if (!e.target.validity.valid) {
+                e.target.setCustomValidity(t('auth.emailInvalidError'))
+              }
             }}
             error={fieldError}
           />

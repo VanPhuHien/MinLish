@@ -1,88 +1,46 @@
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-
-const getAuthHeaders = () => {
-  const token = localStorage.getItem("accessToken");
-  return {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-};
+import apiClient from "../../services/apiClient";
 
 export const listAdminDecksApi = async (filters = {}) => {
-  const params = new URLSearchParams();
-  if (filters.q) params.set("q", filters.q);
-  if (filters.tagId) params.set("tagId", filters.tagId);
-  if (filters.cefrLevelId) params.set("cefrLevelId", filters.cefrLevelId);
-  if (filters.page) params.set("page", filters.page);
-  if (filters.limit) params.set("limit", filters.limit);
-
-  const res = await fetch(
-    `${BASE_URL}/api/v1/admin/decks?${params.toString()}`,
-    {
-      headers: getAuthHeaders(),
-    },
-  );
-  return res.json();
+  const response = await apiClient.get("/admin/decks", { params: filters });
+  return response.data;
 };
 
 export const createAdminDeckApi = async (payload) => {
-  const res = await fetch(`${BASE_URL}/api/v1/admin/decks`, {
-    method: "POST",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(payload),
-  });
-  return res.json();
+  const response = await apiClient.post("/admin/decks", payload);
+  return response.data;
 };
 
 export const updateAdminDeckApi = async (id, payload) => {
-  const res = await fetch(`${BASE_URL}/api/v1/admin/decks/${id}`, {
-    method: "PUT",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(payload),
-  });
-  return res.json();
+  const response = await apiClient.put(`/admin/decks/${id}`, payload);
+  return response.data;
 };
 
 export const deleteAdminDeckApi = async (id) => {
-  const res = await fetch(`${BASE_URL}/api/v1/admin/decks/${id}`, {
-    method: "DELETE",
-    headers: getAuthHeaders(),
-  });
-  return res.json();
+  const response = await apiClient.delete(`/admin/decks/${id}`);
+  return response.data;
 };
 
 export const listCefrLevelsApi = async () => {
-  const res = await fetch(`${BASE_URL}/api/v1/cefr-levels`);
-  return res.json();
+  const response = await apiClient.get("/cefr-levels");
+  return response.data;
 };
 
 export const listTagsApi = async () => {
-  const res = await fetch(`${BASE_URL}/api/v1/tags`);
-  return res.json();
+  const response = await apiClient.get("/tags");
+  return response.data;
 };
 
 export const createTagApi = async (label) => {
-  const res = await fetch(`${BASE_URL}/api/v1/admin/tags`, {
-    method: "POST",
-    headers: getAuthHeaders(),
-    body: JSON.stringify({ label }),
-  });
-  return res.json();
+  const response = await apiClient.post("/admin/tags", { label });
+  return response.data;
 };
 
 export const updateTagApi = async (id, label) => {
-  const res = await fetch(`${BASE_URL}/api/v1/admin/tags/${id}`, {
-    method: "PUT",
-    headers: getAuthHeaders(),
-    body: JSON.stringify({ label }),
-  });
-  return res.json();
+  const response = await apiClient.put(`/admin/tags/${id}`, { label });
+  return response.data;
 };
 
 export const deleteTagApi = async (id) => {
-  const res = await fetch(`${BASE_URL}/api/v1/admin/tags/${id}`, {
-    method: "DELETE",
-    headers: getAuthHeaders(),
-  });
-  return res.json();
+  const response = await apiClient.delete(`/admin/tags/${id}`);
+  return response.data;
 };

@@ -2,6 +2,7 @@ import AppError from '../../utils/AppError.js';
 import LessonSegment from '../../models/lessonSegment.model.js';
 import UserSegmentProgress from '../../models/userSegmentProgress.model.js';
 import UserLessonProgress from '../../models/userLessonProgress.model.js';
+import { recordActivity } from '../gamification/gamification.service.js';
 
 const DICTATION_PASS_THRESHOLD = 80;
 
@@ -47,6 +48,15 @@ export const submitDictationProgress = async (
 
   // Recalculate lesson-level progress
   await recalculateLessonProgress(userId, lessonId, segment.startMs);
+
+  if (dictationUpdate.completed) {
+    try {
+      await recordActivity(userId, 'segment_complete', segmentId.toString());
+    } catch (e) {
+      console.warn('[gamification] recordActivity failed for segment_complete:', e.message);
+    }
+  }
+
   return { score, completed, progress };
 };
 

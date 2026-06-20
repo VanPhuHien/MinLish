@@ -104,13 +104,17 @@ Hàm điều hướng:
   - Tích hợp cơ chế tự động cập nhật tiến độ học của chủ đề ngay sau khi người dùng đánh giá thẻ thành công.
   - Hiển thị màn hình hoàn thành chúc mừng khi học hết tất cả từ mới trong chủ đề hiện tại.
 
-### /profile/decks/:deckId (Trang chi tiết bộ từ vựng cá nhân)
-- **Mô tả**: Trang chi tiết của một bộ từ vựng cá nhân do chính người dùng tạo.
+### /profile/decks/:deckId (Trang quản lý chi tiết bộ từ cá nhân)
+- **Mô tả**: Giao diện quản lý thông tin chi tiết, danh sách chủ đề (topic) và thẻ từ vựng (card) của bộ từ cá nhân do người dùng sở hữu.
 - **Quyền truy cập**: Private (Yêu cầu đăng nhập).
 - **Tham số nhận vào**: `deckId` (ObjectId của bộ từ cá nhân).
 - **Chức năng**:
-  - Tương tự như trang chi tiết bộ từ vựng hệ thống, nhưng lấy dữ liệu thông tin bộ từ và danh sách chủ đề thông qua các API riêng dành cho cá nhân người dùng (`/users/me/decks/{deckId}` và `/users/me/decks/{deckId}/topics`).
-  - Hỗ trợ đầy đủ các tính năng học từ mới qua FlashCard, trắc nghiệm Quiz, đánh giá SRS và tự động cập nhật tiến độ tương ứng.
+  - Cho phép chỉnh sửa tiêu đề và mô tả bộ từ cá nhân.
+  - Quản lý danh sách các Chủ đề (Topic) cá nhân (Thêm chủ đề mới, Chỉnh sửa tên chủ đề, Xóa chủ đề thông qua các API riêng dành cho cá nhân).
+  - Quản lý danh sách Thẻ từ vựng (Card) của chủ đề đang chọn (Thêm thẻ mới, Chỉnh sửa thông tin thẻ, Xóa thẻ).
+  - Tích hợp tính năng Tìm kiếm từ vựng hệ thống (`/vocabulary/search`) có debounce 400ms và auto-complete để hỗ trợ điền nhanh thông tin thẻ mới.
+  - Tái sử dụng component `Input` dùng chung của dự án có xử lý custom validity khi người dùng bỏ trống các trường bắt buộc (`required`).
+  - Hỗ trợ đa ngôn ngữ (VI/EN).
 
 ---
 

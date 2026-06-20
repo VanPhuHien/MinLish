@@ -76,10 +76,10 @@ function TagPickerModal({
         setNewTagLabel('')
         setIsCreatingNew(false)
       } else {
-        setCreateTagError(response.message || t('admin.createTagError'))
+        setCreateTagError(response.message)
       }
     } catch (error) {
-      setCreateTagError(error.response?.data?.message || t('admin.createTagError'))
+      setCreateTagError(error.response?.data?.message || error.message)
     } finally {
       setIsCreatingTag(false)
     }

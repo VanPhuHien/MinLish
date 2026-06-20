@@ -73,11 +73,6 @@ function AdminDeckListPage({ onNavigate }) {
     setFilters({ q: '', cefrLevelId: '', tagId: '', status: '' })
   }
 
-  const getCefrBadgeColor = (code) => {
-    const map = { A1: '#4CAF50', A2: '#8BC34A', B1: '#2196F3', B2: '#3F51B5', C1: '#9C27B0', C2: '#E91E63' }
-    return map[code] || '#757575'
-  }
-
   const from = (pagination.page - 1) * LIMIT + 1
   const to = Math.min(pagination.page * LIMIT, pagination.totalItems)
 
