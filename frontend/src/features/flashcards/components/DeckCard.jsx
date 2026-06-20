@@ -1,6 +1,9 @@
 import './DeckCard.css'
+import { useTranslation } from 'react-i18next'
 
 function DeckCard({ deck, cefrLevels = [], tags = [], onClick }) {
+  const { t } = useTranslation()
+
   // Lấy nhãn CEFR
   const cefrLabels = deck.cefrLevelIds?.map(id => {
     const level = cefrLevels.find(l => l._id === id)
@@ -26,8 +29,8 @@ function DeckCard({ deck, cefrLevels = [], tags = [], onClick }) {
   return (
     <div className="deck-card" onClick={() => onClick && onClick(deck._id)}>
       {/* Container Ảnh */}
-      <div 
-        className="deck-card-image-container" 
+      <div
+        className="deck-card-image-container"
         style={{ backgroundColor: deck.coverImage ? 'transparent' : fallbackColor }}
       >
         {deck.coverImage ? (
@@ -35,13 +38,13 @@ function DeckCard({ deck, cefrLevels = [], tags = [], onClick }) {
         ) : (
           <div className="deck-card-image-placeholder"></div>
         )}
-        
+
         {/* Số từ */}
         <div className="deck-card-word-badge">
           <svg className="deck-card-word-icon" viewBox="0 0 24 24" width="14" height="14">
-            <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z" fill="currentColor"/>
+            <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z" fill="currentColor" />
           </svg>
-          <span>{deck.cardCount || 0} Từ</span>
+          <span>{deck.cardCount || 0} {t('deckDetail.wordsCount')}</span>
         </div>
       </div>
 

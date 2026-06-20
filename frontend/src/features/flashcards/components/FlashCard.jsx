@@ -61,11 +61,11 @@ function FlashCard({ cardItem, mode = 'learn', onSuccess }) {
           onSuccess(gradeValue, response.data)
         }
       } else {
-        setError(response.message || 'Lỗi khi cập nhật trạng thái thẻ.')
+        setError(response.message || t('api.common.UNKNOWN_ERROR'))
       }
     } catch (err) {
       console.error('Lỗi cập nhật card state:', err)
-      setError('Không thể kết nối máy chủ.')
+      setError(t('api.common.UNKNOWN_ERROR'))
     } finally {
       setIsSubmitting(false)
     }
@@ -89,11 +89,11 @@ function FlashCard({ cardItem, mode = 'learn', onSuccess }) {
           onSuccess('hide', response.data)
         }
       } else {
-        setError(response.message || 'Lỗi khi ẩn thẻ.')
+        setError(response.message || t('api.common.UNKNOWN_ERROR'))
       }
     } catch (err) {
       console.error('Lỗi ẩn card:', err)
-      setError('Không thể kết nối máy chủ.')
+      setError(t('api.common.UNKNOWN_ERROR'))
     } finally {
       setIsSubmitting(false)
     }
