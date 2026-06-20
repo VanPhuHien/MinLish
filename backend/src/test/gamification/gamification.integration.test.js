@@ -258,3 +258,88 @@ describe('GET /api/v1/gamification/streak', () => {
   });
 });
 
+// ─── GET /api/v1/gamification/me ─────────────────────────────────────────────
+
+describe('GET /api/v1/gamification/me', () => {
+  it('returns 401 without token', async () => {
+    const res = await request(app).get('/api/v1/gamification/me');
+    expect(res.status).toBe(401);
+  });
+
+  it('returns defaults (xp=0, level=1, progressPct=0) for new user', async () => {
+    const res = await request(app)
+      .get('/api/v1/gamification/me')
+      .set('Authorization', `Bearer ${makeToken(userId1)}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.data).toMatchObject({
+      totalXp: 0,
+      level: 1,
+      currentStreak: 0,
+      longestStreak: 0,
+      xpIntoLevel: 0,
+      xpForNextLevel: 100, // requiredXpForLevel(1) - requiredXpForLevel(0) = 100 - 0
+      progressPct: 0,
+    });
+  });
+
+  it('returns correct level and progress fields for known XP', async () => {
+    // totalXp=50: level 1 halfway (xpFloor=0, xpCeil=100)
+    await UserGamification.create({
+      userId: userId1,
+      totalXp: 50,
+      level: 1,
+    });
+
+    const res = await request(app)
+      .get('/api/v1/gamification/me')
+      .set('Authorization', `Bearer ${makeToken(userId1)}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data).toMatchObject({
+      totalXp: 50,
+      level: 1,
+      xpIntoLevel: 50,
+      xpForNextLevel: 100,
+      progressPct: 50,
+    });
+  });
+
+  it('computes level 2 correctly when XP crosses threshold', async () => {
+    // requiredXpForLevel(1)=100 -> level 2 starts at 100
+    // level 2 span: requiredXpForLevel(2)-requiredXpForLevel(1) = 300-100 = 200
+    await UserGamification.create({
+      userId: userId1,
+      totalXp: 200,
+      level: 2,
+    });
+
+    const res = await request(app)
+      .get('/api/v1/gamification/me')
+      .set('Authorization', `Bearer ${makeToken(userId1)}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data).toMatchObject({
+      totalXp: 200,
+      level: 2,
+      xpIntoLevel: 100,  // 200 - 100
+      xpForNextLevel: 200, // 300 - 100
+      progressPct: 50,
+    });
+  });
+
+  it('progressPct is in [0, 100]', async () => {
+    await service.recordActivity(userId1, 'segment_complete', 'seg-me-test');
+
+    const res = await request(app)
+      .get('/api/v1/gamification/me')
+      .set('Authorization', `Bearer ${makeToken(userId1)}`);
+
+    expect(res.status).toBe(200);
+    const { progressPct } = res.body.data;
+    expect(progressPct).toBeGreaterThanOrEqual(0);
+    expect(progressPct).toBeLessThanOrEqual(100);
+  });
+});
+

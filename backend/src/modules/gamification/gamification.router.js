@@ -7,4 +7,7 @@ const router = Router();
 // Module 1 — Streak
 router.get('/streak', protect, controller.getStreak);
 
+// Module 2 — Profile
+router.get('/me', protect, controller.getMe);
+
 export default router;

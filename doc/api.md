@@ -99,6 +99,24 @@ Vòng đời upload 2 bước: (1) xin presigned PUT → (2) client PUT bytes th
 - PUT /api/v1/users/me/card-states/{cardId} — upsert toàn bộ state card.
 - PATCH /api/v1/users/me/card-states/{cardId} — cập nhật srs và flags
 
+## **Gamification**
+
+### Streak
+
+- GET /api/v1/gamification/streak — lấy trạng thái streak của user hiện tại. Trả về `{ currentStreak, longestStreak, lastActiveDayKey, activeToday }`. Streak chỉ tăng bởi hành động học thật (hoàn thành segment, review card qua SRS grade, chơi battle) — không có write endpoint.
+
+### Profile & Level
+
+- GET /api/v1/gamification/me — hồ sơ gamification của user. Trả về `{ totalXp, level, currentStreak, longestStreak, xpIntoLevel, xpForNextLevel, progressPct }`. `progressPct` trong `[0, 100]`. Nếu chưa có hoạt động, trả về defaults (`xp=0, level=1`).
+
+### Leaderboard _(Module 2.2 — chưa triển khai)_
+
+- GET /api/v1/gamification/leaderboard?page=1&limit=20 — bảng xếp hạng global all-time theo tổng XP giảm dần. Trả về `{ items: [{ rank, userId, name, avatarUrl, totalXp, level }], page, limit, total }`. Hòa điểm phân định bằng `_id` asc. `limit` tối đa 100.
+
+### My Rank _(Module 2.3 — chưa triển khai)_
+
+- GET /api/v1/gamification/me/rank — thứ hạng của user hiện tại. Trả về `{ rank, totalXp, totalPlayers }`. `rank = (số người có totalXp > của mình) + 1`.
+
 ## **Admin API**
 
 ## **User management**
