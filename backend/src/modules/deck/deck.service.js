@@ -439,7 +439,7 @@ export const listAdminDeckCards = async (deckId, filters) => {
   const deck = await Deck.findById(deckId);
   if (!deck) throw new AppError(ADMIN.DECK_NOT_FOUND, 404);
 
-  const { topicId, q, page, limit } = filters;
+  const { topicId, q, page, limit, pos } = filters;
   const query = { deckId };
   if (topicId) query.topicId = topicId;
   if (q) {
@@ -447,6 +447,7 @@ export const listAdminDeckCards = async (deckId, filters) => {
     const regex = new RegExp(escaped, 'i');
     query.$or = [{ term: regex }, { translation: regex }];
   }
+  if (pos) query.pos = pos;
 
   const skip = (page - 1) * limit;
   const [cards, totalItems] = await Promise.all([

@@ -525,6 +525,11 @@ export default {
                 type: 'integer',
                 example: 10,
               },
+              pos: {
+                type: 'string',
+                example: 'verb',
+                description: 'Part of speech filter',
+              },
             },
           },
         },
