@@ -193,8 +193,11 @@ export const updateSegmentProgress = async (
 
   const resultObj = progress.toObject();
   if (data.shadowing && data.shadowing.latestAudioUrl) {
-    resultObj.displayText = displayText;
-    resultObj.wordsAccuracy = wordsAccuracy;
+    if (!resultObj.shadowing) {
+      resultObj.shadowing = {};
+    }
+    resultObj.shadowing.displayText = displayText;
+    resultObj.shadowing.wordsAccuracy = wordsAccuracy;
   }
 
   return resultObj;

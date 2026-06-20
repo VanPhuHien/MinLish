@@ -148,6 +148,29 @@ export default {
             example: 'https://cdn.minlish.com/audio/user_shadowing.mp3',
             description: 'URL audio mới nhất.',
           },
+          displayText: {
+            type: 'string',
+            example: 'Hey everybody, welcome back to the show.',
+            description:
+              'Câu được trích xuất từ file ghi âm qua Azure Speech (chỉ trả về với mode shadowing).',
+          },
+          wordsAccuracy: {
+            type: 'object',
+            additionalProperties: {
+              type: 'number',
+            },
+            example: {
+              hey: 88,
+              everybody: 91,
+              welcome: 94,
+              back: 97,
+              to: 97,
+              the: 100,
+              show: 76,
+            },
+            description:
+              'Độ chính xác của từng từ trong câu phát âm (chỉ trả về với mode shadowing).',
+          },
         },
         description: 'Trạng thái Shadowing cho segment này.',
       },
@@ -156,29 +179,6 @@ export default {
         format: 'date-time',
         example: '2023-10-15T09:00:00.000Z',
         description: 'Lần cập nhật gần nhất.',
-      },
-      displayText: {
-        type: 'string',
-        example: 'Hey everybody, welcome back to the show.',
-        description:
-          'Câu được trích xuất từ file ghi âm qua Azure Speech (chỉ trả về với mode shadowing).',
-      },
-      wordsAccuracy: {
-        type: 'object',
-        additionalProperties: {
-          type: 'number',
-        },
-        example: {
-          hey: 88,
-          everybody: 91,
-          welcome: 94,
-          back: 97,
-          to: 97,
-          the: 100,
-          show: 76,
-        },
-        description:
-          'Độ chính xác của từng từ trong câu phát âm (chỉ trả về với mode shadowing).',
       },
     },
   },
