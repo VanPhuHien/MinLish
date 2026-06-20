@@ -211,6 +211,7 @@ export const listDeckCards = async (req, res, next) => {
       q: req.query.q,
       page: parseInt(req.query.page) || 1,
       limit: parseInt(req.query.limit) || 10,
+      pos: req.query.pos,
     };
     const data = await deckService.listAdminDeckCards(
       req.params.deckId,

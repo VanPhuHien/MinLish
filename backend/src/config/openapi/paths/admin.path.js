@@ -1895,6 +1895,12 @@ export default {
           schema: { type: 'integer', default: 10 },
           description: 'Số lượng card trên mỗi trang',
         },
+        {
+          in: 'query',
+          name: 'pos',
+          schema: { type: 'string' },
+          description: 'Loại từ (verb, noun, ...)',
+        },
       ],
       responses: {
         200: {
