@@ -11,6 +11,7 @@ import {
 } from '../../constants/codes/index.js';
 import { calculateNextSRS } from '../../utils/srs.util.js';
 import { generateQuizOptions } from '../deck/deck.service.js';
+//import fs from 'fs';
 
 export const evaluatePronunciation = async (audioUrl, referenceText) => {
   try {
@@ -18,14 +19,14 @@ export const evaluatePronunciation = async (audioUrl, referenceText) => {
       console.warn(
         'Azure Speech API keys not configured. Returning default score 0.'
       );
-      return 0;
+      return { score: 0, displayText: '', wordsAccuracy: {} };
     }
 
     // 1. Fetch audio từ URL
     const audioResponse = await fetch(audioUrl);
     if (!audioResponse.ok) {
       console.error('Failed to fetch audio from:', audioUrl);
-      return 0;
+      return { score: 0, displayText: '', wordsAccuracy: {} };
     }
     const audioBuffer = await audioResponse.arrayBuffer();
 
@@ -55,7 +56,7 @@ export const evaluatePronunciation = async (audioUrl, referenceText) => {
     if (!azureResponse.ok) {
       const errText = await azureResponse.text();
       //console.error('Azure API Error:', errText);
-      return 0; // Return 0 khi fail để không crash app
+      return { score: 0, displayText: '', wordsAccuracy: {} }; // Return 0 khi fail để không crash app
     }
     const result = await azureResponse.json();
 
@@ -67,16 +68,33 @@ export const evaluatePronunciation = async (audioUrl, referenceText) => {
           : best.PronunciationAssessment
             ? best.PronunciationAssessment.PronScore
             : undefined;
-      //console.log(result);
+
+      const displayText = best.Display || '';
+      const wordsAccuracy = {};
+      if (best.Words) {
+        best.Words.forEach((w) => {
+          wordsAccuracy[w.Word] = w.AccuracyScore;
+        });
+      }
+
+      // fs.writeFileSync(
+      //   'speech-result.json',
+      //   JSON.stringify(result, null, 2),
+      //   'utf8'
+      // );
 
       if (pronScore !== undefined) {
-        return pronScore;
+        return {
+          score: pronScore,
+          displayText,
+          wordsAccuracy,
+        };
       }
     }
-    return 0;
+    return { score: 0, displayText: '', wordsAccuracy: {} };
   } catch (error) {
     //console.error('[AzureSpeech] Error in evaluatePronunciation:', error);
-    return 0;
+    return { score: 0, displayText: '', wordsAccuracy: {} };
   }
 };
 
@@ -114,6 +132,9 @@ export const updateSegmentProgress = async (
 
   const set = {};
   const max = {};
+  let displayText = '';
+  let wordsAccuracy = {};
+
   if (data.dictation) {
     if (data.dictation.attemptCount !== undefined) {
       set['dictation.attemptCount'] = data.dictation.attemptCount;
@@ -139,13 +160,17 @@ export const updateSegmentProgress = async (
 
     // Đánh giá phát âm qua Azure Speech API
     let aiScore = 0;
+
     if (data.shadowing.latestAudioUrl) {
       const referenceText =
         segment.transcript.normalized || segment.transcript.original;
-      aiScore = await evaluatePronunciation(
+      const evaluationResult = await evaluatePronunciation(
         data.shadowing.latestAudioUrl,
         referenceText
       );
+      aiScore = evaluationResult.score;
+      displayText = evaluationResult.displayText;
+      wordsAccuracy = evaluationResult.wordsAccuracy;
     }
 
     const attempt = data.shadowing.attemptCount || 1;
@@ -165,7 +190,14 @@ export const updateSegmentProgress = async (
     updatePayload,
     { new: true, upsert: true }
   );
-  return progress;
+
+  const resultObj = progress.toObject();
+  if (data.shadowing && data.shadowing.latestAudioUrl) {
+    resultObj.displayText = displayText;
+    resultObj.wordsAccuracy = wordsAccuracy;
+  }
+
+  return resultObj;
 };
 
 export const getCardStates = async (userId, queryParams) => {
