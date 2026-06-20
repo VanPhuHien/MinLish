@@ -66,6 +66,30 @@ export default {
     },
   },
 
+  '/gamification/me/rank': {
+    get: {
+      ...bearerAuth,
+      tags: [TAG],
+      summary: 'Lấy thứ hạng của user hiện tại',
+      description:
+        'Trả về thứ hạng của user trong bảng xếp hạng toàn cầu. rank = (số người có totalXp lớn hơn) + 1. Nếu chưa có hoạt động, rank = tổng số người chơi (xp=0).',
+      responses: {
+        200: {
+          description: 'Lấy rank thành công.',
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/GamificationRankResponse',
+              },
+            },
+          },
+        },
+        401: { $ref: '#/components/responses/Unauthorized' },
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+  },
+
   '/gamification/me': {
     get: {
       ...bearerAuth,

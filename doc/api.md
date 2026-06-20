@@ -111,11 +111,11 @@ Vòng đời upload 2 bước: (1) xin presigned PUT → (2) client PUT bytes th
 
 ### Leaderboard
 
-- GET /api/v1/gamification/leaderboard?page=1&limit=20 — bảng xếp hạng global all-time theo tổng XP giảm dần. Trả về `{ items: [{ rank, userId, name, avatarUrl, totalXp, level }], page, limit, total }`. Hòa điểm phân định bằng `_id` asc. `limit` tối đa 100. Validation: `page` ≥ 1, `limit` ∈ [1, 100]; lỗi trả 400.
+- GET /api/v1/gamification/leaderboard?page=1&limit=20 — bảng xếp hạng global all-time theo tổng XP giảm dần. Trả về `{ items: [{ rank, userId, name, avatarUrl, totalXp, level }], page, limit, total }`. Hòa điểm phân định bằng `_id` asc. `limit` tối đa 100. Validation: `page` ≥ 1, `limit` trong khoảng từ [1, 100]; lỗi trả 400.
 
-### My Rank _(Module 2.3 — chưa triển khai)_
+### My Rank
 
-- GET /api/v1/gamification/me/rank — thứ hạng của user hiện tại. Trả về `{ rank, totalXp, totalPlayers }`. `rank = (số người có totalXp > của mình) + 1`.
+- GET /api/v1/gamification/me/rank — thứ hạng của user hiện tại. Trả về `{ rank, totalXp, totalPlayers }`. `rank = (số người có totalXp > của mình) + 1`. Nếu chưa có hoạt động, rank = tổng số người chơi (xp=0).
 
 ## **Admin API**
 

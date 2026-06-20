@@ -55,6 +55,15 @@ export const getLeaderboard = async (req, res, next) => {
   }
 };
 
+export const getMyRank = async (req, res, next) => {
+  try {
+    const data = await service.getMyRank(req.user.id);
+    res.json(successResponse(GAMIFICATION.RANK_FETCHED, data));
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const getStreak = async (req, res, next) => {
   try {
     const profile = await service.getProfile(req.user.id);
