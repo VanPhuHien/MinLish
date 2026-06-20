@@ -431,3 +431,70 @@ describe('GET /api/v1/gamification/leaderboard', () => {
     expect(res.body.data.limit).toBe(20);
   });
 });
+
+// ─── GET /api/v1/gamification/me/rank ────────────────────────────────────────
+
+describe('GET /api/v1/gamification/me/rank', () => {
+  it('returns 401 without token', async () => {
+    const res = await request(app).get('/api/v1/gamification/me/rank');
+    expect(res.status).toBe(401);
+  });
+
+  it('returns rank=totalPlayers for new user with xp=0', async () => {
+    const userId3 = new mongoose.Types.ObjectId();
+    await UserGamification.insertMany([
+      { userId: userId1, totalXp: 300, level: 3 },
+      { userId: userId2, totalXp: 200, level: 2 },
+      { userId: userId3, totalXp: 0,   level: 1 },
+    ]);
+
+    const res = await request(app)
+      .get('/api/v1/gamification/me/rank')
+      .set('Authorization', `Bearer ${makeToken(userId3)}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.data).toMatchObject({ rank: 3, totalXp: 0, totalPlayers: 3 });
+  });
+
+  it('returns rank=1 for top user', async () => {
+    await UserGamification.insertMany([
+      { userId: userId1, totalXp: 500, level: 4 },
+      { userId: userId2, totalXp: 200, level: 2 },
+    ]);
+
+    const res = await request(app)
+      .get('/api/v1/gamification/me/rank')
+      .set('Authorization', `Bearer ${makeToken(userId1)}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data).toMatchObject({ rank: 1, totalXp: 500, totalPlayers: 2 });
+  });
+
+  it('returns correct rank for middle user', async () => {
+    const userId3 = new mongoose.Types.ObjectId();
+    await UserGamification.insertMany([
+      { userId: userId1, totalXp: 500, level: 4 },
+      { userId: userId2, totalXp: 300, level: 3 },
+      { userId: userId3, totalXp: 100, level: 1 },
+    ]);
+
+    const res = await request(app)
+      .get('/api/v1/gamification/me/rank')
+      .set('Authorization', `Bearer ${makeToken(userId2)}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data).toMatchObject({ rank: 2, totalXp: 300, totalPlayers: 3 });
+  });
+
+  it('creates profile on first call (no prior activity)', async () => {
+    const res = await request(app)
+      .get('/api/v1/gamification/me/rank')
+      .set('Authorization', `Bearer ${makeToken(userId1)}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.totalXp).toBe(0);
+    expect(res.body.data.rank).toBeGreaterThanOrEqual(1);
+    expect(res.body.data.totalPlayers).toBeGreaterThanOrEqual(1);
+  });
+});

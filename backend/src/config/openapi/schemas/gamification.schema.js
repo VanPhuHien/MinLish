@@ -85,6 +85,24 @@ export default {
     },
   },
 
+  GamificationRankData: {
+    type: 'object',
+    properties: {
+      rank: { type: 'integer', description: 'Thứ hạng của user hiện tại (1 = cao nhất).', example: 5 },
+      totalXp: { type: 'integer', description: 'Tổng XP của user.', example: 340 },
+      totalPlayers: { type: 'integer', description: 'Tổng số người chơi có trong bảng xếp hạng.', example: 120 },
+    },
+  },
+  GamificationRankResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      code: { type: 'string', example: 'RANK_FETCHED' },
+      message: { type: 'string', example: 'Rank fetched' },
+      data: { $ref: '#/components/schemas/GamificationRankData' },
+    },
+  },
+
   GamificationLeaderboardItem: {
     type: 'object',
     properties: {
