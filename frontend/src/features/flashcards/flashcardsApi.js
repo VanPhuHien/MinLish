@@ -63,16 +63,6 @@ export const getTags = async () => {
 }
 
 /**
- * Cập nhật toàn bộ trạng thái học của thẻ từ (upsert card state)
- * @param {string} cardId ID của thẻ từ
- * @param {Object} data payload gồm deckId, topicId, srs, flags
- */
-export const updateCardState = async (cardId, data) => {
-  const response = await apiClient.put(`/users/me/card-states/${cardId}`, data)
-  return response.data
-}
-
-/**
  * Cập nhật một phần trạng thái học của thẻ từ (patch card state)
  * @param {string} cardId ID của thẻ từ
  * @param {Object} data payload gồm srs hoặc flags

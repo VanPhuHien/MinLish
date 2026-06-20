@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { updateCardState, patchCardState } from '../flashcardsApi'
+import { patchCardState } from '../flashcardsApi'
 import './FlashCardQuiz.css'
 
 function FlashCardQuiz({ cardItem, mode = 'learn', onSuccess }) {
@@ -59,7 +59,7 @@ function FlashCardQuiz({ cardItem, mode = 'learn', onSuccess }) {
           hidden: userCardState?.flags?.hidden || false
         }
       }
-      const response = await updateCardState(card._id, payload)
+      const response = await patchCardState(card._id, payload)
       if (response.success) {
         if (onSuccess) {
           onSuccess(gradeValue, response.data)
@@ -109,10 +109,10 @@ function FlashCardQuiz({ cardItem, mode = 'learn', onSuccess }) {
 
       {/* Card Trắc Nghiệm */}
       <div className="quiz-card-container">
-        
+
         {/* Nút Ẩn thẻ (Chỉ ở chế độ review và nằm ở góc phải) */}
         {mode === 'review' && (
-          <button 
+          <button
             className="quiz-hide-btn"
             onClick={handleHideClick}
             disabled={isSubmitting}
@@ -184,7 +184,7 @@ function FlashCardQuiz({ cardItem, mode = 'learn', onSuccess }) {
               {/* Từ vựng & Audio */}
               <div className="details-term-row">
                 <h3 className="details-term">{card.term}</h3>
-                
+
                 <div className="details-audio-group">
                   {card.phonetics?.map((phonetic, index) => {
                     const isUS = phonetic.locale?.toLowerCase().includes('us');
@@ -246,9 +246,9 @@ function FlashCardQuiz({ cardItem, mode = 'learn', onSuccess }) {
 
       {/* 4 NÚT SRS ĐÁNH GIÁ (Chỉ hiển thị sau khi đã chọn đáp án xong) */}
       <div className={`quiz-actions ${isSubmitted ? 'visible' : ''}`}>
-        
+
         {/* Nút Học lại (Grade 0) */}
-        <button 
+        <button
           className="quiz-action-btn btn-again"
           onClick={() => handleGradeClick(0)}
           disabled={isSubmitting}
@@ -263,7 +263,7 @@ function FlashCardQuiz({ cardItem, mode = 'learn', onSuccess }) {
         </button>
 
         {/* Nút Khó (Grade 1) */}
-        <button 
+        <button
           className="quiz-action-btn btn-hard"
           onClick={() => handleGradeClick(1)}
           disabled={isSubmitting}
@@ -280,7 +280,7 @@ function FlashCardQuiz({ cardItem, mode = 'learn', onSuccess }) {
         </button>
 
         {/* Nút Tốt (Grade 2) */}
-        <button 
+        <button
           className="quiz-action-btn btn-good"
           onClick={() => handleGradeClick(2)}
           disabled={isSubmitting}
@@ -297,7 +297,7 @@ function FlashCardQuiz({ cardItem, mode = 'learn', onSuccess }) {
         </button>
 
         {/* Nút Dễ (Grade 3) */}
-        <button 
+        <button
           className="quiz-action-btn btn-easy"
           onClick={() => handleGradeClick(3)}
           disabled={isSubmitting}

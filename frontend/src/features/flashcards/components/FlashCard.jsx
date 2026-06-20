@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { updateCardState, patchCardState } from '../flashcardsApi'
+import { patchCardState } from '../flashcardsApi'
 import './FlashCard.css'
 
 function FlashCard({ cardItem, mode = 'learn', onSuccess }) {
@@ -55,7 +55,7 @@ function FlashCard({ cardItem, mode = 'learn', onSuccess }) {
           hidden: userCardState?.flags?.hidden || false
         }
       }
-      const response = await updateCardState(card._id, payload)
+      const response = await patchCardState(card._id, payload)
       if (response.success) {
         if (onSuccess) {
           onSuccess(gradeValue, response.data)
@@ -103,17 +103,17 @@ function FlashCard({ cardItem, mode = 'learn', onSuccess }) {
     <div className="flashcard-widget-wrapper">
       {error && <div className="flashcard-error-toast">{error}</div>}
 
-      <div 
-        className={`flashcard-card ${isFlipped ? 'flipped' : ''}`} 
+      <div
+        className={`flashcard-card ${isFlipped ? 'flipped' : ''}`}
         onClick={handleCardClick}
       >
         <div className="flashcard-card-inner">
-          
+
           {/* MẶT TRƯỚC */}
           <div className="flashcard-face flashcard-front">
             {/* Nút Ẩn thẻ (chỉ hiển thị ở chế độ ôn tập và nằm ở góc phải trên cùng) */}
             {mode === 'review' && (
-              <button 
+              <button
                 className="flashcard-hide-btn"
                 onClick={handleHideClick}
                 disabled={isSubmitting}
@@ -129,9 +129,9 @@ function FlashCard({ cardItem, mode = 'learn', onSuccess }) {
             {/* Hình ảnh minh họa */}
             {card.imageUrl && (
               <div className="flashcard-image-container">
-                <img 
-                  src={card.imageUrl} 
-                  alt={card.term} 
+                <img
+                  src={card.imageUrl}
+                  alt={card.term}
                   className="flashcard-image"
                   loading="lazy"
                 />
@@ -142,7 +142,7 @@ function FlashCard({ cardItem, mode = 'learn', onSuccess }) {
             <div className="flashcard-front-content">
               <div className="flashcard-term-row">
                 <h2 className="flashcard-term">{card.term}</h2>
-                
+
                 {/* Các nút phát âm giọng US/UK */}
                 <div className="flashcard-audio-group">
                   {card.phonetics?.map((phonetic, index) => {
@@ -223,9 +223,9 @@ function FlashCard({ cardItem, mode = 'learn', onSuccess }) {
 
       {/* 4 Nút đánh giá ở phía dưới (Chỉ hiện khi lật sang mặt sau) */}
       <div className={`flashcard-actions ${isFlipped ? 'visible' : ''}`}>
-        
+
         {/* Nút Học lại (Grade 0) */}
-        <button 
+        <button
           className="flashcard-action-btn btn-again"
           onClick={() => handleGradeClick(0)}
           disabled={isSubmitting}
@@ -240,7 +240,7 @@ function FlashCard({ cardItem, mode = 'learn', onSuccess }) {
         </button>
 
         {/* Nút Khó (Grade 1) */}
-        <button 
+        <button
           className="flashcard-action-btn btn-hard"
           onClick={() => handleGradeClick(1)}
           disabled={isSubmitting}
@@ -257,7 +257,7 @@ function FlashCard({ cardItem, mode = 'learn', onSuccess }) {
         </button>
 
         {/* Nút Tốt (Grade 2) */}
-        <button 
+        <button
           className="flashcard-action-btn btn-good"
           onClick={() => handleGradeClick(2)}
           disabled={isSubmitting}
@@ -274,7 +274,7 @@ function FlashCard({ cardItem, mode = 'learn', onSuccess }) {
         </button>
 
         {/* Nút Dễ (Grade 3) */}
-        <button 
+        <button
           className="flashcard-action-btn btn-easy"
           onClick={() => handleGradeClick(3)}
           disabled={isSubmitting}
@@ -288,7 +288,7 @@ function FlashCard({ cardItem, mode = 'learn', onSuccess }) {
           </div>
           <span className="flashcard-btn-label">{t('flashcard.gradeEasy')}</span>
         </button>
-        
+
       </div>
     </div>
   )
