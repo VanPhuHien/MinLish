@@ -55,6 +55,7 @@ export const evaluatePronunciation = async (audioUrl, referenceText) => {
           : best.PronunciationAssessment
             ? best.PronunciationAssessment.PronScore
             : undefined;
+      //console.log(result);
 
       if (pronScore !== undefined) {
         return pronScore;
