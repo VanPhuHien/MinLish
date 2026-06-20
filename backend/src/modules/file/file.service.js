@@ -3,6 +3,7 @@ import {
   PutObjectCommand,
   GetObjectCommand,
   DeleteObjectCommand,
+  HeadObjectCommand,
 } from '@aws-sdk/client-s3';
 import crypto from 'crypto';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -10,6 +11,7 @@ import 'dotenv';
 import sharp from 'sharp';
 import AppError from '../../utils/AppError.js';
 import { FILE } from '../../constants/codes/index.js';
+import { UPLOAD_CONFIG, EXT_BY_TYPE } from '../../constants/upload.config.js';
 
 const bucketName = process.env.BUCKET_NAME;
 const s3 = new S3Client({
@@ -23,41 +25,39 @@ const s3 = new S3Client({
 const randomImageName = (bytes = 32) =>
   crypto.randomBytes(bytes).toString('hex');
 
-const UPLOAD_CONFIG = {
-  'shadowing-audio': {
-    prefix: 'shadowing',
-    allowedTypes: [
-      'audio/webm',
-      'audio/mpeg',
-      'audio/mp4',
-      'audio/wav',
-      'audio/ogg',
-    ],
-    maxSize: 10 * 1024 * 1024, // 10MB
-  },
-  'deck-import': {
-    prefix: 'imports',
-    allowedTypes: ['text/csv', 'application/json'],
-    maxSize: 5 * 1024 * 1024, // 5MB
-  },
-  'card-image': {
-    prefix: 'cards',
-    allowedTypes: ['image/jpeg', 'image/png', 'image/webp'],
-    maxSize: 5 * 1024 * 1024,
-  },
-};
+// Build the public/CDN URL served to clients from a stored S3 key.
+export const buildPublicUrl = (key) =>
+  key
+    ? `${(process.env.S3_PUBLIC_BASE_URL || '').replace(/\/$/, '')}/${key}`
+    : null;
 
-const EXT_BY_TYPE = {
-  'audio/webm': 'webm',
-  'audio/mpeg': 'mp3',
-  'audio/mp4': 'm4a',
-  'audio/wav': 'wav',
-  'audio/ogg': 'ogg',
-  'text/csv': 'csv',
-  'application/json': 'json',
-  'image/jpeg': 'jpg',
-  'image/png': 'png',
-  'image/webp': 'webp',
+const legacyBase = () =>
+  (process.env.S3_LEGACY_BASE_URL || 'https://assets.parroto.app').replace(/\/$/, '');
+
+export const validateMediaUrl = async (url, purpose, userId, currentUrl) => {
+  const config = UPLOAD_CONFIG[purpose];
+  if (!config) throw new AppError(FILE.INVALID_PURPOSE, 400);
+
+  if (currentUrl !== undefined && url === currentUrl) return null;
+
+  if (url.startsWith(`${legacyBase()}/`)) {
+    if (currentUrl !== undefined)
+      throw new AppError(FILE.KEY_OWNERSHIP_MISMATCH, 403);
+    return null;
+  }
+
+  const base = (process.env.S3_PUBLIC_BASE_URL || '').replace(/\/$/, '');
+  if (!url.startsWith(`${base}/`))
+    throw new AppError(FILE.KEY_OWNERSHIP_MISMATCH, 403);
+  const key = url.slice(base.length + 1);
+  if (!key.startsWith(`${config.prefix}/${userId}/`))
+    throw new AppError(FILE.KEY_OWNERSHIP_MISMATCH, 403);
+  try {
+    await s3.send(new HeadObjectCommand({ Bucket: bucketName, Key: key }));
+  } catch {
+    throw new AppError(FILE.UPLOAD_NOT_FOUND, 404);
+  }
+  return key;
 };
 
 // Sign a one-time PUT URL so the client uploads straight to S3.
@@ -79,7 +79,7 @@ export const createUploadPresignedUrl = async (
     );
   }
 
-  if (fileSize !== undefined && fileSize > config.maxSize) {
+  if (fileSize > config.maxSize) {
     throw new AppError(
       FILE.FILE_TOO_LARGE,
       400,
@@ -97,12 +97,14 @@ export const createUploadPresignedUrl = async (
       Bucket: bucketName,
       Key: key,
       ContentType: contentType,
+      ContentLength: fileSize,
     }),
     { expiresIn: 60 } // 60 seconds
   );
 
-  return { uploadUrl, key, expiresIn: 60 };
+  return { uploadUrl, key, url: buildPublicUrl(key), expiresIn: 60 };
 };
+
 
 /**
  * @param {User} data

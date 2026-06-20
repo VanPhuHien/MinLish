@@ -1,7 +1,7 @@
 export default {
   PresignedUrlRequest: {
     type: 'object',
-    required: ['contentType', 'purpose'],
+    required: ['contentType', 'purpose', 'fileSize'],
     properties: {
       contentType: {
         type: 'string',
@@ -17,7 +17,7 @@ export default {
       },
       fileSize: {
         type: 'integer',
-        description: 'Kích thước file (byte) để validate giới hạn (tùy chọn).',
+        description: 'Kích thước file (byte). Bắt buộc — được bake vào chữ ký để S3 reject upload sai kích thước.',
         example: 245678,
       },
     },
@@ -33,15 +33,21 @@ export default {
         properties: {
           uploadUrl: {
             type: 'string',
-            description: 'URL PUT ký sẵn để upload bytes trực tiếp lên S3.',
+            description: 'URL PUT ký sẵn để upload bytes trực tiếp lên S3 (hết hạn 60s).',
             example:
               'https://bucket.s3.region.amazonaws.com/shadowing/<userId>/<rand>.webm?X-Amz-Signature=...',
           },
           key: {
             type: 'string',
-            description:
-              'Key của object trên S3; lưu vào DB (không lưu uploadUrl).',
+            description: 'Key của object trên S3.',
             example: 'shadowing/665f.../a3f9.webm',
+          },
+          url: {
+            type: 'string',
+            description:
+              'URL public/CDN đầy đủ. Gửi trực tiếp vào body của endpoint cập nhật resource (PUT card, PATCH segment progress…); backend tự validate tại đó.',
+            example:
+              'https://minlish-english-learning.s3.us-east-1.amazonaws.com/shadowing/665f.../a3f9.webm',
           },
           expiresIn: {
             type: 'integer',

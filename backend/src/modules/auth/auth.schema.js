@@ -2,11 +2,9 @@ import { z } from 'zod';
 
 export const loginSchema = z.object({
   email: z
-    .string({ required_error: 'Email là bắt buộc' })
-    .email({ message: 'Email không đúng định dạng' }),
+    .string({ required_error: 'Email là bắt buộc' }),
   password: z
-    .string({ required_error: 'Mật khẩu là bắt buộc' })
-    .min(6, { message: 'Mật khẩu phải chứa ít nhất 6 ký tự' }),
+    .string({ required_error: 'Mật khẩu là bắt buộc' }),
 });
 
 export const signupSchema = z.object({

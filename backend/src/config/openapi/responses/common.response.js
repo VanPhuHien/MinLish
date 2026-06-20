@@ -44,6 +44,21 @@ export default {
       },
     },
   },
+  NotFound: {
+    description: 'The requested resource was not found',
+    content: {
+      'application/json': {
+        schema: {
+          $ref: '#/components/schemas/ErrorResponse',
+        },
+        example: {
+          success: false,
+          code: 'RESOURCE_NOT_FOUND',
+          message: 'Target resource not found',
+        },
+      },
+    },
+  },
   ServerError: {
     description: 'Internal server error',
     content: {

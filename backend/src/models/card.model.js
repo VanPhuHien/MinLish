@@ -75,14 +75,7 @@ const cardSchema = new mongoose.Schema(
     imageUrl: {
       type: String,
       default: '',
-    },
-    quizOptions: [
-      {
-        word: { type: String, required: true, trim: true },
-        isCorrect: { type: Boolean, required: true },
-        _id: false,
-      },
-    ],
+    }
   },
   {
     timestamps: true,

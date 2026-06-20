@@ -18,6 +18,7 @@ import requestLogger from './middlewares/requestLogger.js';
 import authRouter from './modules/auth/auth.router.js';
 import aiRouter from './modules/ai/ai.routes.js';
 import adminRouter from './modules/admin/admin.router.js';
+import userRouter from './modules/user/user.router.js';
 import swaggerUi from 'swagger-ui-express';
 import openapiDocument from './config/openapi/index.js';
 
@@ -38,6 +39,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDocument));
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/lessons', lessonRouter);
 app.use('/api/v1/decks', deckRouter);
+app.use('/api/v1/users', userRouter);
 app.use('/api/v1/users/me/decks', userDeckRouter);
 app.use('/api/v1/cefr-levels', cefrLevelRouter);
 app.use('/api/v1/tags', tagRouter);

@@ -31,4 +31,10 @@ router.patch(
   adminController.reorderDeckTopics
 );
 
+router.get('/decks/:deckId/cards', adminController.listDeckCards);
+router.post('/decks/:deckId/cards', adminController.createDeckCard);
+router.get('/decks/:deckId/cards/:cardId', adminController.getDeckCardById);
+router.put('/decks/:deckId/cards/:cardId', adminController.updateDeckCard);
+router.delete('/decks/:deckId/cards/:cardId', adminController.deleteDeckCard);
+
 export default router;

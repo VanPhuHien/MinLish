@@ -85,6 +85,18 @@ function App() {
   }
 
   const renderContent = () => {
+    const lessonStudyMatch = currentPath.match(/^\/lessons\/(dictation|shadowing)\/([a-fA-F0-9]{24})$/)
+    if (lessonStudyMatch) {
+      const mode = lessonStudyMatch[1]
+      const lessonId = lessonStudyMatch[2]
+      return (
+        <div style={{ padding: '80px 20px', textAlign: 'center', fontFamily: 'var(--font-family)', color: 'var(--color-on-surface)' }}>
+          <h2 style={{ textTransform: 'capitalize', marginBottom: '16px' }}>{mode}</h2>
+          <p style={{ color: 'var(--color-on-surface-variant)', fontSize: '15px' }}>Lesson ID: {lessonId}</p>
+        </div>
+      )
+    }
+
     const systemDeckMatch = currentPath.match(/^\/decks\/([a-fA-F0-9]{24})$/)
     if (systemDeckMatch) {
       const deckId = systemDeckMatch[1]

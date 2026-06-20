@@ -5,5 +5,5 @@ export const presignedUrlSchema = z.object({
   purpose: z.enum(['shadowing-audio', 'deck-import', 'card-image'], {
     errorMap: () => ({ message: 'Invalid purpose' }),
   }),
-  fileSize: z.coerce.number().int().positive().optional(),
+  fileSize: z.coerce.number().int().positive({ message: 'fileSize must be a positive integer' }),
 });

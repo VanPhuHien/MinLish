@@ -1,4 +1,5 @@
 import axios from 'axios'
+import i18n from '../i18n'
 
 const apiClient = axios.create({
   baseURL: import.meta.env.API_URL || 'http://localhost:5000/api/v1',
@@ -6,6 +7,33 @@ const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
 })
+
+// Helper chuyển đổi message dựa theo code từ API response
+const mapApiResponse = (data, isError = false) => {
+  if (!data) return data
+
+  const code = data.code
+  if (isError) {
+    if (code) {
+      const translationKey = `api.error.${code}`
+      if (i18n.exists(translationKey)) {
+        data.message = i18n.t(translationKey)
+      } else {
+        data.message = i18n.t('api.common.UNKNOWN_ERROR')
+      }
+    } else {
+      data.message = data.message || i18n.t('api.common.UNKNOWN_ERROR')
+    }
+  } else {
+    if (code) {
+      const translationKey = `api.success.${code}`
+      if (i18n.exists(translationKey)) {
+        data.message = i18n.t(translationKey)
+      }
+    }
+  }
+  return data
+}
 
 // Request Interceptor: Gắn accessToken vào header Authorization
 apiClient.interceptors.request.use(
@@ -39,6 +67,9 @@ const processQueue = (error, token = null) => {
 // Response Interceptor: Tự động refresh token khi nhận mã lỗi 401
 apiClient.interceptors.response.use(
   (response) => {
+    if (response.data) {
+      response.data = mapApiResponse(response.data, false)
+    }
     return response
   },
   async (error) => {
@@ -106,8 +137,18 @@ apiClient.interceptors.response.use(
           window.dispatchEvent(new PopStateEvent('popstate'))
         }
 
+        if (refreshError.response && refreshError.response.data) {
+          refreshError.response.data = mapApiResponse(refreshError.response.data, true)
+        }
+
         return Promise.reject(refreshError)
       }
+    }
+
+    if (error.response && error.response.data) {
+      error.response.data = mapApiResponse(error.response.data, true)
+    } else {
+      error.message = i18n.t('api.common.UNKNOWN_ERROR')
     }
 
     return Promise.reject(error)

@@ -82,7 +82,9 @@ forgot-password, reset-password tương tự
 
 ## **Upload file (S3)**
 
-- POST /api/v1/s3/presigned-url — tạo URL PUT ký sẵn (hết hạn 60s) để client upload file trực tiếp lên S3. Body: contentType (bắt buộc), purpose (bắt buộc: shadowing-audio | deck-import | card-image), fileSize (tùy chọn). Key sinh ở server theo userId; backend không nhận bytes. Trả về uploadUrl + key + expiresIn. Lưu key vào DB sau khi upload xong.
+Vòng đời upload 2 bước: (1) xin presigned PUT → (2) client PUT bytes thẳng lên S3. Sau đó gửi `url` (trả về từ bước 1) trực tiếp vào body của endpoint cập nhật resource; backend validate quyền sở hữu + HeadObject tại đó, không cần bước confirm riêng.
+
+- POST /api/v1/s3/presigned-url — tạo URL PUT ký sẵn (hết hạn 60s) để client upload file trực tiếp lên S3. Body: contentType (bắt buộc), purpose (bắt buộc: shadowing-audio | deck-import | card-image), fileSize (bắt buộc, bytes). Key sinh ở server theo userId; backend không nhận bytes. `fileSize` được bake vào chữ ký → S3 reject upload sai kích thước. Trả về uploadUrl + key + url (public/CDN) + expiresIn. Client dùng url này để gửi kèm khi cập nhật resource. **Phân quyền theo purpose:** `card-image` yêu cầu role `admin` (403 nếu user thường); `shadowing-audio` và `deck-import` cho phép mọi user đã xác thực.
 
 ## **Progress của user**
 
@@ -91,8 +93,7 @@ forgot-password, reset-password tương tự
 - PUT /api/v1/users/me/lesson-progress/{lessonId} — upsert toàn bộ tiến độ lesson.
 - GET /api/v1/users/me/lessons/{lessonId}/segments-progress — lấy toàn bộ tiến độ segment của một lesson.
 - GET /api/v1/users/me/lessons/{lessonId}/segments/{segmentId}/progress — lấy tiến độ một segment.
-- PUT /api/v1/users/me/lessons/{lessonId}/segments/{segmentId}/progress — upsert tiến độ segment.
-- PATCH /api/v1/users/me/lessons/{lessonId}/segments/{segmentId}/progress — cập nhật block dictation và shadowing.
+- PATCH /api/v1/users/me/lessons/{lessonId}/segments/{segmentId}/progress - upsert/cập nhật một phần block dictation hoặc shadowing (nếu chưa có sẽ tự tạo mới tiến độ cho câu này).
 - GET /api/v1/users/me/card-states — danh sách trạng thái card; hỗ trợ deckId, topicId, due, starred, page, limit.
 - GET /api/v1/users/me/card-states/{cardId} — lấy trạng thái một card.
 - PUT /api/v1/users/me/card-states/{cardId} — upsert toàn bộ state card.

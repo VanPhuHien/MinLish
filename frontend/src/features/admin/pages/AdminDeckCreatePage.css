@@ -346,61 +346,41 @@
   opacity: 1;
 }
 
-.admin-tag-input-wrap {
-  position: relative;
-}
-
-.admin-tag-input {
+/* Tag Picker Button */
+.admin-tag-picker-btn {
   width: 100%;
-  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px;
   border: 1px solid var(--color-outline-variant);
-  border-radius: var(--rounded-default);
+  border-radius: var(--rounded-md);
+  background-color: var(--color-surface-container-lowest);
   font-family: var(--font-family);
   font-size: 13px;
-  color: var(--color-on-surface);
-  background-color: var(--color-surface-container-lowest);
-  outline: none;
-  transition: border-color 0.2s ease;
-  box-sizing: border-box;
-}
-
-.admin-tag-input:focus {
-  border-color: var(--color-primary);
-}
-
-.admin-tag-input::placeholder {
-  color: var(--color-outline);
-}
-
-.admin-tag-suggestions {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  background-color: var(--color-surface-container-lowest);
-  border: 1px solid var(--color-outline-variant);
-  border-radius: var(--rounded-default);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  overflow: hidden;
-}
-
-.admin-tag-suggestion-item {
-  width: 100%;
-  padding: 9px 14px;
-  text-align: left;
-  background: none;
-  border: none;
-  font-family: var(--font-family);
-  font-size: 13px;
-  color: var(--color-on-surface);
+  font-weight: 500;
+  color: var(--color-on-surface-variant);
   cursor: pointer;
-  transition: background-color 0.1s ease;
+  transition: all 0.15s ease;
+  text-align: left;
 }
 
-.admin-tag-suggestion-item:hover {
-  background-color: color-mix(in srgb, var(--color-primary) 6%, transparent);
+.admin-tag-picker-btn:hover {
+  border-color: var(--color-primary);
+  background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
+  color: var(--color-primary);
 }
+
+.admin-tag-picker-btn svg {
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.admin-tag-picker-btn:hover svg {
+  transform: scale(1.1);
+}
+
+
 
 /* Status Radio Cards */
 .admin-status-options {

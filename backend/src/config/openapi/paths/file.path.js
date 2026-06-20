@@ -9,7 +9,7 @@ export default {
       tags: [TAG],
       summary: 'Tạo presigned URL để upload thẳng lên S3',
       description:
-        'Trả về một URL PUT ký sẵn (hết hạn 60s) để client upload file trực tiếp lên S3. Client KHÔNG gửi bytes tới endpoint này — chỉ gửi mô tả file. Key sinh ở server (scope theo userId), contentType bị khóa vào chữ ký.',
+        'Vòng đời upload 2 bước: (1) gọi endpoint này để nhận `uploadUrl` + `url` (public/CDN) — (2) client PUT bytes thẳng lên S3 bằng `uploadUrl`. Sau đó gửi `url` như một trường bình thường trong body của endpoint cập nhật resource (PUT card, PATCH segment progress…); backend tự validate quyền sở hữu + HeadObject tại đó. Key sinh ở server (scope theo userId), contentType bị khóa vào chữ ký. **Lưu ý:** `purpose=card-image` yêu cầu role `admin`; user thường gửi purpose này sẽ nhận 403.',
       requestBody: {
         required: true,
         content: {
