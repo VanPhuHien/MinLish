@@ -84,4 +84,37 @@ export default {
       data: { $ref: '#/components/schemas/GamificationProfileData' },
     },
   },
+
+  GamificationLeaderboardItem: {
+    type: 'object',
+    properties: {
+      rank: { type: 'integer', description: 'Thứ hạng (1 = cao nhất).', example: 1 },
+      userId: { type: 'string', description: 'ID của user.', example: '664f1a2b3c4d5e6f7a8b9c0d' },
+      name: { type: 'string', nullable: true, description: 'Tên hiển thị.', example: 'Nguyen Van A' },
+      avatarUrl: { type: 'string', nullable: true, description: 'Ảnh đại diện.', example: null },
+      totalXp: { type: 'integer', description: 'Tổng XP.', example: 520 },
+      level: { type: 'integer', description: 'Cấp độ hiện tại.', example: 3 },
+    },
+  },
+  GamificationLeaderboardData: {
+    type: 'object',
+    properties: {
+      items: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/GamificationLeaderboardItem' },
+      },
+      page: { type: 'integer', example: 1 },
+      limit: { type: 'integer', example: 20 },
+      total: { type: 'integer', description: 'Tổng số users có trong bảng xếp hạng.', example: 42 },
+    },
+  },
+  GamificationLeaderboardResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      code: { type: 'string', example: 'LEADERBOARD_FETCHED' },
+      message: { type: 'string', example: 'Leaderboard fetched' },
+      data: { $ref: '#/components/schemas/GamificationLeaderboardData' },
+    },
+  },
 };

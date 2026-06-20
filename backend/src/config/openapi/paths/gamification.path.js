@@ -15,10 +15,51 @@ export default {
           description: 'Lấy streak thành công.',
           content: {
             'application/json': {
-              schema: { $ref: '#/components/schemas/GamificationStreakResponse' },
+              schema: {
+                $ref: '#/components/schemas/GamificationStreakResponse',
+              },
             },
           },
         },
+        401: { $ref: '#/components/responses/Unauthorized' },
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+  },
+
+  '/gamification/leaderboard': {
+    get: {
+      ...bearerAuth,
+      tags: [TAG],
+      summary: 'Bảng xếp hạng toàn hệ thống theo XP',
+      description:
+        'Danh sách user xếp hạng giảm dần theo totalXp all-time. Hòa điểm tiebreak bằng _id tăng dần (ổn định khi phân trang). limit tối đa 100.',
+      parameters: [
+        {
+          name: 'page',
+          in: 'query',
+          schema: { type: 'integer', minimum: 1, default: 1 },
+          description: 'Trang hiện tại.',
+        },
+        {
+          name: 'limit',
+          in: 'query',
+          schema: { type: 'integer', minimum: 1, maximum: 100, default: 20 },
+          description: 'Số user mỗi trang (tối đa 100).',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'Lấy leaderboard thành công.',
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/GamificationLeaderboardResponse',
+              },
+            },
+          },
+        },
+        400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
         500: { $ref: '#/components/responses/ServerError' },
       },
@@ -37,7 +78,9 @@ export default {
           description: 'Lấy hồ sơ thành công.',
           content: {
             'application/json': {
-              schema: { $ref: '#/components/schemas/GamificationProfileResponse' },
+              schema: {
+                $ref: '#/components/schemas/GamificationProfileResponse',
+              },
             },
           },
         },

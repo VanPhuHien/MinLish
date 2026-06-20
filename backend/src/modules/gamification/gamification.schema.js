@@ -1,3 +1,6 @@
 import { z } from 'zod';
 
-// Schemas added in steps 2.2, 2.3
+export const leaderboardQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+});

@@ -343,3 +343,91 @@ describe('GET /api/v1/gamification/me', () => {
   });
 });
 
+// ─── GET /api/v1/gamification/leaderboard ────────────────────────────────────
+
+describe('GET /api/v1/gamification/leaderboard', () => {
+  it('returns 401 without token', async () => {
+    const res = await request(app).get('/api/v1/gamification/leaderboard');
+    expect(res.status).toBe(401);
+  });
+
+  it('returns empty board when no users', async () => {
+    const res = await request(app)
+      .get('/api/v1/gamification/leaderboard')
+      .set('Authorization', `Bearer ${makeToken(userId1)}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.data).toMatchObject({ items: [], total: 0, page: 1, limit: 20 });
+  });
+
+  it('orders users by totalXp descending', async () => {
+    const userId3 = new mongoose.Types.ObjectId();
+    await UserGamification.insertMany([
+      { userId: userId1, totalXp: 100, level: 2 },
+      { userId: userId2, totalXp: 300, level: 3 },
+      { userId: userId3, totalXp: 50,  level: 1 },
+    ]);
+
+    const res = await request(app)
+      .get('/api/v1/gamification/leaderboard')
+      .set('Authorization', `Bearer ${makeToken(userId1)}`);
+
+    expect(res.status).toBe(200);
+    const items = res.body.data.items;
+    expect(items).toHaveLength(3);
+    expect(items[0].totalXp).toBe(300);
+    expect(items[1].totalXp).toBe(100);
+    expect(items[2].totalXp).toBe(50);
+    expect(items[0].rank).toBe(1);
+    expect(items[1].rank).toBe(2);
+    expect(items[2].rank).toBe(3);
+  });
+
+  it('rank numbers correct across pages', async () => {
+    const userId3 = new mongoose.Types.ObjectId();
+    await UserGamification.insertMany([
+      { userId: userId1, totalXp: 300, level: 3 },
+      { userId: userId2, totalXp: 200, level: 2 },
+      { userId: userId3, totalXp: 100, level: 1 },
+    ]);
+
+    const page2 = await request(app)
+      .get('/api/v1/gamification/leaderboard?page=2&limit=2')
+      .set('Authorization', `Bearer ${makeToken(userId1)}`);
+
+    expect(page2.status).toBe(200);
+    const items = page2.body.data.items;
+    expect(items).toHaveLength(1);
+    expect(items[0].rank).toBe(3);
+    expect(page2.body.data.total).toBe(3);
+    expect(page2.body.data.page).toBe(2);
+    expect(page2.body.data.limit).toBe(2);
+  });
+
+  it('returns 400 for limit > 100', async () => {
+    const res = await request(app)
+      .get('/api/v1/gamification/leaderboard?limit=200')
+      .set('Authorization', `Bearer ${makeToken(userId1)}`);
+
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 400 for page=0', async () => {
+    const res = await request(app)
+      .get('/api/v1/gamification/leaderboard?page=0')
+      .set('Authorization', `Bearer ${makeToken(userId1)}`);
+
+    expect(res.status).toBe(400);
+  });
+
+  it('uses default page=1 limit=20 when not provided', async () => {
+    const res = await request(app)
+      .get('/api/v1/gamification/leaderboard')
+      .set('Authorization', `Bearer ${makeToken(userId1)}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.page).toBe(1);
+    expect(res.body.data.limit).toBe(20);
+  });
+});

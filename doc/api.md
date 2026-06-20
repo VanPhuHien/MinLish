@@ -109,9 +109,9 @@ Vòng đời upload 2 bước: (1) xin presigned PUT → (2) client PUT bytes th
 
 - GET /api/v1/gamification/me — hồ sơ gamification của user. Trả về `{ totalXp, level, currentStreak, longestStreak, xpIntoLevel, xpForNextLevel, progressPct }`. `progressPct` trong `[0, 100]`. Nếu chưa có hoạt động, trả về defaults (`xp=0, level=1`).
 
-### Leaderboard _(Module 2.2 — chưa triển khai)_
+### Leaderboard
 
-- GET /api/v1/gamification/leaderboard?page=1&limit=20 — bảng xếp hạng global all-time theo tổng XP giảm dần. Trả về `{ items: [{ rank, userId, name, avatarUrl, totalXp, level }], page, limit, total }`. Hòa điểm phân định bằng `_id` asc. `limit` tối đa 100.
+- GET /api/v1/gamification/leaderboard?page=1&limit=20 — bảng xếp hạng global all-time theo tổng XP giảm dần. Trả về `{ items: [{ rank, userId, name, avatarUrl, totalXp, level }], page, limit, total }`. Hòa điểm phân định bằng `_id` asc. `limit` tối đa 100. Validation: `page` ≥ 1, `limit` ∈ [1, 100]; lỗi trả 400.
 
 ### My Rank _(Module 2.3 — chưa triển khai)_
 

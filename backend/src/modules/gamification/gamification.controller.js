@@ -1,10 +1,12 @@
 import { successResponse } from '../../utils/response.js';
-import { GAMIFICATION } from '../../constants/codes/index.js';
+import { GAMIFICATION, COMMON } from '../../constants/codes/index.js';
+import AppError from '../../utils/AppError.js';
 import * as service from './gamification.service.js';
 import {
   getDayKey,
   requiredXpForLevel,
 } from '../../config/gamification.config.js';
+import { leaderboardQuerySchema } from './gamification.schema.js';
 
 export const getMe = async (req, res, next) => {
   try {
@@ -31,6 +33,23 @@ export const getMe = async (req, res, next) => {
         progressPct,
       })
     );
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getLeaderboard = async (req, res, next) => {
+  const result = leaderboardQuerySchema.safeParse(req.query);
+  if (!result.success) {
+    const errors = result.error.errors.map((e) => ({
+      field: e.path.join('.'),
+      message: e.message,
+    }));
+    return next(new AppError(COMMON.INVALID_DATA, 400, errors));
+  }
+  try {
+    const data = await service.getLeaderboard(result.data);
+    res.json(successResponse(GAMIFICATION.LEADERBOARD_FETCHED, data));
   } catch (err) {
     next(err);
   }
