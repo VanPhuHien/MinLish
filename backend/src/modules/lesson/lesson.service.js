@@ -1,9 +1,15 @@
 import AppError from '../../utils/AppError.js';
-import { LESSON } from '../../constants/codes/index.js';
+import {
+  LESSON,
+  COMMON,
+  ADMIN,
+  MESSAGES,
+} from '../../constants/codes/index.js';
 import LessonSegment from '../../models/lessonSegment.model.js';
 import Lesson from '../../models/lesson.model.js';
 import UserLessonProgress from '../../models/userLessonProgress.model.js';
 import UserSegmentProgress from '../../models/userSegmentProgress.model.js';
+import { generateSlug } from '../../utils/generate.js';
 
 export const listLessons = async (filters, userId) => {
   const { tagId, cefrLevelId, mode, q, page, limit } = filters;
@@ -115,4 +121,155 @@ export const getSegmentById = async (lessonId, segmentId, userId) => {
   }
 
   return { segment, userProgress };
+};
+
+export const listAdminLessons = async (filters) => {
+  const { status, tagId, cefrLevelId, mode, q, page, limit } = filters;
+  const query = {};
+  if (status) query.status = status;
+  if (tagId) query.tagIds = tagId;
+  if (cefrLevelId) query.cefrLevelIds = cefrLevelId;
+  if (mode) query.modes = mode;
+  if (q) {
+    const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escaped, 'i');
+    query.$or = [{ title: regex }, { description: regex }];
+  }
+
+  const skip = (page - 1) * limit;
+  const [lessons, totalItems] = await Promise.all([
+    Lesson.find(query).sort({ createdAt: -1, _id: -1 }).skip(skip).limit(limit),
+    Lesson.countDocuments(query),
+  ]);
+  return {
+    lessons,
+    pagination: {
+      page,
+      limit,
+      totalItems,
+      totalPages: Math.ceil(totalItems / limit),
+    },
+  };
+};
+
+const validateData = (data) => {
+  const errors = [];
+  if (!data.title) {
+    errors.push({ field: 'title', message: 'The title field is required.' });
+  }
+  if (!data.sourceUrl) {
+    errors.push({
+      field: 'sourceUrl',
+      message: 'The sourceURL field is required.',
+    });
+  }
+  if (
+    data.status &&
+    !['draft', 'published', 'archived'].includes(data.status)
+  ) {
+    errors.push({
+      field: 'status',
+      message: 'The status field must be draft, published or archived.',
+    });
+  }
+  if (errors.length > 0) {
+    throw new AppError(COMMON.INVALID_DATA, 400, errors);
+  }
+};
+
+export const createAdminLesson = async (data) => {
+  validateData(data);
+  let slug = data.slug;
+  if (!data.slug) slug = generateSlug(data.title);
+  const existing = await Lesson.findOne({ slug });
+  if (existing) {
+    throw new AppError(ADMIN.LESSON_SLUG_EXISTS, 400, {
+      field: 'slug',
+      message: MESSAGES[ADMIN.LESSON_SLUG_EXISTS],
+    });
+  }
+
+  const lesson = await Lesson.create({
+    title: data.title,
+    slug,
+    description: data.description || '',
+    tagIds: data.tagIds || [],
+    cefrLevelIds: data.cefrLevelIds || [],
+    modes: data.modes || [],
+    status: data.status || 'draft',
+    sourceUrl: data.sourceUrl,
+    thumbnailUrl: data.thumbnailUrl || '',
+  });
+  return lesson;
+};
+
+export const getAdminLessonById = async (lessonId) => {
+  const lesson = await Lesson.findById(lessonId);
+  if (!lesson) throw new AppError(LESSON.LESSON_NOT_FOUND, 404);
+  return lesson;
+};
+
+export const updateAdminLesson = async (lessonId, data) => {
+  const lesson = await Lesson.findById(lessonId);
+  if (!lesson) throw new AppError(LESSON.LESSON_NOT_FOUND, 404);
+  validateData(data);
+
+  let slug = data.slug;
+  if (!data.slug) slug = generateSlug(data.title);
+  const existing = await Lesson.findOne({ slug, _id: { $ne: lessonId } });
+  if (existing) {
+    throw new AppError(ADMIN.LESSON_SLUG_EXISTS, 400, {
+      field: 'slug',
+      message: MESSAGES[ADMIN.LESSON_SLUG_EXISTS],
+    });
+  }
+  lesson.slug = slug;
+  lesson.title = data.title;
+
+  if (data.description !== undefined) lesson.description = data.description;
+  if (data.tagIds !== undefined) lesson.tagIds = data.tagIds;
+  if (data.cefrLevelIds !== undefined) lesson.cefrLevelIds = data.cefrLevelIds;
+  if (data.modes !== undefined) lesson.modes = data.modes;
+  if (data.status !== undefined) lesson.status = data.status;
+  if (data.sourceUrl !== undefined) lesson.sourceUrl = data.sourceUrl;
+  if (data.thumbnailUrl !== undefined) lesson.thumbnailUrl = data.thumbnailUrl;
+  await lesson.save();
+  return lesson;
+};
+
+export const deleteAdminLesson = async (lessonId) => {
+  const lesson = await Lesson.findById(lessonId);
+  if (!lesson) throw new AppError(LESSON.LESSON_NOT_FOUND, 404);
+  lesson.status = 'archived';
+  await lesson.save();
+  return lesson;
+};
+
+export const publishAdminLesson = async (lessonId) => {
+  const lesson = await Lesson.findById(lessonId);
+  if (!lesson) throw new AppError(LESSON.LESSON_NOT_FOUND, 404);
+
+  if (lesson.status === 'published') {
+    throw new AppError(
+      COMMON.INVALID_DATA,
+      400,
+      undefined,
+      'Lesson is already published'
+    );
+  }
+
+  const segmentCount = await LessonSegment.countDocuments({ lessonId });
+  if (segmentCount === 0) {
+    throw new AppError(
+      COMMON.INVALID_DATA,
+      400,
+      undefined,
+      'Cannot publish a lesson with no segments'
+    );
+  }
+
+  lesson.status = 'published';
+  lesson.publishedAt = new Date();
+  await lesson.save();
+  return lesson;
 };
