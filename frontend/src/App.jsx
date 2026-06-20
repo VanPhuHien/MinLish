@@ -13,6 +13,7 @@ import UserDeckDetailPage from './features/flashcards/pages/UserDeckDetailPage'
 import AdminLayout from './features/admin/layout/AdminLayout'
 import AdminDeckListPage from './features/admin/pages/AdminDeckListPage'
 import AdminDeckCreatePage from './features/admin/pages/AdminDeckCreatePage'
+import AdminDeckEditPage from './features/admin/pages/AdminDeckEditPage'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from './context/AuthContext'
 import './App.css'
@@ -73,6 +74,11 @@ function App() {
   const renderAdminContent = () => {
     if (currentPath === '/admin/decks/new') {
       return <AdminDeckCreatePage onNavigate={navigate} />
+    }
+    // Match /admin/decks/:deckId/edit pattern
+    if (currentPath.startsWith('/admin/decks/') && currentPath.endsWith('/edit')) {
+      const deckId = currentPath.split('/')[3]
+      return <AdminDeckEditPage onNavigate={navigate} deckId={deckId} />
     }
     if (currentPath.startsWith('/admin/decks')) {
       return <AdminDeckListPage onNavigate={navigate} />

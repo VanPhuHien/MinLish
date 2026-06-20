@@ -146,3 +146,13 @@ Các route trong nhóm này yêu cầu người dùng đã đăng nhập với v
   - **Cột phải**: Chọn trình độ CEFR (multi-select dạng pill — A1 đến C2), chọn thẻ danh mục (có autocomplete từ danh sách tag có sẵn, hiển thị dạng chip có thể xóa), chọn trạng thái (Bản nháp / Công khai).
   - Gọi API `POST /api/v1/admin/decks`. Thành công sẽ điều hướng về `/admin/decks` sau 1.2 giây.
   - Nút "Hủy" điều hướng trở lại `/admin/decks` không lưu dữ liệu.
+
+### /admin/decks/:deckId/edit (Trang chỉnh sửa Bộ từ vựng)
+- **Mô tả**: Form cập nhật thông tin và cài đặt cho một bộ từ vựng hệ thống đã có.
+- **Quyền truy cập**: Private — chỉ dành cho `role = admin`.
+- **Tham số nhận vào**: `deckId` (ObjectId của bộ từ vựng cần chỉnh sửa).
+- **Chức năng**:
+  - Tải thông tin hiện tại của bộ từ thông qua API `GET /api/v1/admin/decks/{deckId}` và điền sẵn vào các trường nhập liệu (tiêu đề, mô tả, trình độ CEFR, các tag và trạng thái Bản nháp/Công khai/Đã lưu trữ).
+  - Tích hợp modal chọn danh mục (Tag Picker Modal) giúp người dùng quản lý tag linh hoạt (thêm tag hiện có, tạo tag mới, chỉnh sửa tag, xóa tag).
+  - Gọi API `PUT /api/v1/admin/decks/{deckId}` để lưu các thay đổi. Thành công sẽ tự động điều hướng về `/admin/decks` sau 1.2 giây.
+  - Nút "Hủy" điều hướng quay lại `/admin/decks` mà không lưu thay đổi.

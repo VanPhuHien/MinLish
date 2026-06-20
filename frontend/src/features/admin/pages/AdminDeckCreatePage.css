@@ -424,6 +424,10 @@
   background-color: var(--color-success);
 }
 
+.admin-status-dot.archived {
+  background-color: var(--color-outline);
+}
+
 .admin-status-name {
   font-family: var(--font-family);
   font-size: 13px;

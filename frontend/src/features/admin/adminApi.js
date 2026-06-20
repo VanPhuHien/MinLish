@@ -10,6 +10,11 @@ export const createAdminDeckApi = async (payload) => {
   return response.data;
 };
 
+export const getAdminDeckByIdApi = async (id) => {
+  const response = await apiClient.get(`/admin/decks/${id}`);
+  return response.data;
+};
+
 export const updateAdminDeckApi = async (id, payload) => {
   const response = await apiClient.put(`/admin/decks/${id}`, payload);
   return response.data;

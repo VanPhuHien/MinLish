@@ -59,7 +59,9 @@ function AdminDeckListPage({ onNavigate }) {
   }, [searchInput])
 
   const handleArchiveToggle = async (deck) => {
-    const newStatus = deck.status === 'archived' ? 'draft' : 'archived'
+    const newStatus = deck.status === 'archived' 
+      ? (deck.publishedAt ? 'published' : 'draft') 
+      : 'archived'
     try {
       await updateAdminDeckApi(deck._id, { ...deck, status: newStatus, title: deck.title })
       fetchDecks(pagination.page)
@@ -130,8 +132,11 @@ function AdminDeckListPage({ onNavigate }) {
           ))}
         </select>
 
-        {/* Status filter - decorative only */}
-        <select className="admin-filter-select" value={filters.status} onChange={(e) => setFilters((prev) => ({ ...prev, status: e.target.value }))}>
+        <select
+          className="admin-filter-select"
+          value={filters.status}
+          onChange={(e) => setFilters((prev) => ({ ...prev, status: e.target.value }))}
+        >
           <option value="">{t('admin.filterStatus')}</option>
           <option value="published">{t('admin.statusPublished')}</option>
           <option value="draft">{t('admin.statusDraft')}</option>
@@ -254,28 +259,30 @@ function AdminDeckListPage({ onNavigate }) {
                     </svg>
                   </button>
 
-                  <button
-                    className={`admin-deck-action-btn ${isArchived ? 'unarchive' : ''}`}
-                    title={isArchived ? t('admin.unarchive') : t('admin.archive')}
-                    onClick={() => handleArchiveToggle(deck)}
-                  >
-                    {isArchived ? (
-                      /* Unarchive icon - box with up arrow */
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
-                        <polyline points="21 8 21 21 3 21 3 8" />
-                        <rect x="1" y="3" width="22" height="5" rx="1" />
-                        <line x1="10" y1="12" x2="14" y2="12" />
-                        <polyline points="10 16 12 12 14 16" />
-                      </svg>
-                    ) : (
-                      /* Archive icon - box with down arrow */
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
-                        <polyline points="21 8 21 21 3 21 3 8" />
-                        <rect x="1" y="3" width="22" height="5" rx="1" />
-                        <line x1="10" y1="12" x2="14" y2="12" />
-                      </svg>
-                    )}
-                  </button>
+                  {deck.status !== 'draft' && (
+                    <button
+                      className={`admin-deck-action-btn ${isArchived ? 'unarchive' : ''}`}
+                      title={isArchived ? t('admin.unarchive') : t('admin.archive')}
+                      onClick={() => handleArchiveToggle(deck)}
+                    >
+                      {isArchived ? (
+                        /* Unarchive icon - box with up arrow */
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+                          <polyline points="21 8 21 21 3 21 3 8" />
+                          <rect x="1" y="3" width="22" height="5" rx="1" />
+                          <line x1="10" y1="12" x2="14" y2="12" />
+                          <polyline points="10 16 12 12 14 16" />
+                        </svg>
+                      ) : (
+                        /* Archive icon - box with down arrow */
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+                          <polyline points="21 8 21 21 3 21 3 8" />
+                          <rect x="1" y="3" width="22" height="5" rx="1" />
+                          <line x1="10" y1="12" x2="14" y2="12" />
+                        </svg>
+                      )}
+                    </button>
+                  )}
 
                   <a
                     href={`/admin/decks/${deck._id}`}
