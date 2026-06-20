@@ -3,6 +3,7 @@ import AppError from '../../utils/AppError.js';
 import {
   COMMON,
   USER_CARD_STATE,
+  USER_SEGMENT_PROGRESS,
   MESSAGES,
 } from '../../constants/codes/index.js';
 import {
@@ -33,7 +34,8 @@ export const getLessonSegmentsProgress = async (req, res, next) => {
     );
     res.status(200).json({
       success: true,
-      message: 'Lấy danh sách segment progress của lesson thành công',
+      code: USER_SEGMENT_PROGRESS.SEGMENT_PROGRESS_LIST_SUCCESS,
+      message: MESSAGES[USER_SEGMENT_PROGRESS.SEGMENT_PROGRESS_LIST_SUCCESS],
       data: progressList,
     });
   } catch (error) {
@@ -61,7 +63,8 @@ export const getSegmentProgress = async (req, res, next) => {
     );
     res.status(200).json({
       success: true,
-      message: 'Lấy chi tiết segment progress thành công',
+      code: USER_SEGMENT_PROGRESS.SEGMENT_PROGRESS_DETAIL_SUCCESS,
+      message: MESSAGES[USER_SEGMENT_PROGRESS.SEGMENT_PROGRESS_DETAIL_SUCCESS],
       data: progress,
     });
   } catch (error) {
@@ -110,7 +113,8 @@ export const updateSegmentProgress = async (req, res, next) => {
     );
     res.status(200).json({
       success: true,
-      message: 'Cập nhật một phần segment progress thành công',
+      code: USER_SEGMENT_PROGRESS.SEGMENT_PROGRESS_UPDATE_SUCCESS,
+      message: MESSAGES[USER_SEGMENT_PROGRESS.SEGMENT_PROGRESS_UPDATE_SUCCESS],
       data: progress,
     });
   } catch (error) {

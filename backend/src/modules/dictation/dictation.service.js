@@ -53,7 +53,10 @@ export const submitDictationProgress = async (
     try {
       await recordActivity(userId, 'segment_complete', segmentId.toString());
     } catch (e) {
-      console.warn('[gamification] recordActivity failed for segment_complete:', e.message);
+      console.warn(
+        '[gamification] recordActivity failed for segment_complete:',
+        e.message
+      );
     }
   }
 

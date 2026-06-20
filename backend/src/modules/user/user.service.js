@@ -3,13 +3,17 @@ import LessonSegment from '../../models/lessonSegment.model.js';
 import Lesson from '../../models/lesson.model.js';
 import UserCardState from '../../models/userCardState.model.js';
 import AppError from '../../utils/AppError.js';
-import { USER_CARD_STATE } from '../../constants/codes/index.js';
+import {
+  USER_CARD_STATE,
+  LESSON,
+  USER_SEGMENT_PROGRESS,
+} from '../../constants/codes/index.js';
 import { evaluatePronunciation } from '../../services/azureSpeech.service.js';
 import { calculateNextSRS } from '../../utils/srs.util.js';
 export const getLessonSegmentsProgress = async (userId, lessonId) => {
   const lesson = await Lesson.findById(lessonId);
   if (!lesson) {
-    throw new AppError('Lesson not found', 404);
+    throw new AppError(LESSON.LESSON_NOT_FOUND, 404);
   }
   return await UserSegmentProgress.find({ userId, lessonId });
 };
@@ -22,7 +26,7 @@ export const getSegmentProgress = async (userId, lessonId, segmentId) => {
   });
 
   if (!progress) {
-    throw new AppError('Segment progress not found', 404);
+    throw new AppError(USER_SEGMENT_PROGRESS.SEGMENT_PROGRESS_NOT_FOUND, 404);
   }
   return progress;
 };
@@ -35,7 +39,7 @@ export const updateSegmentProgress = async (
 ) => {
   const segment = await LessonSegment.findOne({ _id: segmentId, lessonId });
   if (!segment) {
-    throw new AppError('Segment not found in this lesson', 404);
+    throw new AppError(USER_SEGMENT_PROGRESS.SEGMENT_NOT_FOUND_IN_LESSON, 404);
   }
 
   const set = {};

@@ -163,9 +163,10 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
+      code: { type: 'string', example: 'SEGMENT_PROGRESS_LIST_SUCCESS' },
       message: {
         type: 'string',
-        example: 'Lấy danh sách segment progress của lesson thành công',
+        example: 'Successfully retrieved lesson segments progress',
       },
       data: {
         type: 'array',
@@ -374,9 +375,10 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
+      code: { type: 'string', example: 'SEGMENT_PROGRESS_DETAIL_SUCCESS' },
       message: {
         type: 'string',
-        example: 'Lấy chi tiết segment progress thành công',
+        example: 'Successfully retrieved segment progress details',
       },
       data: { $ref: '#/components/schemas/UserSegmentProgress' },
     },

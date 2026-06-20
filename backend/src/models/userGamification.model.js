@@ -44,5 +44,9 @@ userGamificationSchema.index({ totalXp: -1, _id: 1 });
 
 const UserGamification =
   mongoose.models.UserGamification ||
-  mongoose.model('UserGamification', userGamificationSchema, 'user_gamification');
+  mongoose.model(
+    'UserGamification',
+    userGamificationSchema,
+    'user_gamification'
+  );
 export default UserGamification;

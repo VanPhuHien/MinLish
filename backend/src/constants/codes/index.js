@@ -13,7 +13,10 @@ import {
   USER_CARD_STATE_MESSAGES,
 } from './userCardState.codes.js';
 import { GAMIFICATION, GAMIFICATION_MESSAGES } from './gamification.codes.js';
-
+import {
+  USER_SEGMENT_PROGRESS,
+  USER_SEGMENT_PROGRESS_MESSAGES,
+} from './userSegmentProgress.codes.js';
 export {
   COMMON,
   AUTH,
@@ -27,6 +30,7 @@ export {
   ADMIN,
   USER_CARD_STATE,
   GAMIFICATION,
+  USER_SEGMENT_PROGRESS,
 };
 
 export const MESSAGES = {
@@ -42,4 +46,5 @@ export const MESSAGES = {
   ...ADMIN_MESSAGES,
   ...USER_CARD_STATE_MESSAGES,
   ...GAMIFICATION_MESSAGES,
+  ...USER_SEGMENT_PROGRESS_MESSAGES,
 };

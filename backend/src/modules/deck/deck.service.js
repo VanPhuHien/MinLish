@@ -4,7 +4,7 @@ import Topic from '../../models/topic.model.js';
 import Card from '../../models/card.model.js';
 import UserCardState from '../../models/userCardState.model.js';
 import AppError from '../../utils/AppError.js';
-import { DECK, COMMON } from '../../constants/codes/index.js';
+import { DECK, COMMON, ADMIN } from '../../constants/codes/index.js';
 import { generateSlug } from '../../utils/generate.js';
 
 // Public deck endpoints serve the SYSTEM catalog only.
@@ -157,6 +157,7 @@ export const listAdminDecks = async (filters) => {
     const regex = new RegExp(escaped, 'i');
     query.$or = [{ title: regex }, { description: regex }];
   }
+  query.ownerType = 'system';
 
   const skip = (page - 1) * limit; // Tính số lượng bản ghi cần bỏ qua khi phân trang
   // vd: const page = 3; const limit = 10;
@@ -436,7 +437,7 @@ export const generateQuizOptions = async (
 
 export const listAdminDeckCards = async (deckId, filters) => {
   const deck = await Deck.findById(deckId);
-  if (!deck) throw new AppError('Không tìm thấy deck', 404);
+  if (!deck) throw new AppError(ADMIN.DECK_NOT_FOUND, 404);
 
   const { topicId, q, page, limit } = filters;
   const query = { deckId };
@@ -466,31 +467,31 @@ export const listAdminDeckCards = async (deckId, filters) => {
 const validateCardData = (data) => {
   const errors = [];
   if (!data.topicId)
-    errors.push({ field: 'topicId', message: 'Trường topicId là bắt buộc' });
+    errors.push({ field: 'topicId', message: 'The topicId field is required' });
   if (!data.term)
-    errors.push({ field: 'term', message: 'Trường term là bắt buộc' });
+    errors.push({ field: 'term', message: 'The term field is required' });
   if (!data.pos)
-    errors.push({ field: 'pos', message: 'Trường pos là bắt buộc' });
+    errors.push({ field: 'pos', message: 'The pos field is required' });
   if (!data.translation)
     errors.push({
       field: 'translation',
-      message: 'Trường translation là bắt buộc',
+      message: 'The translation field is required',
     });
   if (errors.length > 0) {
-    throw new AppError('Dữ liệu không hợp lệ', 400, errors);
+    throw new AppError(COMMON.INVALID_DATA, 400, errors);
   }
 };
 
 const validateTopicInDeck = async (deckId, topicId) => {
   const topic = await Topic.findById(topicId);
   if (!topic) {
-    throw new AppError('Không tìm thấy topic', 404);
+    throw new AppError(ADMIN.TOPIC_NOT_FOUND, 404);
   }
   if (topic.deckId.toString() !== deckId.toString()) {
-    throw new AppError('Dữ liệu không hợp lệ', 400, [
+    throw new AppError(COMMON.INVALID_DATA, 400, [
       {
         field: 'topicId',
-        message: 'Topic này không thuộc về deck hiện tại',
+        message: 'Topic does not belong to this deck',
       },
     ]);
   }
@@ -500,7 +501,7 @@ const validateTopicInDeck = async (deckId, topicId) => {
 export const createAdminDeckCard = async (deckId, data) => {
   validateCardData(data);
   const deck = await Deck.findById(deckId);
-  if (!deck) throw new AppError('Không tìm thấy deck', 404);
+  if (!deck) throw new AppError(ADMIN.DECK_NOT_FOUND, 404);
   await validateTopicInDeck(deckId, data.topicId);
 
   const last = await Card.findOne({ deckId, topicId: data.topicId })
@@ -530,13 +531,13 @@ export const createAdminDeckCard = async (deckId, data) => {
 
 export const getAdminDeckCard = async (deckId, cardId) => {
   const card = await Card.findOne({ _id: cardId, deckId });
-  if (!card) throw new AppError('Không tìm thấy deck hoặc card', 404);
+  if (!card) throw new AppError(ADMIN.CARD_NOT_FOUND, 404);
   return card;
 };
 
 export const updateAdminDeckCard = async (deckId, cardId, data) => {
   const card = await Card.findOne({ _id: cardId, deckId });
-  if (!card) throw new AppError('Không tìm thấy deck hoặc card', 404);
+  if (!card) throw new AppError(ADMIN.CARD_NOT_FOUND, 404);
   validateCardData(data);
   await validateTopicInDeck(deckId, data.topicId);
 
@@ -570,7 +571,7 @@ export const updateAdminDeckCard = async (deckId, cardId, data) => {
 
 export const deleteAdminDeckCard = async (deckId, cardId) => {
   const card = await Card.findOne({ _id: cardId, deckId });
-  if (!card) throw new AppError('Không tìm thấy deck hoặc card', 404);
+  if (!card) throw new AppError(ADMIN.CARD_NOT_FOUND, 404);
   await Promise.all([card.deleteOne(), UserCardState.deleteMany({ cardId })]);
   await Promise.all([
     Topic.updateOne({ _id: card.topicId }, { $inc: { cardCount: -1 } }),

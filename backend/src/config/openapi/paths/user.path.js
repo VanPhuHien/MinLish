@@ -292,10 +292,13 @@ export default {
                   {
                     type: 'object',
                     properties: {
+                      code: {
+                        type: 'string',
+                        example: 'SEGMENT_PROGRESS_UPDATE_SUCCESS',
+                      },
                       message: {
                         type: 'string',
-                        example:
-                          'Cập nhật một phần segment progress thành công',
+                        example: 'Successfully updated segment progress',
                       },
                     },
                   },

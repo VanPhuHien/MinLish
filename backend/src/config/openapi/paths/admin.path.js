@@ -3,7 +3,11 @@ const CefrNotFound = {
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
-      example: { success: false, message: 'Không tìm thấy CEFR Level' },
+      example: {
+        success: false,
+        code: 'CEFR_LEVEL_NOT_FOUND',
+        message: 'CEFR level not found',
+      },
     },
   },
 };
@@ -13,7 +17,11 @@ const TagNotFound = {
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
-      example: { success: false, message: 'Không tìm thấy tag' },
+      example: {
+        success: false,
+        code: 'TAG_NOT_FOUND',
+        message: 'Tag not found',
+      },
     },
   },
 };
@@ -23,7 +31,11 @@ const LessonNotFound = {
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
-      example: { success: false, message: 'Không tìm thấy lesson' },
+      example: {
+        success: false,
+        code: 'LESSON_NOT_FOUND',
+        message: 'Lesson not found',
+      },
     },
   },
 };
@@ -35,7 +47,8 @@ const LessonSlugConflict = {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
       example: {
         success: false,
-        message: 'Dữ liệu đã tồn tại',
+        code: 'ALREADY_EXISTS',
+        message: 'Resource already exists',
         errors: [
           {
             field: 'slug',
@@ -57,7 +70,8 @@ const LessonBadRequest = {
           summary: 'Thiếu dữ liệu trường bắt buộc',
           value: {
             success: false,
-            message: 'Dữ liệu không hợp lệ',
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
             errors: [
               { field: 'title', message: 'Trường title là bắt buộc' },
               { field: 'sourceUrl', message: 'Trường sourceUrl là bắt buộc' },
@@ -68,7 +82,8 @@ const LessonBadRequest = {
           summary: 'Sai trạng thái',
           value: {
             success: false,
-            message: 'Dữ liệu không hợp lệ',
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
             errors: [
               {
                 field: 'status',
@@ -92,14 +107,16 @@ const LessonPublishBadRequest = {
           summary: 'Bài học đã được publish',
           value: {
             success: false,
-            message: 'Bài học này đã ở trạng thái published',
+            code: 'INVALID_DATA',
+            message: 'Lesson is already published',
           },
         },
         MissingSegments: {
           summary: 'Chưa có nội dung',
           value: {
             success: false,
-            message: 'Không thể publish bài học chưa có segment nào',
+            code: 'INVALID_DATA',
+            message: 'Cannot publish a lesson with no segments',
           },
         },
       },
@@ -115,11 +132,19 @@ const LessonOrSegmentNotFound = {
       examples: {
         LessonNotFound: {
           summary: 'Lỗi sai lesson ID',
-          value: { success: false, message: 'Không tìm thấy lesson' },
+          value: {
+            success: false,
+            code: 'LESSON_NOT_FOUND',
+            message: 'Lesson not found',
+          },
         },
         SegmentNotFound: {
           summary: 'Lỗi sai segment ID',
-          value: { success: false, message: 'Không tìm thấy segment' },
+          value: {
+            success: false,
+            code: 'SEGMENT_NOT_FOUND',
+            message: 'Segment not found',
+          },
         },
       },
     },
@@ -136,7 +161,8 @@ const CefrBadRequest = {
           summary: 'Thiếu dữ liệu trường bắt buộc',
           value: {
             success: false,
-            message: 'Dữ liệu không hợp lệ',
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
             errors: [{ field: 'label', message: 'Trường label là bắt buộc' }],
           },
         },
@@ -155,7 +181,8 @@ const TagBadRequest = {
           summary: 'Thiếu dữ liệu trường bắt buộc',
           value: {
             success: false,
-            message: 'Dữ liệu không hợp lệ',
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
             errors: [{ field: 'label', message: 'Trường label là bắt buộc' }],
           },
         },
@@ -174,7 +201,8 @@ const SegmentBadRequest = {
           summary: 'Thiếu dữ liệu trường bắt buộc',
           value: {
             success: false,
-            message: 'Dữ liệu không hợp lệ',
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
             errors: [
               {
                 field: 'startMs',
@@ -211,7 +239,8 @@ const CefrConflict = {
           summary: 'Trùng label',
           value: {
             success: false,
-            message: 'Dữ liệu đã tồn tại',
+            code: 'ALREADY_EXISTS',
+            message: 'Resource already exists',
             errors: [
               { field: 'label', message: 'Label CEFR level này đã tồn tại' },
             ],
@@ -232,7 +261,8 @@ const TagConflict = {
           summary: 'Trùng label',
           value: {
             success: false,
-            message: 'Dữ liệu đã tồn tại',
+            code: 'ALREADY_EXISTS',
+            message: 'Resource already exists',
             errors: [{ field: 'label', message: 'Label tag này đã tồn tại' }],
           },
         },
@@ -251,7 +281,8 @@ const DeckBadRequest = {
           summary: 'Thiếu dữ liệu trường bắt buộc',
           value: {
             success: false,
-            message: 'Dữ liệu không hợp lệ',
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
             errors: [{ field: 'title', message: 'Trường title là bắt buộc' }],
           },
         },
@@ -265,7 +296,11 @@ const DeckNotFound = {
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
-      example: { success: false, message: 'Không tìm thấy deck' },
+      example: {
+        success: false,
+        code: 'DECK_NOT_FOUND',
+        message: 'Deck not found',
+      },
     },
   },
 };
@@ -280,7 +315,8 @@ const DeckSlugConflict = {
           summary: 'Trùng slug',
           value: {
             success: false,
-            message: 'Dữ liệu đã tồn tại',
+            code: 'ALREADY_EXISTS',
+            message: 'Resource already exists',
             errors: [
               {
                 field: 'slug',
@@ -302,7 +338,8 @@ const DeckOrTopicNotFound = {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
       example: {
         success: false,
-        message: 'Không tìm thấy deck hoặc topic',
+        code: 'DECK_OR_TOPIC_NOT_FOUND',
+        message: 'Deck or topic not found',
       },
     },
   },
@@ -315,7 +352,8 @@ const TopicConflict = {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
       example: {
         success: false,
-        message: 'Dữ liệu đã tồn tại',
+        code: 'ALREADY_EXISTS',
+        message: 'Resource already exists',
         errors: [
           {
             field: 'slug',
@@ -337,7 +375,8 @@ const TopicBadRequest = {
         summary: 'Thiếu dữ liệu trường bắt buộc',
         value: {
           success: false,
-          message: 'Dữ liệu không hợp lệ',
+          code: 'INVALID_DATA',
+          message: 'Invalid request data',
           errors: [{ field: 'name', message: 'Trường name là bắt buộc' }],
         },
       },
@@ -355,7 +394,8 @@ const TopicReorderBadRequest = {
           summary: 'Thiếu hoặc sai cấu trúc dữ liệu',
           value: {
             success: false,
-            message: 'Dữ liệu không hợp lệ',
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
             errors: [
               {
                 field: 'topics',
@@ -377,7 +417,8 @@ const TopicReorderBadRequest = {
           summary: 'Trùng lặp order trong mảng',
           value: {
             success: false,
-            message: 'Dữ liệu không hợp lệ',
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
             errors: [
               {
                 field: 'topics',
@@ -390,7 +431,8 @@ const TopicReorderBadRequest = {
           summary: 'Topic không thuộc Deck',
           value: {
             success: false,
-            message: 'Dữ liệu không hợp lệ',
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
             errors: [
               {
                 field: 'topics[0].topicId',
@@ -411,7 +453,8 @@ const DeckOrCardNotFound = {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
       example: {
         success: false,
-        message: 'Không tìm thấy deck hoặc card',
+        code: 'DECK_OR_CARD_NOT_FOUND',
+        message: 'Deck or card not found',
       },
     },
   },
@@ -427,7 +470,8 @@ const CardBadRequest = {
           summary: 'Thiếu dữ liệu trường bắt buộc',
           value: {
             success: false,
-            message: 'Dữ liệu không hợp lệ',
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
             errors: [
               { field: 'topicId', message: 'Trường topicId là bắt buộc' },
               { field: 'term', message: 'Trường term là bắt buộc' },
@@ -443,7 +487,8 @@ const CardBadRequest = {
           summary: 'Topic không thuộc Deck',
           value: {
             success: false,
-            message: 'Dữ liệu không hợp lệ',
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
             errors: [
               {
                 field: 'topicId',

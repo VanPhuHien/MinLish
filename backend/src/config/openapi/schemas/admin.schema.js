@@ -61,9 +61,10 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
+      code: { type: 'string', example: 'CEFR_DETAIL_SUCCESS' },
       message: {
         type: 'string',
-        example: 'Lấy chi tiết CEFR level thành công',
+        example: 'CEFR level detail retrieved successfully',
       },
       data: {
         $ref: '#/components/schemas/CefrLevel',
@@ -119,7 +120,8 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Lấy chi tiết tag thành công' },
+      code: { type: 'string', example: 'TAG_DETAIL_SUCCESS' },
+      message: { type: 'string', example: 'Tag detail retrieved successfully' },
       data: {
         $ref: '#/components/schemas/Tag',
       },
@@ -195,7 +197,8 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Lấy danh sách lesson thành công' },
+      code: { type: 'string', example: 'LESSON_LIST_SUCCESS' },
+      message: { type: 'string', example: 'Lessons retrieved successfully' },
       data: {
         type: 'array',
         items: { $ref: '#/components/schemas/Lesson' },
@@ -264,7 +267,11 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Lấy chi tiết lesson thành công' },
+      code: { type: 'string', example: 'LESSON_DETAIL_SUCCESS' },
+      message: {
+        type: 'string',
+        example: 'Lesson detail retrieved successfully',
+      },
       data: {
         $ref: '#/components/schemas/Lesson',
       },
@@ -323,7 +330,8 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Lấy danh sách segment thành công' },
+      code: { type: 'string', example: 'SEGMENT_LIST_SUCCESS' },
+      message: { type: 'string', example: 'Segments retrieved successfully' },
       data: {
         type: 'array',
         items: { $ref: '#/components/schemas/Segment' },
@@ -373,7 +381,11 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Lấy chi tiết segment thành công' },
+      code: { type: 'string', example: 'SEGMENT_DETAIL_SUCCESS' },
+      message: {
+        type: 'string',
+        example: 'Segment detail retrieved successfully',
+      },
       data: {
         $ref: '#/components/schemas/Segment',
       },
@@ -427,7 +439,8 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Lấy danh sách topics thành công' },
+      code: { type: 'string', example: 'TOPIC_LIST_SUCCESS' },
+      message: { type: 'string', example: 'Topics retrieved successfully' },
       data: {
         type: 'array',
         items: { $ref: '#/components/schemas/Topic' },
@@ -438,7 +451,11 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Lấy chi tiết topic thành công' },
+      code: { type: 'string', example: 'TOPIC_DETAIL_SUCCESS' },
+      message: {
+        type: 'string',
+        example: 'Topic detail retrieved successfully',
+      },
       data: {
         $ref: '#/components/schemas/Topic',
       },
@@ -478,7 +495,8 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Lấy danh sách card thành công' },
+      code: { type: 'string', example: 'CARD_LIST_SUCCESS' },
+      message: { type: 'string', example: 'Cards retrieved successfully' },
       data: {
         type: 'object',
         properties: {
@@ -517,7 +535,11 @@ export default {
     type: 'object',
     properties: {
       success: { type: 'boolean', example: true },
-      message: { type: 'string', example: 'Lấy chi tiết card thành công' },
+      code: { type: 'string', example: 'CARD_DETAIL_SUCCESS' },
+      message: {
+        type: 'string',
+        example: 'Card detail retrieved successfully',
+      },
       data: {
         $ref: '#/components/schemas/Card',
       },

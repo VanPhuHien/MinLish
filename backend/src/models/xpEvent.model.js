@@ -35,9 +35,13 @@ const xpEventSchema = new mongoose.Schema(
 
 // Idempotency: same userId+source+refId cannot award XP twice.
 // sparse: true skips docs where refId is null, allowing repeat-free sources.
-xpEventSchema.index({ userId: 1, source: 1, refId: 1 }, { unique: true, sparse: true });
+xpEventSchema.index(
+  { userId: 1, source: 1, refId: 1 },
+  { unique: true, sparse: true }
+);
 
 const XpEvent =
-  mongoose.models.XpEvent || mongoose.model('XpEvent', xpEventSchema, 'xp_events');
+  mongoose.models.XpEvent ||
+  mongoose.model('XpEvent', xpEventSchema, 'xp_events');
 
 export default XpEvent;

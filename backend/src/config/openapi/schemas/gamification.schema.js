@@ -15,7 +15,8 @@ export default {
       lastActiveDayKey: {
         type: 'string',
         nullable: true,
-        description: 'Ngày cuối cùng có hành động học (YYYY-MM-DD, UTC+7). null nếu chưa học.',
+        description:
+          'Ngày cuối cùng có hành động học (YYYY-MM-DD, UTC+7). null nếu chưa học.',
         example: '2026-06-20',
       },
       activeToday: {
@@ -60,12 +61,14 @@ export default {
       },
       xpIntoLevel: {
         type: 'integer',
-        description: 'XP đã tích lũy bên trong level hiện tại (tính từ sàn của level).',
+        description:
+          'XP đã tích lũy bên trong level hiện tại (tính từ sàn của level).',
         example: 40,
       },
       xpForNextLevel: {
         type: 'integer',
-        description: 'Tổng XP cần thiết để hoàn thành level hiện tại và lên cấp.',
+        description:
+          'Tổng XP cần thiết để hoàn thành level hiện tại và lên cấp.',
         example: 200,
       },
       progressPct: {
@@ -88,9 +91,21 @@ export default {
   GamificationRankData: {
     type: 'object',
     properties: {
-      rank: { type: 'integer', description: 'Thứ hạng của user hiện tại (1 = cao nhất).', example: 5 },
-      totalXp: { type: 'integer', description: 'Tổng XP của user.', example: 340 },
-      totalPlayers: { type: 'integer', description: 'Tổng số người chơi có trong bảng xếp hạng.', example: 120 },
+      rank: {
+        type: 'integer',
+        description: 'Thứ hạng của user hiện tại (1 = cao nhất).',
+        example: 5,
+      },
+      totalXp: {
+        type: 'integer',
+        description: 'Tổng XP của user.',
+        example: 340,
+      },
+      totalPlayers: {
+        type: 'integer',
+        description: 'Tổng số người chơi có trong bảng xếp hạng.',
+        example: 120,
+      },
     },
   },
   GamificationRankResponse: {
@@ -106,10 +121,28 @@ export default {
   GamificationLeaderboardItem: {
     type: 'object',
     properties: {
-      rank: { type: 'integer', description: 'Thứ hạng (1 = cao nhất).', example: 1 },
-      userId: { type: 'string', description: 'ID của user.', example: '664f1a2b3c4d5e6f7a8b9c0d' },
-      name: { type: 'string', nullable: true, description: 'Tên hiển thị.', example: 'Nguyen Van A' },
-      avatarUrl: { type: 'string', nullable: true, description: 'Ảnh đại diện.', example: null },
+      rank: {
+        type: 'integer',
+        description: 'Thứ hạng (1 = cao nhất).',
+        example: 1,
+      },
+      userId: {
+        type: 'string',
+        description: 'ID của user.',
+        example: '664f1a2b3c4d5e6f7a8b9c0d',
+      },
+      name: {
+        type: 'string',
+        nullable: true,
+        description: 'Tên hiển thị.',
+        example: 'Nguyen Van A',
+      },
+      avatarUrl: {
+        type: 'string',
+        nullable: true,
+        description: 'Ảnh đại diện.',
+        example: null,
+      },
       totalXp: { type: 'integer', description: 'Tổng XP.', example: 520 },
       level: { type: 'integer', description: 'Cấp độ hiện tại.', example: 3 },
     },
@@ -123,7 +156,11 @@ export default {
       },
       page: { type: 'integer', example: 1 },
       limit: { type: 'integer', example: 20 },
-      total: { type: 'integer', description: 'Tổng số users có trong bảng xếp hạng.', example: 42 },
+      total: {
+        type: 'integer',
+        description: 'Tổng số users có trong bảng xếp hạng.',
+        example: 42,
+      },
     },
   },
   GamificationLeaderboardResponse: {
