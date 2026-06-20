@@ -3,6 +3,7 @@ import * as tagService from '../tag/tag.service.js';
 import * as deckService from '../deck/deck.service.js';
 import AppError from '../../utils/AppError.js';
 import { ADMIN, COMMON } from '../../constants/codes/index.js';
+import * as lessonService from '../lesson/lesson.service.js';
 
 export const listTags = async (req, res, next) => {
   try {
@@ -270,6 +271,82 @@ export const deleteDeckCard = async (req, res, next) => {
   try {
     await deckService.deleteAdminDeckCard(req.params.deckId, req.params.cardId);
     return res.status(200).json(successResponse(ADMIN.CARD_DELETED_SUCCESS));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const listLessons = async (req, res, next) => {
+  try {
+    const filters = {
+      status: req.query.status,
+      tagId: req.query.tagId,
+      cefrLevelId: req.query.cefrLevelId,
+      mode: req.query.mode,
+      q: req.query.q,
+      page: parseInt(req.query.page) || 1,
+      limit: parseInt(req.query.limit) || 10,
+    };
+    const data = await lessonService.listAdminLessons(filters);
+    return res
+      .status(200)
+      .json(successResponse(ADMIN.LESSON_LIST_SUCCESS, data));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createLesson = async (req, res, next) => {
+  try {
+    const lesson = await lessonService.createAdminLesson(req.body);
+    return res
+      .status(201)
+      .json(successResponse(ADMIN.LESSON_CREATED_SUCCESS, lesson));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getLessonById = async (req, res, next) => {
+  try {
+    const lesson = await lessonService.getAdminLessonById(req.params.lessonId);
+    return res
+      .status(200)
+      .json(successResponse(ADMIN.LESSON_DETAIL_SUCCESS, lesson));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateLesson = async (req, res, next) => {
+  try {
+    const lesson = await lessonService.updateAdminLesson(
+      req.params.lessonId,
+      req.body
+    );
+    return res
+      .status(200)
+      .json(successResponse(ADMIN.LESSON_UPDATED_SUCCESS, lesson));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteLesson = async (req, res, next) => {
+  try {
+    await lessonService.deleteAdminLesson(req.params.lessonId);
+    return res.status(200).json(successResponse(ADMIN.LESSON_DELETED_SUCCESS));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const publishLesson = async (req, res, next) => {
+  try {
+    const lesson = await lessonService.publishAdminLesson(req.params.lessonId);
+    return res
+      .status(200)
+      .json(successResponse(ADMIN.LESSON_PUBLISHED_SUCCESS, lesson));
   } catch (error) {
     next(error);
   }

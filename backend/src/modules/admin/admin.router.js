@@ -37,4 +37,11 @@ router.get('/decks/:deckId/cards/:cardId', adminController.getDeckCardById);
 router.put('/decks/:deckId/cards/:cardId', adminController.updateDeckCard);
 router.delete('/decks/:deckId/cards/:cardId', adminController.deleteDeckCard);
 
+router.get('/lessons', adminController.listLessons);
+router.post('/lessons', adminController.createLesson);
+router.get('/lessons/:lessonId', adminController.getLessonById);
+router.put('/lessons/:lessonId', adminController.updateLesson);
+router.delete('/lessons/:lessonId', adminController.deleteLesson);
+router.post('/lessons/:lessonId/publish', adminController.publishLesson);
+
 export default router;

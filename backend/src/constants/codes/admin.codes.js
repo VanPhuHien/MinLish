@@ -50,6 +50,7 @@ export const ADMIN = Object.freeze({
   DECK_NOT_FOUND: 'DECK_NOT_FOUND',
   TOPIC_NOT_FOUND: 'TOPIC_NOT_FOUND',
   CARD_NOT_FOUND: 'CARD_NOT_FOUND',
+  LESSON_SLUG_EXISTS: 'LESSON_SLUG_EXISTS',
 });
 
 export const ADMIN_MESSAGES = {
@@ -104,4 +105,7 @@ export const ADMIN_MESSAGES = {
   DECK_NOT_FOUND: 'Deck not found',
   TOPIC_NOT_FOUND: 'Topic not found',
   CARD_NOT_FOUND: 'Card not found',
+
+  LESSON_SLUG_EXISTS:
+    'The lesson slug already exists in the system. Please adjust the slug or title.',
 };
