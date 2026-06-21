@@ -1,0 +1,335 @@
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import Input from '../../../../components/Input/Input'
+import TagPickerModal from '../../components/TagPickerModal/TagPickerModal'
+import { createAdminLessonApi, listCefrLevelsApi, listTagsApi } from '../../adminApi'
+import '../deck/AdminDeckCreatePage.css'
+import './AdminLessonPage.css'
+
+const getYouTubeEmbedUrl = (url) => {
+  if (!url) return ''
+  try {
+    const parsed = new URL(url)
+    const host = parsed.hostname.replace(/^www\./, '')
+    let videoId = ''
+
+    if (host === 'youtube.com' || host === 'm.youtube.com') {
+      if (parsed.pathname === '/watch') {
+        videoId = parsed.searchParams.get('v') || ''
+      } else if (parsed.pathname.startsWith('/embed/')) {
+        videoId = parsed.pathname.split('/embed/')[1]?.split('/')[0] || ''
+      } else if (parsed.pathname.startsWith('/shorts/')) {
+        videoId = parsed.pathname.split('/shorts/')[1]?.split('/')[0] || ''
+      }
+    }
+
+    if (host === 'youtu.be') {
+      videoId = parsed.pathname.slice(1).split('/')[0]
+    }
+
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : ''
+  } catch {
+    return ''
+  }
+}
+
+function AdminLessonCreatePage({ onNavigate }) {
+  const { t } = useTranslation()
+
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
+  const [sourceUrl, setSourceUrl] = useState('')
+  const [selectedCefr, setSelectedCefr] = useState([])
+  const [selectedTags, setSelectedTags] = useState([])
+  const [status, setStatus] = useState('draft')
+
+  const [cefrLevels, setCefrLevels] = useState([])
+  const [availableTags, setAvailableTags] = useState([])
+  const [isTagModalOpen, setIsTagModalOpen] = useState(false)
+
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [titleError, setTitleError] = useState('')
+  const [successMsg, setSuccessMsg] = useState('')
+  const [errorMsg, setErrorMsg] = useState('')
+  const youtubeEmbedUrl = getYouTubeEmbedUrl(sourceUrl)
+
+  useEffect(() => {
+    const loadMeta = async () => {
+      const [cefrRes, tagRes] = await Promise.all([listCefrLevelsApi(), listTagsApi()])
+      if (cefrRes.data) setCefrLevels(cefrRes.data)
+      if (tagRes.data) setAvailableTags(tagRes.data)
+    }
+    loadMeta()
+  }, [])
+
+  const toggleCefr = (id) => {
+    setSelectedCefr((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    )
+  }
+
+  const handleTagModalApply = (tags) => {
+    setSelectedTags(tags)
+  }
+
+  const handleTagsChange = (newTags) => {
+    setAvailableTags(newTags)
+    setSelectedTags((prev) => prev.filter((tag) => newTags.find((item) => item._id === tag._id)))
+  }
+
+  const removeTag = (id) => {
+    setSelectedTags((prev) => prev.filter((tag) => tag._id !== id))
+  }
+
+  const handleSubmit = async () => {
+    setTitleError('')
+    setErrorMsg('')
+    setSuccessMsg('')
+
+    if (!title.trim()) {
+      setTitleError(t('admin.lessonTitleRequired'))
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      const payload = {
+        title: title.trim(),
+        description: description.trim(),
+        sourceUrl: sourceUrl.trim(),
+        cefrLevelIds: selectedCefr,
+        tagIds: selectedTags.map((tag) => tag._id),
+        status
+      }
+
+      const res = await createAdminLessonApi(payload)
+      if (res.success) {
+        setSuccessMsg(res.message)
+        setTimeout(() => {
+          if (onNavigate) onNavigate('/admin/lessons')
+        }, 1200)
+      } else {
+        setErrorMsg(res.message)
+        setIsSubmitting(false)
+      }
+    } catch (error) {
+      setErrorMsg(error.response?.data?.message || error.message)
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="admin-create-page admin-lesson-form-page">
+      <div className="admin-create-page-header">
+        <div>
+          <h1 className="admin-page-title">{t('admin.lessonCreateTitle')}</h1>
+          <p className="admin-page-subtitle">{t('admin.lessonCreateSubtitle')}</p>
+        </div>
+        <div className="admin-create-header-actions">
+          <button
+            className="admin-cancel-btn"
+            onClick={() => onNavigate && onNavigate('/admin/lessons')}
+            disabled={isSubmitting}
+          >
+            {t('admin.cancelBtn')}
+          </button>
+          <button className="admin-save-btn" onClick={handleSubmit} disabled={isSubmitting}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+              <polyline points="17 21 17 13 7 13 7 21" />
+              <polyline points="7 3 7 8 15 8" />
+            </svg>
+            {isSubmitting ? t('admin.creating') : t('admin.lessonSaveBtn')}
+          </button>
+        </div>
+      </div>
+
+      {successMsg && <div className="admin-alert success">{successMsg}</div>}
+      {errorMsg && <div className="admin-alert error">{errorMsg}</div>}
+
+      <div className="admin-create-body">
+        <div className="admin-create-left">
+          <div className="admin-create-section">
+            <div className="admin-create-section-header">
+              <div className="admin-create-section-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                </svg>
+              </div>
+              <h2 className="admin-create-section-title">{t('admin.lessonSectionContent')}</h2>
+            </div>
+            <div className="admin-create-section-body">
+              <Input
+                id="lesson-title"
+                label={t('admin.lessonTitleLabel').toUpperCase()}
+                type="text"
+                placeholder={t('admin.lessonTitlePlaceholder')}
+                value={title}
+                onChange={(e) => {
+                  setTitle(e.target.value)
+                  if (titleError) setTitleError('')
+                }}
+                error={titleError}
+              />
+
+              <div className="admin-textarea-group">
+                <label htmlFor="lesson-desc" className="admin-textarea-label">{t('admin.lessonDescLabel').toUpperCase()}</label>
+                <textarea
+                  id="lesson-desc"
+                  className="admin-textarea admin-lesson-description"
+                  placeholder={t('admin.lessonDescPlaceholder')}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={6}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="admin-create-section">
+            <div className="admin-create-section-header">
+              <div className="admin-create-section-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+                  <polygon points="23 7 16 12 23 17 23 7" />
+                  <rect x="1" y="5" width="15" height="14" rx="2" />
+                </svg>
+              </div>
+              <h2 className="admin-create-section-title">{t('admin.lessonSectionMedia')}</h2>
+            </div>
+            <div className="admin-create-section-body">
+              <Input
+                id="lesson-source-url"
+                label={t('admin.lessonSourceUrlLabel').toUpperCase()}
+                type="text"
+                placeholder={t('admin.lessonSourceUrlPlaceholder')}
+                value={sourceUrl}
+                onChange={(e) => setSourceUrl(e.target.value)}
+              />
+
+              <div className="admin-lesson-media-row">
+                <div className="admin-upload-area admin-lesson-upload-visual">
+                  <div className="admin-upload-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" width="36" height="36">
+                      <polyline points="16 16 12 12 8 16" />
+                      <line x1="12" y1="12" x2="12" y2="21" />
+                      <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+                    </svg>
+                  </div>
+                  <p className="admin-upload-hint">{t('admin.lessonThumbnailUploadHint')}</p>
+                  <p className="admin-upload-desc">{t('admin.imageUploadDesc')}</p>
+                </div>
+
+                <div className="admin-lesson-preview">
+                  {youtubeEmbedUrl ? (
+                    <iframe
+                      src={youtubeEmbedUrl}
+                      title={title || t('admin.lessonPreviewAlt')}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <div className="admin-lesson-preview-placeholder">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <polyline points="21 15 16 10 5 21" />
+                      </svg>
+                    </div>
+                  )}
+                  {!youtubeEmbedUrl && (
+                    <div className="admin-lesson-preview-play">
+                      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="admin-create-right">
+          <div className="admin-create-section">
+            <h2 className="admin-create-classify-title">{t('admin.sectionClassify')}</h2>
+
+            <div className="admin-classify-group">
+              <label className="admin-classify-label">{t('admin.cefrLabel')}</label>
+              <div className="admin-cefr-grid">
+                {cefrLevels.map((level) => (
+                  <button
+                    key={level._id}
+                    type="button"
+                    className={`admin-cefr-pill ${selectedCefr.includes(level._id) ? 'active' : ''}`}
+                    onClick={() => toggleCefr(level._id)}
+                  >
+                    {level.label || level.code}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="admin-classify-group">
+              <label className="admin-classify-label">{t('admin.lessonTagLabel')}</label>
+              {selectedTags.length > 0 && (
+                <div className="admin-tag-chips">
+                  {selectedTags.map((tag) => (
+                    <span key={tag._id} className="admin-tag-chip">
+                      {tag.label}
+                      <button type="button" className="admin-tag-chip-remove" onClick={() => removeTag(tag._id)}>
+                        x
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              <button type="button" className="admin-tag-picker-btn" onClick={() => setIsTagModalOpen(true)}>
+                <span>{t('admin.addLessonTagBtn')}</span>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="16" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="8" y1="12" x2="16" y2="12" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="admin-classify-group">
+              <label className="admin-classify-label">{t('admin.statusLabel')}</label>
+              <div className="admin-status-options">
+                <label className={`admin-status-card ${status === 'draft' ? 'active' : ''}`}>
+                  <input type="radio" name="lesson-status" value="draft" checked={status === 'draft'} onChange={() => setStatus('draft')} className="admin-status-radio" />
+                  <div className="admin-status-dot draft" />
+                  <div>
+                    <div className="admin-status-name">{t('admin.statusDraft')}</div>
+                    <div className="admin-status-desc">{t('admin.statusDraftDesc')}</div>
+                  </div>
+                </label>
+
+                <label className={`admin-status-card ${status === 'published' ? 'active' : ''}`}>
+                  <input type="radio" name="lesson-status" value="published" checked={status === 'published'} onChange={() => setStatus('published')} className="admin-status-radio" />
+                  <div className="admin-status-dot published" />
+                  <div>
+                    <div className="admin-status-name">{t('admin.statusPublished')}</div>
+                    <div className="admin-status-desc">{t('admin.statusPublishedDesc')}</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <TagPickerModal
+        isOpen={isTagModalOpen}
+        onClose={() => setIsTagModalOpen(false)}
+        availableTags={availableTags}
+        selectedTags={selectedTags}
+        onApply={handleTagModalApply}
+        onTagsChange={handleTagsChange}
+      />
+    </div>
+  )
+}
+
+export default AdminLessonCreatePage

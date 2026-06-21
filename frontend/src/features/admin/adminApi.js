@@ -30,6 +30,16 @@ export const listAdminLessonsApi = async (filters = {}) => {
   return response.data;
 };
 
+export const createAdminLessonApi = async (payload) => {
+  const response = await apiClient.post("/admin/lessons", payload);
+  return response.data;
+};
+
+export const getAdminLessonByIdApi = async (id) => {
+  const response = await apiClient.get(`/admin/lessons/${id}`);
+  return response.data;
+};
+
 export const updateAdminLessonApi = async (id, payload) => {
   const response = await apiClient.put(`/admin/lessons/${id}`, payload);
   return response.data;

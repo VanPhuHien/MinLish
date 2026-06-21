@@ -18,6 +18,8 @@ import AdminDeckEditPage from './features/admin/pages/deck/AdminDeckEditPage'
 import AdminDeckTopicPage from './features/admin/pages/topic/AdminDeckTopicPage'
 import AdminCardListPage from './features/admin/pages/card/AdminCardListPage'
 import AdminLessonListPage from './features/admin/pages/lesson/AdminLessonListPage'
+import AdminLessonCreatePage from './features/admin/pages/lesson/AdminLessonCreatePage'
+import AdminLessonEditPage from './features/admin/pages/lesson/AdminLessonEditPage'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from './context/AuthContext'
 import './App.css'
@@ -77,6 +79,13 @@ function App() {
   }
 
   const renderAdminContent = () => {
+    if (currentPath === '/admin/lessons/new') {
+      return <AdminLessonCreatePage onNavigate={navigate} />
+    }
+    if (currentPath.startsWith('/admin/lessons/') && currentPath.endsWith('/edit')) {
+      const lessonId = currentPath.split('/')[3]
+      return <AdminLessonEditPage onNavigate={navigate} lessonId={lessonId} />
+    }
     if (currentPath === '/admin/decks/new') {
       return <AdminDeckCreatePage onNavigate={navigate} />
     }
