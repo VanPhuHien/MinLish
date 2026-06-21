@@ -579,3 +579,46 @@ export const deleteAdminDeckCard = async (deckId, cardId) => {
     Deck.updateOne({ _id: deckId }, { $inc: { cardCount: -1 } }),
   ]);
 };
+
+export const reorderAdminTopicCards = async (topicId, cards) => {
+  const errors = [];
+  if (!Array.isArray(cards) || cards.length === 0) {
+    errors.push({
+      field: 'cards',
+      message: 'The cards field must be a non-empty array',
+    });
+  } else {
+    cards.forEach((item, index) => {
+      if (!item.cardId) {
+        errors.push({
+          field: `cards[${index}].cardId`,
+          message: 'The cardId field is required',
+        });
+      }
+      if (!item.order || !Number.isInteger(item.order) || item.order < 1) {
+        errors.push({
+          field: `cards[${index}].order`,
+          message: 'The order field is required and must be an integer >= 1',
+        });
+      }
+    });
+  }
+
+  if (errors.length > 0) {
+    throw new AppError(COMMON.INVALID_DATA, 400, errors);
+  }
+
+  const topic = await Topic.findById(topicId);
+  if (!topic) throw new AppError(DECK.TOPIC_NOT_FOUND, 404);
+
+  const bulkOps = cards.map(({ cardId, order }) => ({
+    updateOne: {
+      filter: { _id: cardId, topicId },
+      // topicId để kiểm tra topic này có đúng là chứa card này không, tránh giả topicId
+      update: { $set: { order } },
+    },
+  }));
+  if (bulkOps.length > 0) {
+    await Card.bulkWrite(bulkOps);
+  }
+};

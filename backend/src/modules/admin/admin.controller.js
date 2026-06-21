@@ -276,6 +276,18 @@ export const deleteDeckCard = async (req, res, next) => {
   }
 };
 
+export const reorderTopicCards = async (req, res, next) => {
+  try {
+    await deckService.reorderAdminTopicCards(
+      req.params.topicId,
+      req.body.cards
+    );
+    return res.status(200).json(successResponse(ADMIN.CARD_REORDERED_SUCCESS));
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const listLessons = async (req, res, next) => {
   try {
     const filters = {
