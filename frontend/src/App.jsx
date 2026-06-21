@@ -5,6 +5,7 @@ import LoginPage from './features/auth/pages/LoginPage'
 import SignupPage from './features/auth/pages/SignupPage'
 import VerifyEmailPage from './features/auth/pages/VerifyEmailPage'
 import LessonListPage from './features/lessons/pages/LessonListPage'
+import DictationStudyPage from './features/lessons/pages/DictationStudyPage'
 import ForgotPasswordPage from './features/auth/pages/ForgotPasswordPage'
 import ResetPasswordPage from './features/auth/pages/ResetPasswordPage'
 import DeckListPage from './features/flashcards/pages/DeckListPage'
@@ -133,6 +134,9 @@ function App() {
     if (lessonStudyMatch) {
       const mode = lessonStudyMatch[1]
       const lessonId = lessonStudyMatch[2]
+      if (mode === 'dictation') {
+        return <DictationStudyPage lessonId={lessonId} onNavigate={navigate} />
+      }
       return (
         <div style={{ padding: '80px 20px', textAlign: 'center', fontFamily: 'var(--font-family)', color: 'var(--color-on-surface)' }}>
           <h2 style={{ textTransform: 'capitalize', marginBottom: '16px' }}>{mode}</h2>

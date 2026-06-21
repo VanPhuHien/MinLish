@@ -514,5 +514,25 @@
     "deleteCardTooltip": "Delete card",
     "editCardTooltip": "Edit card",
     "noWords": "No words in this topic."
+  },
+  "dictation": {
+    "title": "Dictation Study",
+    "typeWhatYouHear": "Type what you hear",
+    "placeholderInput": "Type your answer here...",
+    "vocabularyHint": "VOCABULARY HINT",
+    "hintWarning": "Revealed words are counted as errors and will affect your final score.",
+    "showAllBtn": "Show all words",
+    "nextBtn": "Next",
+    "startBtn": "Start",
+    "replayBtn": "Replay this segment",
+    "progressTitle": "PROGRESS",
+    "loading": "Loading lesson...",
+    "errorLoad": "Could not load this lesson. Please try again later.",
+    "completedTitle": "Congratulations!",
+    "completedSubtitle": "You have completed all segments of this lesson.",
+    "backToList": "Back to Lesson List",
+    "scoreLabel": "Your Score: {{score}}",
+    "hintUsed": "Hints used: {{count}}",
+    "attempts": "Attempts: {{count}}"
   }
 }

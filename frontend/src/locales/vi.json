@@ -512,5 +512,25 @@
     "deleteCardTooltip": "Xóa thẻ",
     "editCardTooltip": "Sửa thẻ",
     "noWords": "Không có từ vựng trong chủ đề."
+  },
+  "dictation": {
+    "title": "Chép chính tả",
+    "typeWhatYouHear": "Gõ những gì bạn nghe được",
+    "placeholderInput": "Gõ câu trả lời của bạn ở đây...",
+    "vocabularyHint": "GỢI Ý TỪ VỰNG",
+    "hintWarning": "Các từ được tiết lộ sẽ bị tính là lỗi và ảnh hưởng đến điểm số cuối cùng của bạn.",
+    "showAllBtn": "Hiện tất cả từ",
+    "nextBtn": "Tiếp theo",
+    "startBtn": "Bắt đầu",
+    "replayBtn": "Nghe lại đoạn này",
+    "progressTitle": "TIẾN ĐỘ",
+    "loading": "Đang tải bài học...",
+    "errorLoad": "Không thể tải bài học này. Vui lòng thử lại sau.",
+    "completedTitle": "Chúc mừng!",
+    "completedSubtitle": "Bạn đã hoàn thành tất cả các phần học của bài học này.",
+    "backToList": "Quay lại danh sách bài học",
+    "scoreLabel": "Điểm số của bạn: {{score}}",
+    "hintUsed": "Gợi ý đã dùng: {{count}}",
+    "attempts": "Số lần thử: {{count}}"
   }
 }
