@@ -158,6 +158,23 @@ xp_events
 | `amount`    | Số XP đã cộng.                                                                                                                                                                |
 | `createdAt` | Thời điểm ghi nhận.                                                                                                                                                           |
 
+battle_matches
+
+| Field          | Ý nghĩa                                                                                         |
+| :------------- | :---------------------------------------------------------------------------------------------- |
+| `_id`          | ID trận đấu (dùng làm matchId trong socket).                                                    |
+| `mode`         | Dạng câu hỏi: `mcq` (chọn đáp án) hoặc `typing` (gõ nghĩa).                                   |
+| `matchType`    | Cách ghép trận: `queue` (random) hoặc `invite` (dùng room code).                               |
+| `roomCode`     | Mã phòng 6 ký tự (chỉ có với invite). Sparse unique index.                                     |
+| `status`       | `waiting` → `in_progress` → `finished` hoặc `abandoned`.                                       |
+| `players`      | Mảng 2 phần tử `[{ userId, score, correctCount, connected }]`. `connected` = còn kết nối cuối trận. |
+| `questions`    | Mảng câu hỏi `[{ cardId, term, correctAnswer, options }]`. `options` rỗng với typing mode.     |
+| `winnerId`     | UserId người thắng. `null` = hòa hoặc trận `abandoned`.                                        |
+| `startedAt`    | Thời điểm bắt đầu trận.                                                                         |
+| `finishedAt`   | Thời điểm kết thúc.                                                                             |
+| `createdAt`    | Thời điểm tạo document.                                                                         |
+| `updatedAt`    | Cập nhật gần nhất.                                                                              |
+
 user_card_states
 
 | Field       | Ý nghĩa                                         |

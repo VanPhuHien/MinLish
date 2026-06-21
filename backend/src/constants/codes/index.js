@@ -9,6 +9,7 @@ import { USER_DECK, USER_DECK_MESSAGES } from './userDeck.codes.js';
 import { VOCABULARY, VOCABULARY_MESSAGES } from './vocabulary.codes.js';
 import { ADMIN, ADMIN_MESSAGES } from './admin.codes.js';
 import { GAMIFICATION, GAMIFICATION_MESSAGES } from './gamification.codes.js';
+import { BATTLE, BATTLE_MESSAGES } from './battle.codes.js';
 
 export {
   COMMON,
@@ -22,6 +23,7 @@ export {
   VOCABULARY,
   ADMIN,
   GAMIFICATION,
+  BATTLE,
 };
 
 
@@ -37,4 +39,5 @@ export const MESSAGES = {
   ...VOCABULARY_MESSAGES,
   ...ADMIN_MESSAGES,
   ...GAMIFICATION_MESSAGES,
+  ...BATTLE_MESSAGES,
 };
