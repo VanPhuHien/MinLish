@@ -161,8 +161,9 @@ export const generateCardDetailsFromAI = async (inputStr) => {
   Hãy cung cấp các thông tin của thẻ từ vựng dưới định dạng JSON bao gồm:
   - term: từ vựng tiếng Anh (bắt buộc)
   - translation: nghĩa tiếng Việt (bắt buộc)
-  - pos: từ loại (VD: noun, verb, adjective,...) (để tiếng Anh, để một loại theo đúng phát âm)
-  - phonetics: mảng chứa object có dạng { text: "phát âm IPA", audio: "link audio phát âm không có thì để ''", locale: "en-UK" hoặc "en-US" hoặc cả 2}
+  - pos: từ loại (chọn duy nhất một trong các pos sau theo đúng phát âm: adjective, adverb, auxiliary verb, collocation,
+       conjunction, determiner, idiom, interjection, modal verb, noun, phrasal verb, phrase, preposition, pronoun, verb)
+  - phonetics: mảng chứa object có dạng { text: "phát âm IPA", audio: "", locale: "en-UK" hoặc "en-US" hoặc cả 2}
   - explanation: object chứa { vi: "giải thích tiếng Việt", en: "giải thích tiếng Anh" }
   - examples: object chứa { vi: "ví dụ tiếng Việt", en: "ví dụ tiếng Anh" }
   Đảm bảo kết quả trả về là JSON hợp lệ, đầy đủ ngoặc và đúng format.`;
