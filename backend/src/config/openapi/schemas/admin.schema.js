@@ -164,8 +164,8 @@ export default {
       },
       modes: {
         type: 'array',
-        items: { type: 'string', enum: ['dictation', 'shadowing'] },
-        example: ['dictation'],
+        items: { type: 'string' },
+        example: ['dictation', 'shadowing'],
         description: 'Chế độ hỗ trợ.',
       },
       status: {
@@ -244,12 +244,6 @@ export default {
         items: { type: 'string' },
         example: ['64a1234567890abcdef12345'],
         description: 'Danh sách ID CEFR level.',
-      },
-      modes: {
-        type: 'array',
-        items: { type: 'string', enum: ['dictation', 'shadowing'] },
-        example: ['dictation'],
-        description: 'Chế độ hỗ trợ.',
       },
       sourceUrl: {
         type: 'string',

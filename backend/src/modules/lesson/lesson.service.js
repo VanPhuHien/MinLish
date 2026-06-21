@@ -195,7 +195,7 @@ export const createAdminLesson = async (data) => {
     description: data.description || '',
     tagIds: data.tagIds || [],
     cefrLevelIds: data.cefrLevelIds || [],
-    modes: data.modes || [],
+    modes: ['dictation', 'shadowing'],
     status: data.status || 'draft',
     sourceUrl: data.sourceUrl,
     thumbnailUrl: data.thumbnailUrl || '',
@@ -229,7 +229,6 @@ export const updateAdminLesson = async (lessonId, data) => {
   if (data.description !== undefined) lesson.description = data.description;
   if (data.tagIds !== undefined) lesson.tagIds = data.tagIds;
   if (data.cefrLevelIds !== undefined) lesson.cefrLevelIds = data.cefrLevelIds;
-  if (data.modes !== undefined) lesson.modes = data.modes;
   if (data.status !== undefined) lesson.status = data.status;
   if (data.sourceUrl !== undefined) lesson.sourceUrl = data.sourceUrl;
   if (data.thumbnailUrl !== undefined) lesson.thumbnailUrl = data.thumbnailUrl;
