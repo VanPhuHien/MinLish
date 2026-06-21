@@ -1424,7 +1424,7 @@ export default {
       },
       responses: {
         200: {
-          description: 'Cập nhật segment thành công',
+          description: 'Segment updated successfully',
           content: {
             'application/json': {
               schema: {
@@ -1435,7 +1435,7 @@ export default {
                     properties: {
                       message: {
                         type: 'string',
-                        example: 'Cập nhật segment thành công',
+                        example: 'Segment updated successfully',
                       },
                     },
                   },
@@ -1453,8 +1453,8 @@ export default {
     },
     delete: {
       tags: ['Admin lesson segments'],
-      summary: 'Xóa segment khỏi lesson',
-      description: 'Xóa segment khỏi lesson dành cho Admin.',
+      summary: 'Delete lesson segment',
+      description: 'Delete lesson segment for Admin.',
       security: [{ BearerAuth: [] }],
       parameters: [
         {
@@ -1474,10 +1474,27 @@ export default {
       ],
       responses: {
         200: {
-          description: 'Xóa segment thành công',
+          description: 'Segment deleted successfully',
           content: {
             'application/json': {
-              schema: { $ref: '#/components/schemas/SuccessResponse' },
+              schema: {
+                allOf: [
+                  { $ref: '#/components/schemas/SuccessResponse' },
+                  {
+                    type: 'object',
+                    properties: {
+                      code: {
+                        type: 'string',
+                        example: 'SEGMENT_DELETED_SUCCESS',
+                      },
+                      message: {
+                        type: 'string',
+                        example: 'Segment deleted successfully',
+                      },
+                    },
+                  },
+                ],
+              },
             },
           },
         },

@@ -10,6 +10,7 @@ import Lesson from '../../models/lesson.model.js';
 import UserLessonProgress from '../../models/userLessonProgress.model.js';
 import UserSegmentProgress from '../../models/userSegmentProgress.model.js';
 import { generateSlug } from '../../utils/generate.js';
+import { getDurationMsViaYtdlp } from '../../utils/youtube.util.js';
 
 export const listLessons = async (filters, userId) => {
   const { tagId, cefrLevelId, mode, q, page, limit } = filters;
@@ -189,6 +190,8 @@ export const createAdminLesson = async (data) => {
     });
   }
 
+  const durationMs = await getDurationMsViaYtdlp(data.sourceUrl);
+
   const lesson = await Lesson.create({
     title: data.title,
     slug,
@@ -199,6 +202,7 @@ export const createAdminLesson = async (data) => {
     status: data.status || 'draft',
     sourceUrl: data.sourceUrl,
     thumbnailUrl: data.thumbnailUrl || '',
+    ...(durationMs !== null && { durationMs }),
   });
   return lesson;
 };
@@ -230,7 +234,19 @@ export const updateAdminLesson = async (lessonId, data) => {
   if (data.tagIds !== undefined) lesson.tagIds = data.tagIds;
   if (data.cefrLevelIds !== undefined) lesson.cefrLevelIds = data.cefrLevelIds;
   if (data.status !== undefined) lesson.status = data.status;
-  if (data.sourceUrl !== undefined) lesson.sourceUrl = data.sourceUrl;
+
+  if (data.sourceUrl !== undefined) {
+    if (lesson.sourceUrl !== data.sourceUrl) {
+      lesson.sourceUrl = data.sourceUrl;
+      const durationMs = await getDurationMsViaYtdlp(data.sourceUrl);
+      if (durationMs !== null) {
+        lesson.durationMs = durationMs;
+      }
+    } else {
+      lesson.sourceUrl = data.sourceUrl;
+    }
+  }
+
   if (data.thumbnailUrl !== undefined) lesson.thumbnailUrl = data.thumbnailUrl;
   await lesson.save();
   return lesson;
