@@ -272,3 +272,176 @@ export const publishAdminLesson = async (lessonId) => {
   await lesson.save();
   return lesson;
 };
+
+export const listAdminLessonSegments = async (lessonId) => {
+  const lesson = await Lesson.findById(lessonId);
+  if (!lesson) throw new AppError(LESSON.LESSON_NOT_FOUND, 404);
+  const segments = await LessonSegment.find({ lessonId }).sort({ startMs: 1 });
+  return segments;
+};
+
+const validateSegmentData = (data) => {
+  const errors = [];
+  if (
+    data.startMs === undefined ||
+    typeof data.startMs !== 'number' ||
+    data.startMs < 0
+  ) {
+    errors.push({
+      field: 'startMs',
+      message: 'The startMs field is mandatory, must be a number and >= 0.',
+    });
+  }
+  if (data.endMs === undefined || typeof data.endMs !== 'number') {
+    errors.push({
+      field: 'endMs',
+      message: 'The endMs field is mandatory and must be a number.',
+    });
+  } else {
+    if (data.endMs <= 0) {
+      errors.push({
+        field: 'endMs',
+        message: 'The endMs field must be > 0.',
+      });
+    }
+
+    if (data.endMs <= data.startMs) {
+      errors.push({
+        field: 'endMs',
+        message: 'The endMs field must be larger than the startMs field.',
+      });
+    }
+  }
+  if (!data.transcript?.original) {
+    errors.push({
+      field: 'transcript.original',
+      message: 'The original field is required.',
+    });
+  }
+  if (!data.transcript?.normalized) {
+    errors.push({
+      field: 'transcript.normalized',
+      message: 'The normalized field is required.',
+    });
+  }
+  if (!data.translation) {
+    errors.push({
+      field: 'translation',
+      message: 'The translation field is required.',
+    });
+  }
+  if (errors.length > 0) {
+    throw new AppError(COMMON.INVALID_DATA, 400, errors);
+  }
+};
+
+export const createAdminLessonSegment = async (lessonId, data) => {
+  const lesson = await Lesson.findById(lessonId);
+  if (!lesson) throw new AppError(LESSON.LESSON_NOT_FOUND, 404);
+  validateSegmentData(data);
+
+  if (
+    lesson.durationMs &&
+    lesson.durationMs > 0 &&
+    data.endMs > lesson.durationMs
+  ) {
+    throw new AppError(COMMON.INVALID_DATA, 400, [
+      {
+        field: 'endMs',
+        message:
+          'The endMs field must not exceed the audio length of the lesson.',
+      },
+    ]);
+  }
+
+  const overlappingSegments = await LessonSegment.find({
+    lessonId,
+    startMs: { $lt: data.endMs },
+    endMs: { $gt: data.startMs },
+  });
+  if (overlappingSegments.length > 0) {
+    throw new AppError(COMMON.INVALID_DATA, 400, [
+      {
+        field: 'startMs/endMs',
+        message:
+          'The time allocated for this segment overlaps with that of other segments.',
+      },
+    ]);
+  }
+
+  const segment = await LessonSegment.create({
+    lessonId,
+    startMs: data.startMs,
+    endMs: data.endMs,
+    transcript: {
+      original: data.transcript.original,
+      normalized: data.transcript.normalized,
+    },
+    translation: data.translation,
+  });
+  return segment;
+};
+
+export const getAdminLessonSegmentById = async (lessonId, segmentId) => {
+  const lesson = await Lesson.findById(lessonId);
+  if (!lesson) throw new AppError(LESSON.LESSON_NOT_FOUND, 404);
+  const segment = await LessonSegment.findOne({ _id: segmentId, lessonId });
+  if (!segment) throw new AppError(LESSON.SEGMENT_NOT_FOUND, 404);
+  return segment;
+};
+
+export const updateAdminLessonSegment = async (lessonId, segmentId, data) => {
+  const lesson = await Lesson.findById(lessonId);
+  if (!lesson) throw new AppError(LESSON.LESSON_NOT_FOUND, 404);
+  const segment = await LessonSegment.findOne({ _id: segmentId, lessonId });
+  if (!segment) throw new AppError(LESSON.SEGMENT_NOT_FOUND, 404);
+  validateSegmentData(data);
+
+  if (
+    lesson.durationMs &&
+    lesson.durationMs > 0 &&
+    data.endMs > lesson.durationMs
+  ) {
+    throw new AppError(COMMON.INVALID_DATA, 400, [
+      {
+        field: 'endMs',
+        message:
+          'The endMs field must not exceed the audio length of the lesson.',
+      },
+    ]);
+  }
+
+  const overlappingSegments = await LessonSegment.find({
+    lessonId,
+    _id: { $ne: segmentId },
+    startMs: { $lt: data.endMs },
+    endMs: { $gt: data.startMs },
+  });
+  if (overlappingSegments.length > 0) {
+    throw new AppError(COMMON.INVALID_DATA, 400, [
+      {
+        field: 'startMs/endMs',
+        message:
+          'The time allocated for this segment overlaps with that of other segments.',
+      },
+    ]);
+  }
+
+  segment.startMs = data.startMs;
+  segment.endMs = data.endMs;
+  segment.transcript = {
+    original: data.transcript.original,
+    normalized: data.transcript.normalized,
+  };
+  segment.translation = data.translation;
+  await segment.save();
+  return segment;
+};
+
+export const deleteAdminLessonSegment = async (lessonId, segmentId) => {
+  const lesson = await Lesson.findById(lessonId);
+  if (!lesson) throw new AppError(LESSON.LESSON_NOT_FOUND, 404);
+  const segment = await LessonSegment.findOne({ _id: segmentId, lessonId });
+  if (!segment) throw new AppError(LESSON.SEGMENT_NOT_FOUND, 404);
+  await LessonSegment.deleteOne({ _id: segmentId });
+};

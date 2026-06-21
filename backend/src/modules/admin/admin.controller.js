@@ -363,3 +363,71 @@ export const publishLesson = async (req, res, next) => {
     next(error);
   }
 };
+
+export const listLessonSegments = async (req, res, next) => {
+  try {
+    const segments = await lessonService.listAdminLessonSegments(
+      req.params.lessonId
+    );
+    return res
+      .status(200)
+      .json(successResponse(ADMIN.SEGMENT_LIST_SUCCESS, segments));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createLessonSegment = async (req, res, next) => {
+  try {
+    const segment = await lessonService.createAdminLessonSegment(
+      req.params.lessonId,
+      req.body
+    );
+    return res
+      .status(201)
+      .json(successResponse(ADMIN.SEGMENT_CREATED_SUCCESS, segment));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getLessonSegmentById = async (req, res, next) => {
+  try {
+    const segment = await lessonService.getAdminLessonSegmentById(
+      req.params.lessonId,
+      req.params.segmentId
+    );
+    return res
+      .status(200)
+      .json(successResponse(ADMIN.SEGMENT_DETAIL_SUCCESS, segment));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateLessonSegment = async (req, res, next) => {
+  try {
+    const segment = await lessonService.updateAdminLessonSegment(
+      req.params.lessonId,
+      req.params.segmentId,
+      req.body
+    );
+    return res
+      .status(200)
+      .json(successResponse(ADMIN.SEGMENT_UPDATED_SUCCESS, segment));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteLessonSegment = async (req, res, next) => {
+  try {
+    await lessonService.deleteAdminLessonSegment(
+      req.params.lessonId,
+      req.params.segmentId
+    );
+    return res.status(200).json(successResponse(ADMIN.SEGMENT_DELETED_SUCCESS));
+  } catch (error) {
+    next(error);
+  }
+};

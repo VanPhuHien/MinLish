@@ -16,30 +16,24 @@ const userLessonProgressSchema = new mongoose.Schema(
       status: {
         type: String,
         enum: ['in_progress', 'completed'],
-        default: 'in_progress',
       },
       progressPct: {
         type: Number,
-        default: 0,
       },
-      lastSegmentOrder: {
+      lastStartMs: {
         type: Number,
-        default: 0,
       },
     },
     shadowing: {
       status: {
         type: String,
         enum: ['in_progress', 'completed'],
-        default: 'in_progress',
       },
       progressPct: {
         type: Number,
-        default: 0,
       },
-      lastSegmentOrder: {
+      lastStartMs: {
         type: Number,
-        default: 0,
       },
     },
   },

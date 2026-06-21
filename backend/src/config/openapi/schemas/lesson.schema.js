@@ -97,7 +97,7 @@ export default {
             type: 'number',
             example: 0,
           },
-          lastSegmentOrder: {
+          lastStartMs: {
             type: 'integer',
             example: 0,
           },
@@ -115,7 +115,7 @@ export default {
             type: 'number',
             example: 0,
           },
-          lastSegmentOrder: {
+          lastStartMs: {
             type: 'integer',
             example: 0,
           },

@@ -213,7 +213,7 @@ export const updateSegmentProgress = async (
       });
       const pct = Math.round((completedSegments / allSegments) * 100);
       lessonUpdate['dictation.progressPct'] = pct;
-      lessonUpdate['dictation.lastSegmentOrder'] = segment.startMs;
+      lessonUpdate['dictation.lastStartMs'] = segment.startMs;
       lessonUpdate['dictation.status'] =
         pct === 100 ? 'completed' : 'in_progress';
     }
@@ -225,7 +225,7 @@ export const updateSegmentProgress = async (
       });
       const pct = Math.round((completedSegments / allSegments) * 100);
       lessonUpdate['shadowing.progressPct'] = pct;
-      lessonUpdate['shadowing.lastSegmentOrder'] = segment.startMs;
+      lessonUpdate['shadowing.lastStartMs'] = segment.startMs;
       lessonUpdate['shadowing.status'] =
         pct === 100 ? 'completed' : 'in_progress';
     }

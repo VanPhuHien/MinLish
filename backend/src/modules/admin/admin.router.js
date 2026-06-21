@@ -48,4 +48,19 @@ router.put('/lessons/:lessonId', adminController.updateLesson);
 router.delete('/lessons/:lessonId', adminController.deleteLesson);
 router.post('/lessons/:lessonId/publish', adminController.publishLesson);
 
+router.get('/lessons/:lessonId/segments', adminController.listLessonSegments);
+router.post('/lessons/:lessonId/segments', adminController.createLessonSegment);
+router.get(
+  '/lessons/:lessonId/segments/:segmentId',
+  adminController.getLessonSegmentById
+);
+router.put(
+  '/lessons/:lessonId/segments/:segmentId',
+  adminController.updateLessonSegment
+);
+router.delete(
+  '/lessons/:lessonId/segments/:segmentId',
+  adminController.deleteLessonSegment
+);
+
 export default router;

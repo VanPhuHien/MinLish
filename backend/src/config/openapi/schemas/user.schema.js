@@ -31,10 +31,11 @@ export default {
             example: 0,
             description: 'Phần trăm hoàn thành.',
           },
-          lastSegmentOrder: {
+          lastStartMs: {
             type: 'integer',
             example: 0,
-            description: 'Lần gần nhất user đang ở segment số mấy.',
+            description:
+              'Lần gần nhất user đang ở segment có startMs bao nhiêu.',
           },
         },
         description: 'Tiến độ học dictation.',
@@ -53,7 +54,7 @@ export default {
             example: 0,
             description: 'Phần trăm hoàn thành.',
           },
-          lastSegmentOrder: {
+          lastStartMs: {
             type: 'integer',
             example: 0,
             description: 'Lần gần nhất user đang ở segment số mấy.',
@@ -382,46 +383,6 @@ export default {
           hidden: { type: 'boolean', example: false },
         },
       },
-    },
-  },
-  LessonProgressPayload: {
-    type: 'object',
-    properties: {
-      dictation: {
-        type: 'object',
-        properties: {
-          status: {
-            type: 'string',
-            enum: ['in_progress', 'completed'],
-            example: 'in_progress',
-          },
-          progressPct: { type: 'number', example: 0 },
-          lastSegmentOrder: { type: 'integer', example: 0 },
-        },
-      },
-      shadowing: {
-        type: 'object',
-        properties: {
-          status: {
-            type: 'string',
-            enum: ['in_progress', 'completed'],
-            example: 'in_progress',
-          },
-          progressPct: { type: 'number', example: 0 },
-          lastSegmentOrder: { type: 'integer', example: 0 },
-        },
-      },
-    },
-  },
-  LessonProgressSingleResponse: {
-    type: 'object',
-    properties: {
-      success: { type: 'boolean', example: true },
-      message: {
-        type: 'string',
-        example: 'Lấy chi tiết lesson progress thành công',
-      },
-      data: { $ref: '#/components/schemas/UserLessonProgress' },
     },
   },
   SegmentProgressPayload: {

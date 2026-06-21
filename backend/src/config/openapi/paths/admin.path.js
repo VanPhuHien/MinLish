@@ -192,13 +192,13 @@ const TagBadRequest = {
 };
 
 const SegmentBadRequest = {
-  description: 'Dữ liệu đầu vào không hợp lệ',
+  description: 'Invalid input data',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
       examples: {
         MissingFields: {
-          summary: 'Thiếu dữ liệu trường bắt buộc',
+          summary: 'Data missing or invalid data',
           value: {
             success: false,
             code: 'INVALID_DATA',
@@ -206,20 +206,43 @@ const SegmentBadRequest = {
             errors: [
               {
                 field: 'startMs',
-                message: 'Trường startMs là bắt buộc và phải >= 0',
+                message:
+                  'The startMs field is mandatory, must be a number and >= 0',
               },
-              { field: 'endMs', message: 'Trường endMs phải lớn hơn startMs' },
+              {
+                field: 'endMs',
+                message: 'The endMs field is mandatory and must be a number.',
+              },
+              {
+                field: 'endMs',
+                message: 'The endMs field must be > 0.',
+              },
+              {
+                field: 'endMs',
+                message:
+                  'The endMs field must be larger than the startMs field.',
+              },
               {
                 field: 'transcript.original',
-                message: 'Trường original là bắt buộc',
+                message: 'The original field is required.',
               },
               {
                 field: 'transcript.normalized',
-                message: 'Trường normalized là bắt buộc',
+                message: 'The normalized field is required.',
               },
               {
                 field: 'translation',
-                message: 'Trường translation là bắt buộc',
+                message: 'The translation field is required.',
+              },
+              {
+                field: 'endMs',
+                message:
+                  'The endMs field must not exceed the audio length of the lesson.',
+              },
+              {
+                field: 'startMs/endMs',
+                message:
+                  'The time allocated for this segment overlaps with that of other segments.',
               },
             ],
           },

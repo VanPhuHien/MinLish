@@ -70,7 +70,7 @@ describe('GET /api/v1/lessons/:lessonId', () => {
         lessonId: lesson._id,
         status: 'in_progress',
         progressPct: 35,
-        lastSegmentOrder: 4,
+        lastStartMs: 4000,
         selectedMode: 'dictation',
       });
 
@@ -81,7 +81,7 @@ describe('GET /api/v1/lessons/:lessonId', () => {
       const up = res.body.data.userProgress;
       expect(up).not.toBeNull();
       expect(up.progressPct).toBe(35);
-      expect(up.lastSegmentOrder).toBe(4);
+      expect(up.lastStartMs).toBe(4000);
       expect(up.selectedMode).toBe('dictation');
     });
 

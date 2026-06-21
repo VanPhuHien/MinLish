@@ -116,8 +116,8 @@ user_lesson_progress
 | `_id`         | ID bản ghi tiến độ.                                                     |
 | `userId`      | User nào.                                                               |
 | `lessonId`    | Lesson nào.                                                             |
-| `dictation`   | Trạng thái Dictation (`status`, `progressPct`, `lastSegmentOrder`).     |
-| `shadowing`   | Trạng thái Shadowing (`status`, `progressPct`, `lastSegmentOrder`).     |
+| `dictation`   | Trạng thái Dictation (`status`, `progressPct`, `lastStartMs`).     |
+| `shadowing`   | Trạng thái Shadowing (`status`, `progressPct`, `lastStartMs`).     |
 | `updatedAt`   | Cập nhật gần nhất.                                                      |
 
 user_segment_progress (“Bảng này lưu tiến độ của user ở mức từng segment. Vì Dictation và Shadowing diễn ra theo từng câu”)

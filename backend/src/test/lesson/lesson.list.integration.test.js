@@ -107,7 +107,7 @@ describe('GET /api/v1/lessons', () => {
         lessonId: lesson._id,
         status: 'in_progress',
         progressPct: 35,
-        lastSegmentOrder: 4,
+        lastStartMs: 4000,
         selectedMode: 'dictation',
       });
 
@@ -118,7 +118,7 @@ describe('GET /api/v1/lessons', () => {
       const up = res.body.data.lessons[0].userProgress;
       expect(up).not.toBeNull();
       expect(up.progressPct).toBe(35);
-      expect(up.lastSegmentOrder).toBe(4);
+      expect(up.lastStartMs).toBe(4000);
     });
 
     it("does not attach another user's progress", async () => {
