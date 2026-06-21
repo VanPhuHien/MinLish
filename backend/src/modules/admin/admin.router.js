@@ -36,6 +36,10 @@ router.post('/decks/:deckId/cards', adminController.createDeckCard);
 router.get('/decks/:deckId/cards/:cardId', adminController.getDeckCardById);
 router.put('/decks/:deckId/cards/:cardId', adminController.updateDeckCard);
 router.delete('/decks/:deckId/cards/:cardId', adminController.deleteDeckCard);
+router.patch(
+  '/topics/:topicId/cards/reorder',
+  adminController.reorderTopicCards
+);
 
 router.get('/lessons', adminController.listLessons);
 router.post('/lessons', adminController.createLesson);

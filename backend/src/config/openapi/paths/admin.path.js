@@ -399,16 +399,16 @@ const TopicReorderBadRequest = {
             errors: [
               {
                 field: 'topics',
-                message: 'Trường topics phải là một mảng và không được rỗng',
+                message: 'The topics field must be a non-empty array',
               },
               {
                 field: 'topics[0].topicId',
-                message: 'Trường topicId là bắt buộc',
+                message: 'The topicId field is required',
               },
               {
                 field: 'topics[0].order',
                 message:
-                  'Trường order là bắt buộc và phải là số nguyên lớn hơn hoặc bằng 1',
+                  'The order field is required and must be an integer >= 1',
               },
             ],
           },
@@ -441,6 +441,20 @@ const TopicReorderBadRequest = {
             ],
           },
         },
+      },
+    },
+  },
+};
+
+const TopicNotFound = {
+  description: 'Không tìm thấy topic',
+  content: {
+    'application/json': {
+      schema: { $ref: '#/components/schemas/ErrorResponse' },
+      example: {
+        success: false,
+        code: 'TOPIC_NOT_FOUND',
+        message: 'Topic not found',
       },
     },
   },
@@ -492,6 +506,68 @@ const CardBadRequest = {
             errors: [
               {
                 field: 'topicId',
+                message: 'Topic này không thuộc về deck hiện tại',
+              },
+            ],
+          },
+        },
+      },
+    },
+  },
+};
+
+const CardReorderBadRequest = {
+  description: 'Dữ liệu đầu vào không hợp lệ',
+  content: {
+    'application/json': {
+      schema: { $ref: '#/components/schemas/ErrorResponse' },
+      examples: {
+        MissingFields: {
+          summary: 'Thiếu hoặc sai cấu trúc dữ liệu',
+          value: {
+            success: false,
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
+            errors: [
+              {
+                field: 'cards',
+                message: 'The cards field must be a non-empty array',
+              },
+              {
+                field: 'cards[0].cardId',
+                message: 'The cardId field is required',
+              },
+              {
+                field: 'cards[0].order',
+                message:
+                  'The order field is required and must be an integer >= 1',
+              },
+            ],
+          },
+        },
+        DuplicateOrderInArray: {
+          summary: 'Trùng lặp order trong mảng',
+          value: {
+            success: false,
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
+            errors: [
+              {
+                field: 'topics',
+                message: 'Order của các topics không được trùng lặp trong mảng',
+              },
+            ],
+          },
+        },
+        InvalidTopicInDeck: {
+          summary: 'Topic không thuộc Deck',
+          value: {
+            success: false,
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
+            errors: [
+              {
+                field: 'topics[0].topicId',
                 message: 'Topic này không thuộc về deck hiện tại',
               },
             ],
@@ -1709,7 +1785,24 @@ export default {
           description: 'Sắp xếp topics thành công',
           content: {
             'application/json': {
-              schema: { $ref: '#/components/schemas/SuccessResponse' },
+              schema: {
+                allOf: [
+                  { $ref: '#/components/schemas/SuccessResponse' },
+                  {
+                    type: 'object',
+                    properties: {
+                      code: {
+                        type: 'string',
+                        example: 'TOPIC_REORDERED_SUCCESS',
+                      },
+                      message: {
+                        type: 'string',
+                        example: 'Topics reordered successfully',
+                      },
+                    },
+                  },
+                ],
+              },
             },
           },
         },
@@ -2097,6 +2190,63 @@ export default {
           },
         },
         404: DeckOrCardNotFound,
+        401: { $ref: '#/components/responses/Unauthorized' },
+        403: { $ref: '#/components/responses/Forbidden' },
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+  },
+  '/admin/topics/{topicId}/cards/reorder': {
+    patch: {
+      tags: ['Admin cards'],
+      summary: 'Sắp xếp lại các cards',
+      description: 'Cập nhật lại order của nhiều cards cùng lúc trong topic.',
+      security: [{ BearerAuth: [] }],
+      parameters: [
+        {
+          in: 'path',
+          name: 'topicId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID của topic',
+        },
+      ],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: { $ref: '#/components/schemas/CardReorderPayload' },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: 'Sắp xếp cards thành công',
+          content: {
+            'application/json': {
+              schema: {
+                allOf: [
+                  { $ref: '#/components/schemas/SuccessResponse' },
+                  {
+                    type: 'object',
+                    properties: {
+                      code: {
+                        type: 'string',
+                        example: 'CARD_REORDERED_SUCCESS',
+                      },
+                      message: {
+                        type: 'string',
+                        example: 'Cards reordered successfully',
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        404: TopicNotFound,
+        400: CardReorderBadRequest,
         401: { $ref: '#/components/responses/Unauthorized' },
         403: { $ref: '#/components/responses/Forbidden' },
         500: { $ref: '#/components/responses/ServerError' },

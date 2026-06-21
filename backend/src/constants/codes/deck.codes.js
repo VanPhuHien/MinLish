@@ -10,6 +10,7 @@ export const DECK = Object.freeze({
   DECK_SLUG_EXISTS: 'DECK_SLUG_EXISTS',
   TOPIC_SLUG_EXISTS: 'TOPIC_SLUG_EXISTS',
   TOPIC_NAME_REQUIRED: 'TOPIC_NAME_REQUIRED',
+  TOPIC_NOT_FOUND: 'TOPIC_NOT_FOUND',
 });
 
 export const DECK_MESSAGES = {
@@ -23,4 +24,5 @@ export const DECK_MESSAGES = {
   TOPIC_SLUG_EXISTS:
     'Topic slug already exists. Please change the slug or title',
   TOPIC_NAME_REQUIRED: 'The name field is required',
+  TOPIC_NOT_FOUND: 'Topic not found',
 };

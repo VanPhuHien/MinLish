@@ -597,4 +597,22 @@ export default {
       },
     },
   },
+  CardReorderPayload: {
+    type: 'object',
+    required: ['cards'],
+    properties: {
+      cards: {
+        type: 'array',
+        description: 'Mảng các cards kèm thứ tự mới',
+        items: {
+          type: 'object',
+          required: ['cardId', 'order'],
+          properties: {
+            cardId: { type: 'string', example: '665f1f77bcf86cd799439041' },
+            order: { type: 'integer', example: 1 },
+          },
+        },
+      },
+    },
+  },
 };
