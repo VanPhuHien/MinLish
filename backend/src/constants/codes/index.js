@@ -17,6 +17,7 @@ import {
   USER_SEGMENT_PROGRESS,
   USER_SEGMENT_PROGRESS_MESSAGES,
 } from './userSegmentProgress.codes.js';
+import { AI, AI_MESSAGES } from './ai.codes.js';
 export {
   COMMON,
   AUTH,
@@ -31,6 +32,7 @@ export {
   USER_CARD_STATE,
   GAMIFICATION,
   USER_SEGMENT_PROGRESS,
+  AI,
 };
 
 export const MESSAGES = {
@@ -47,4 +49,5 @@ export const MESSAGES = {
   ...USER_CARD_STATE_MESSAGES,
   ...GAMIFICATION_MESSAGES,
   ...USER_SEGMENT_PROGRESS_MESSAGES,
+  ...AI_MESSAGES,
 };

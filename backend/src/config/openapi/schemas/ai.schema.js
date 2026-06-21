@@ -41,4 +41,51 @@ export default {
       data: { $ref: '#/components/schemas/AiResponseData' },
     },
   },
+  CardAutoFillResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      code: { type: 'string', example: 'CARD_AUTO_FILL_SUCCESS' },
+      message: {
+        type: 'string',
+        example: 'Card details auto-filled successfully',
+      },
+      data: {
+        type: 'object',
+        properties: {
+          term: { type: 'string', example: 'family' },
+          pos: { type: 'string', example: 'noun' },
+          phonetics: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                text: { type: 'string', example: '/ˈfæməli/' },
+                audio: { type: 'string', example: '' },
+                locale: { type: 'string', example: 'us' },
+              },
+            },
+          },
+          translation: { type: 'string', example: 'gia đình' },
+          explanation: {
+            type: 'object',
+            properties: {
+              vi: {
+                type: 'string',
+                example: 'Những người có quan hệ huyết thống',
+              },
+              en: { type: 'string', example: 'A group of related people' },
+            },
+          },
+          examples: {
+            type: 'object',
+            properties: {
+              vi: { type: 'string', example: 'Gia đình tôi có bốn người' },
+              en: { type: 'string', example: 'My family has four people' },
+            },
+          },
+        },
+      },
+    },
+  },
 };

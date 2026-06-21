@@ -155,3 +155,18 @@ export const responseQuestionMinLishService = async (question, contextData) => {
   const result = await model.generateContent(prompt);
   return JSON.parse(result.response.text());
 };
+
+export const generateCardDetailsFromAI = async (inputStr) => {
+  const prompt = `Bạn là một chuyên gia ngôn ngữ học. Dựa vào từ vựng hoặc nghĩa sau: "${inputStr}".
+  Hãy cung cấp các thông tin của thẻ từ vựng dưới định dạng JSON bao gồm:
+  - term: từ vựng tiếng Anh (bắt buộc)
+  - translation: nghĩa tiếng Việt (bắt buộc)
+  - pos: từ loại (VD: noun, verb, adjective,...) (nếu có, để tiếng Anh)
+  - phonetics: mảng chứa object có dạng { text: "phát âm IPA", audio: "", locale: "us" }
+  - explanation: object chứa { vi: "giải thích tiếng Việt", en: "giải thích tiếng Anh" }
+  - examples: object chứa { vi: "ví dụ tiếng Việt", en: "ví dụ tiếng Anh" }
+  Đảm bảo kết quả trả về là JSON hợp lệ, đầy đủ ngoặc và đúng format.`;
+
+  const result = await model.generateContent(prompt);
+  return JSON.parse(result.response.text());
+};
