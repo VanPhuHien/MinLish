@@ -10,6 +10,7 @@ import ResetPasswordPage from './features/auth/pages/ResetPasswordPage'
 import DeckListPage from './features/flashcards/pages/DeckListPage'
 import DeckDetailPage from './features/flashcards/pages/DeckDetailPage'
 import UserDeckDetailPage from './features/flashcards/pages/UserDeckDetailPage'
+import ReviewPage from './features/flashcards/pages/ReviewPage'
 import AdminLayout from './features/admin/layout/AdminLayout'
 import AdminDeckListPage from './features/admin/pages/deck/AdminDeckListPage'
 import AdminDeckCreatePage from './features/admin/pages/deck/AdminDeckCreatePage'
@@ -135,6 +136,8 @@ function App() {
         return <LessonListPage onNavigate={navigate} />
       case '/decks':
         return <DeckListPage onNavigate={navigate} />
+      case '/review':
+        return <ReviewPage onNavigate={navigate} />
       case '/forgot-password':
         return <ForgotPasswordPage onNavigate={navigate} />
       case '/reset-password':
@@ -158,10 +161,10 @@ function App() {
                   {t('home.heroDesc')}
                 </p>
                 <a
-                  href="/login"
+                  href="/lessons"
                   onClick={(e) => {
                     e.preventDefault()
-                    navigate('/login')
+                    navigate('/lessons')
                   }}
                   className="btn-primary"
                 >

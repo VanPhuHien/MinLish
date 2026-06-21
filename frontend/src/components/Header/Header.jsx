@@ -79,6 +79,13 @@ function Header({ onNavigate, currentPath = window.location.pathname }) {
             >
               {t('header.vocabulary')}
             </a>
+            <a
+              href="/review"
+              onClick={(e) => handleClick('/review', e)}
+              className={`header-nav-link ${currentPath.startsWith('/review') ? 'active' : ''}`}
+            >
+              {t('header.review')}
+            </a>
           </nav>
         </div>
         <div className="header-right">

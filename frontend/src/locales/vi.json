@@ -3,9 +3,27 @@
     "home": "Trang chủ",
     "lessons": "Bài học",
     "vocabulary": "Từ vựng",
+    "review": "Ôn tập",
     "profile": "Thông tin cá nhân",
     "logout": "Đăng xuất",
     "login": "Đăng nhập"
+  },
+  "review": {
+    "title": "Ôn tập từ vựng",
+    "dueCount": "Bạn có {{count}} thẻ đến hạn ôn tập hôm nay.",
+    "completed": "Đã hoàn thành",
+    "noDueCards": "Tuyệt vời! Hiện tại không có thẻ nào đến hạn ôn tập.",
+    "noDueCardsSubtitle": "Hãy tiếp tục học thêm từ mới để nâng cao vốn từ nhé!",
+    "backToVocabulary": "Quay lại danh sách bộ từ",
+    "loading": "Đang tải danh sách thẻ ôn tập...",
+    "errorLoad": "Không thể tải danh sách thẻ ôn tập. Vui lòng thử lại sau.",
+    "completedTitle": "Đã hoàn thành ôn tập!",
+    "completedSubtitle": "Chúc mừng! Bạn đã hoàn thành tất cả các thẻ cần ôn tập hôm nay.",
+    "studyMode": "Chế độ học",
+    "confirmHideTitle": "Ẩn thẻ từ vựng",
+    "confirmHideMessage": "Bạn có chắc chắn muốn ẩn thẻ này không? Sau khi ẩn, thẻ sẽ không xuất hiện lại trong các phiên ôn tập tiếp theo.",
+    "confirmHideConfirmText": "Ẩn thẻ",
+    "confirmHideCancelText": "Hủy"
   },
   "footer": {
     "rights": "Bản quyền của MinLish",

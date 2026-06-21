@@ -3,9 +3,27 @@
     "home": "Home",
     "lessons": "Lessons",
     "vocabulary": "Vocabulary",
+    "review": "Review",
     "profile": "Profile",
     "logout": "Log out",
     "login": "Log in"
+  },
+  "review": {
+    "title": "Vocabulary Review",
+    "dueCount": "You have {{count}} cards due for review today.",
+    "completed": "Completed",
+    "noDueCards": "Awesome! No cards due for review right now.",
+    "noDueCardsSubtitle": "Keep learning new words to expand your vocabulary!",
+    "backToVocabulary": "Back to Vocabulary Decks",
+    "loading": "Loading review cards...",
+    "errorLoad": "Could not load review cards. Please try again later.",
+    "completedTitle": "Review Completed!",
+    "completedSubtitle": "Congratulations! You have completed all due cards for today.",
+    "studyMode": "Study Mode",
+    "confirmHideTitle": "Hide Flashcard",
+    "confirmHideMessage": "Are you sure you want to hide this card? Once hidden, it will not appear in future review sessions.",
+    "confirmHideConfirmText": "Hide Card",
+    "confirmHideCancelText": "Cancel"
   },
   "footer": {
     "rights": "Copyright by MinLish",

@@ -202,4 +202,16 @@ export const searchSystemVocabulary = async (params = {}) => {
   return response.data
 }
 
+/**
+ * Lấy danh sách các thẻ đến hạn ôn tập (due card states) của người dùng hiện tại
+ * @param {Object} params gồm các tham số lọc như page, limit, do mặc định due=true
+ */
+export const getUserDueCardStates = async (params = {}) => {
+  const response = await apiClient.get('/users/me/card-states', {
+    params: { ...params }
+  })
+  return response.data
+}
+
+
 

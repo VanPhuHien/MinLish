@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { patchCardState } from '../flashcardsApi'
 import './FlashCardQuiz.css'
 
-function FlashCardQuiz({ cardItem, mode = 'learn', onSuccess }) {
+function FlashCardQuiz({ cardItem, mode = 'learn', onSuccess, onHide }) {
   const { t, i18n } = useTranslation()
   const [selectedOption, setSelectedOption] = useState(null)
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -76,30 +76,10 @@ function FlashCardQuiz({ cardItem, mode = 'learn', onSuccess }) {
   }
 
   // Xử lý ẩn thẻ (chỉ cho chế độ ôn tập)
-  const handleHideClick = async (e) => {
+  const handleHideClick = (e) => {
     e.stopPropagation()
-    setIsSubmitting(true)
-    setError('')
-    try {
-      const payload = {
-        flags: {
-          starred: userCardState?.flags?.starred || false,
-          hidden: true
-        }
-      }
-      const response = await patchCardState(card._id, payload)
-      if (response.success) {
-        if (onSuccess) {
-          onSuccess('hide', response.data)
-        }
-      } else {
-        setError(response.message || t('api.common.UNKNOWN_ERROR'))
-      }
-    } catch (err) {
-      console.error('Lỗi ẩn card trong quiz:', err)
-      setError(t('api.common.UNKNOWN_ERROR'))
-    } finally {
-      setIsSubmitting(false)
+    if (onHide) {
+      onHide(cardItem)
     }
   }
 
