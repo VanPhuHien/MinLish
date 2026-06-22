@@ -49,6 +49,7 @@ function AdminLessonCreatePage({ onNavigate }) {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [titleError, setTitleError] = useState('')
+  const [sourceUrlError, setSourceUrlError] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
   const youtubeEmbedUrl = getYouTubeEmbedUrl(sourceUrl)
@@ -83,11 +84,17 @@ function AdminLessonCreatePage({ onNavigate }) {
 
   const handleSubmit = async () => {
     setTitleError('')
+    setSourceUrlError('')
     setErrorMsg('')
     setSuccessMsg('')
 
     if (!title.trim()) {
       setTitleError(t('admin.lessonTitleRequired'))
+      return
+    }
+
+    if (!sourceUrl.trim()) {
+      setSourceUrlError(t('admin.lessonSourceUrlRequired'))
       return
     }
 
@@ -104,7 +111,7 @@ function AdminLessonCreatePage({ onNavigate }) {
 
       const res = await createAdminLessonApi(payload)
       if (res.success) {
-        setSuccessMsg(res.message)
+        setSuccessMsg(t('api.success.LESSON_CREATED_SUCCESS'))
         setTimeout(() => {
           if (onNavigate) onNavigate('/admin/lessons')
         }, 1200)
@@ -187,7 +194,11 @@ function AdminLessonCreatePage({ onNavigate }) {
                 type="text"
                 placeholder={t('admin.lessonSourceUrlPlaceholder')}
                 value={sourceUrl}
-                onChange={(e) => setSourceUrl(e.target.value)}
+                onChange={(e) => {
+                  setSourceUrl(e.target.value)
+                  if (sourceUrlError) setSourceUrlError('')
+                }}
+                error={sourceUrlError}
               />
 
               <div className="admin-lesson-media-row">

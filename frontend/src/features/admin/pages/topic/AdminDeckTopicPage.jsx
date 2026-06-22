@@ -168,7 +168,12 @@ function AdminDeckTopicPage({ onNavigate, deckId }) {
       const newSelected = sortedTopics.find(t => t._id === updatedSelectedTopic._id) || updatedSelectedTopic
       handleSelectTopic(newSelected)
       
-      setSuccessMsg(actionRes?.message || 'Lưu chủ đề thành công')
+      // Show appropriate success message based on action
+      if (selectedTopic._id === 'new') {
+        setSuccessMsg(t('api.success.TOPIC_CREATE_SUCCESS'))
+      } else {
+        setSuccessMsg(t('api.success.TOPIC_UPDATE_SUCCESS'))
+      }
       setTimeout(() => {
         setSuccessMsg('')
       }, 3000)
@@ -210,7 +215,7 @@ function AdminDeckTopicPage({ onNavigate, deckId }) {
         setSelectedTopic(null)
       }
       
-      setSuccessMsg(res?.message || 'Xóa chủ đề thành công')
+      setSuccessMsg(t('api.success.TOPIC_DELETE_SUCCESS'))
       setTimeout(() => {
         setSuccessMsg('')
       }, 3000)
@@ -263,7 +268,7 @@ function AdminDeckTopicPage({ onNavigate, deckId }) {
 
       if (finalPayload.length > 0) {
         const res = await reorderDeckTopicsApi(deckId, finalPayload)
-        setSuccessMsg(res?.message || 'Sắp xếp topic thành công')
+        setSuccessMsg(t('api.success.TOPIC_REORDERED_SUCCESS'))
         setTimeout(() => {
           setSuccessMsg('')
         }, 3000)

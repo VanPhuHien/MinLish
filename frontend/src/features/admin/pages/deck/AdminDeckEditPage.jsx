@@ -113,7 +113,7 @@ function AdminDeckEditPage({ onNavigate, deckId }) {
       }
       const res = await updateAdminDeckApi(deckId, payload)
       if (res.success) {
-        setSuccessMsg(res.message)
+        setSuccessMsg(t('api.success.DECK_UPDATE_SUCCESS'))
         setIsSubmitting(false)
         // Tự động ẩn thông báo sau 3 giây
         setTimeout(() => {

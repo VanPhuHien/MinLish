@@ -79,7 +79,7 @@ function AdminDeckCreatePage({ onNavigate }) {
       }
       const res = await createAdminDeckApi(payload)
       if (res.success) {
-        setSuccessMsg(res.message) // Message đã được dịch tự động từ code
+        setSuccessMsg(t('api.success.DECK_CREATE_SUCCESS'))
         setTimeout(() => {
           if (onNavigate) onNavigate('/admin/decks')
         }, 1200)
