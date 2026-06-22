@@ -26,6 +26,80 @@ const UserNotFound = {
   },
 };
 
+const UserInvalidStatus = {
+  description: 'Trạng thái không hợp lệ',
+  content: {
+    'application/json': {
+      schema: { $ref: '#/components/schemas/ErrorResponse' },
+      example: {
+        success: false,
+        code: 'INVALID_STATUS',
+        message: 'INVALID_STATUS',
+        errors: [
+          {
+            field: 'status',
+            message: 'Status must be active or banned',
+          },
+        ],
+      },
+    },
+  },
+};
+
+const UserPasswordBadRequest = {
+  description: 'Dữ liệu đầu vào không hợp lệ',
+  content: {
+    'application/json': {
+      schema: { $ref: '#/components/schemas/ErrorResponse' },
+      examples: {
+        MissingPassword: {
+          summary: 'Chưa nhập mật khẩu mới',
+          value: {
+            success: false,
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
+            errors: [
+              {
+                field: 'newPassword',
+                message: 'Please enter new password',
+              },
+            ],
+          },
+        },
+        TooShort: {
+          summary: 'Mật khẩu quá ngắn',
+          value: {
+            success: false,
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
+            errors: [
+              {
+                field: 'newPassword',
+                message: 'Password must be at least 8 characters',
+              },
+            ],
+          },
+        },
+        InvalidFormat: {
+          summary: 'Sai định dạng mật khẩu',
+          value: {
+            success: false,
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
+            errors: [
+              {
+                field: 'newPassword',
+                message:
+                  'Password must be at least 8 characters, including uppercase, lowercase, number, and special character',
+              },
+            ],
+          },
+        },
+      },
+    },
+  },
+};
+
 const TagNotFound = {
   description: 'Không tìm thấy tag',
   content: {
@@ -2444,7 +2518,7 @@ export default {
             },
           },
         },
-        400: { $ref: '#/components/responses/BadRequest' },
+        400: UserPasswordBadRequest,
         401: { $ref: '#/components/responses/Unauthorized' },
         404: UserNotFound,
         500: { $ref: '#/components/responses/ServerError' },
@@ -2453,7 +2527,8 @@ export default {
     delete: {
       tags: ['Admin users'],
       summary: 'Khóa / mở khóa tài khoản người dùng',
-      description: 'Khóa hoặc mở khóa tài khoản người dùng dành cho Admin',
+      description:
+        'Khóa hoặc mở khóa tài khoản người dùng dành cho Admin (đổi trạng thái sang banned/active)',
       security: [{ BearerAuth: [] }],
       parameters: [
         {
@@ -2509,7 +2584,7 @@ export default {
             },
           },
         },
-        400: { $ref: '#/components/responses/BadRequest' },
+        400: UserInvalidStatus,
         401: { $ref: '#/components/responses/Unauthorized' },
         404: UserNotFound,
         500: { $ref: '#/components/responses/ServerError' },
