@@ -661,8 +661,36 @@ export default {
       code: { type: 'string', example: 'USER_LIST_SUCCESS' },
       message: { type: 'string', example: 'Users retrieved successfully' },
       data: {
-        type: 'array',
-        items: { $ref: '#/components/schemas/User' },
+        type: 'object',
+        properties: {
+          users: {
+            type: 'array',
+            items: {
+              $ref: '#/components/schemas/User',
+            },
+          },
+          pagination: {
+            type: 'object',
+            properties: {
+              totalItems: {
+                type: 'integer',
+                example: 100,
+              },
+              page: {
+                type: 'integer',
+                example: 1,
+              },
+              limit: {
+                type: 'integer',
+                example: 10,
+              },
+              totalPages: {
+                type: 'integer',
+                example: 10,
+              },
+            },
+          },
+        },
       },
     },
   },

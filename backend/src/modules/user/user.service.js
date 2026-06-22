@@ -419,7 +419,7 @@ export const listAdminUsers = async (filters) => {
     return obj;
   });
   return {
-    data: items,
+    users: items,
     pagination: {
       totalItems,
       page,
