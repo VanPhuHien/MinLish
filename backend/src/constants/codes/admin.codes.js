@@ -3,6 +3,8 @@ export const ADMIN = Object.freeze({
   USER_DETAIL_SUCCESS: 'USER_DETAIL_SUCCESS',
   USER_UPDATED_SUCCESS: 'USER_UPDATED_SUCCESS',
   USER_DELETED_SUCCESS: 'USER_DELETED_SUCCESS',
+  USER_PASSWORD_CHANGED_SUCCESS: 'USER_PASSWORD_CHANGED_SUCCESS',
+  USER_STATUS_UPDATED_SUCCESS: 'USER_STATUS_UPDATED_SUCCESS',
 
   TAG_LIST_SUCCESS: 'TAG_LIST_SUCCESS',
   TAG_CREATED_SUCCESS: 'TAG_CREATED_SUCCESS',
@@ -59,6 +61,8 @@ export const ADMIN_MESSAGES = {
   USER_DETAIL_SUCCESS: 'User detail retrieved successfully',
   USER_UPDATED_SUCCESS: 'User updated successfully',
   USER_DELETED_SUCCESS: 'User deleted/locked successfully',
+  USER_PASSWORD_CHANGED_SUCCESS: 'Password changed successfully',
+  USER_STATUS_UPDATED_SUCCESS: 'User status updated successfully',
 
   TAG_LIST_SUCCESS: 'Tags retrieved successfully',
   TAG_CREATED_SUCCESS: 'Tag created successfully',

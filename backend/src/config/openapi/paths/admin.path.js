@@ -12,6 +12,20 @@ const CefrNotFound = {
   },
 };
 
+const UserNotFound = {
+  description: 'User not found',
+  content: {
+    'application/json': {
+      schema: { $ref: '#/components/schemas/ErrorResponse' },
+      example: {
+        success: false,
+        code: 'USER_NOT_FOUND',
+        message: 'User not found',
+      },
+    },
+  },
+};
+
 const TagNotFound = {
   description: 'Không tìm thấy tag',
   content: {
@@ -2289,6 +2303,215 @@ export default {
         400: CardReorderBadRequest,
         401: { $ref: '#/components/responses/Unauthorized' },
         403: { $ref: '#/components/responses/Forbidden' },
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+  },
+  '/admin/users': {
+    get: {
+      tags: ['Admin users'],
+      summary: 'Lấy danh sách người dùng',
+      description: 'Lấy danh sách người dùng dành cho Admin',
+      security: [{ BearerAuth: [] }],
+      parameters: [
+        {
+          in: 'query',
+          name: 'q',
+          schema: { type: 'string' },
+          description: 'Từ khóa tìm kiếm (email, tên)',
+        },
+        {
+          in: 'query',
+          name: 'page',
+          schema: { type: 'integer', default: 1 },
+          description: 'Số trang',
+        },
+        {
+          in: 'query',
+          name: 'limit',
+          schema: { type: 'integer', default: 10 },
+          description: 'Số lượng / trang',
+        },
+        {
+          in: 'query',
+          name: 'status',
+          schema: { type: 'string', enum: ['active', 'banned', 'unverified'] },
+          description: 'Lọc theo trạng thái tài khoản',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'Lấy danh sách thành công',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/UsersResponse' },
+            },
+          },
+        },
+        401: { $ref: '#/components/responses/Unauthorized' },
+        403: { $ref: '#/components/responses/Forbidden' },
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+  },
+  '/admin/users/{userId}': {
+    get: {
+      tags: ['Admin users'],
+      summary: 'Lấy thông tin tài khoản người dùng',
+      description: 'Lấy thông tin chi tiết tài khoản người dùng dành cho Admin',
+      security: [{ BearerAuth: [] }],
+      parameters: [
+        {
+          in: 'path',
+          name: 'userId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID người dùng',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'Lấy chi tiết user thành công',
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/UserResponse',
+              },
+            },
+          },
+        },
+        401: { $ref: '#/components/responses/Unauthorized' },
+        403: { $ref: '#/components/responses/Forbidden' },
+        404: UserNotFound,
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+    patch: {
+      tags: ['Admin users'],
+      summary: 'Đổi mật khẩu người dùng',
+      description: 'Đổi mật khẩu của người dùng dành cho Admin',
+      security: [{ BearerAuth: [] }],
+      parameters: [
+        {
+          in: 'path',
+          name: 'userId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID người dùng',
+        },
+      ],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              required: ['newPassword'],
+              properties: {
+                newPassword: {
+                  type: 'string',
+                  minLength: 8,
+                  example: 'Duy!2005#',
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: 'Đổi mật khẩu thành công',
+          content: {
+            'application/json': {
+              schema: {
+                allOf: [
+                  { $ref: '#/components/schemas/SuccessResponse' },
+                  {
+                    type: 'object',
+                    properties: {
+                      code: {
+                        type: 'string',
+                        example: 'USER_PASSWORD_CHANGED_SUCCESS',
+                      },
+                      message: {
+                        type: 'string',
+                        example: 'Password changed successfully',
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        400: { $ref: '#/components/responses/BadRequest' },
+        401: { $ref: '#/components/responses/Unauthorized' },
+        404: UserNotFound,
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+    delete: {
+      tags: ['Admin users'],
+      summary: 'Khóa / mở khóa tài khoản người dùng',
+      description: 'Khóa hoặc mở khóa tài khoản người dùng dành cho Admin',
+      security: [{ BearerAuth: [] }],
+      parameters: [
+        {
+          in: 'path',
+          name: 'userId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID người dùng',
+        },
+      ],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              required: ['status'],
+              properties: {
+                status: {
+                  type: 'string',
+                  enum: ['active', 'unverified', 'banned'],
+                  description:
+                    'Trạng thái tài khoản. active: hoạt động, unverified: chưa xác thực, banned: bị khóa',
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: 'Cập nhật trạng thái thành công',
+          content: {
+            'application/json': {
+              schema: {
+                allOf: [
+                  { $ref: '#/components/schemas/SuccessResponse' },
+                  {
+                    type: 'object',
+                    properties: {
+                      code: {
+                        type: 'string',
+                        example: 'USER_STATUS_UPDATED_SUCCESS',
+                      },
+                      message: {
+                        type: 'string',
+                        example: 'User status updated successfully',
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        400: { $ref: '#/components/responses/BadRequest' },
+        401: { $ref: '#/components/responses/Unauthorized' },
+        404: UserNotFound,
         500: { $ref: '#/components/responses/ServerError' },
       },
     },

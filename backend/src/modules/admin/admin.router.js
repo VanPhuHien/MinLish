@@ -63,4 +63,11 @@ router.delete(
   adminController.deleteLessonSegment
 );
 
+router.get('/users', adminController.listUsers);
+router.get('/users/:userId', adminController.getUserById);
+router.patch(
+  '/users/:userId/change-password',
+  adminController.changeUserPassword
+);
+router.patch('/users/:userId/change-status', adminController.changeUserStatus);
 export default router;

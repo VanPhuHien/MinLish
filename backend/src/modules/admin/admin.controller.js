@@ -4,6 +4,7 @@ import * as deckService from '../deck/deck.service.js';
 import AppError from '../../utils/AppError.js';
 import { ADMIN, COMMON } from '../../constants/codes/index.js';
 import * as lessonService from '../lesson/lesson.service.js';
+import * as userService from '../user/user.service.js';
 
 export const listTags = async (req, res, next) => {
   try {
@@ -427,6 +428,57 @@ export const deleteLessonSegment = async (req, res, next) => {
       req.params.segmentId
     );
     return res.status(200).json(successResponse(ADMIN.SEGMENT_DELETED_SUCCESS));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const listUsers = async (req, res, next) => {
+  try {
+    const filters = {
+      q: req.query.q,
+      page: parseInt(req.query.page) || 1,
+      limit: parseInt(req.query.limit) || 10,
+      status: req.query.status,
+    };
+    const data = await userService.listAdminUsers(filters);
+    return res.status(200).json(successResponse(ADMIN.USER_LIST_SUCCESS, data));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUserById = async (req, res, next) => {
+  try {
+    const user = await userService.getAdminUserById(req.params.userId);
+    return res
+      .status(200)
+      .json(successResponse(ADMIN.USER_DETAIL_SUCCESS, user));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const changeUserPassword = async (req, res, next) => {
+  try {
+    await userService.changeAdminUserPassword(
+      req.params.userId,
+      req.body.newPassword
+    );
+    return res
+      .status(200)
+      .json(successResponse(ADMIN.USER_PASSWORD_CHANGED_SUCCESS));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const changeUserStatus = async (req, res, next) => {
+  try {
+    await userService.changeAdminUserStatus(req.params.userId, req.body.status);
+    return res
+      .status(200)
+      .json(successResponse(ADMIN.USER_STATUS_UPDATED_SUCCESS));
   } catch (error) {
     next(error);
   }

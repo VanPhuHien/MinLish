@@ -609,4 +609,75 @@ export default {
       },
     },
   },
+  User: {
+    type: 'object',
+    properties: {
+      _id: {
+        type: 'string',
+        description: 'ObjectId',
+        example: '6a3201fc7ba6fde4b150c153',
+      },
+      email: {
+        type: 'string',
+        example: 'vlkduy2005@gmail.com',
+      },
+      name: {
+        type: 'string',
+        example: 'Khanh Duy Vo Le',
+      },
+      avatarUrl: {
+        type: 'string',
+        example:
+          'https://minlish-english-learning.s3.us-east-1.amazonaws.com/3df0455f43d9240c5928f61b73faa48996d97fdc963e96e20ef9cdd3a5bac6d9',
+      },
+      isVerified: {
+        type: 'boolean',
+        example: true,
+      },
+      isActive: {
+        type: 'boolean',
+        example: true,
+      },
+      banReason: {
+        type: 'string',
+        example: '',
+      },
+      createdAt: {
+        type: 'string',
+        format: 'date-time',
+        example: '2026-06-17T02:10:04.078+00:00',
+      },
+      updatedAt: {
+        type: 'string',
+        format: 'date-time',
+        example: '2026-06-22T04:35:14.781+00:00',
+      },
+    },
+  },
+  UsersResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      code: { type: 'string', example: 'USER_LIST_SUCCESS' },
+      message: { type: 'string', example: 'Users retrieved successfully' },
+      data: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/User' },
+      },
+    },
+  },
+  UserResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      code: { type: 'string', example: 'USER_DETAIL_SUCCESS' },
+      message: {
+        type: 'string',
+        example: 'User detail retrieved successfully',
+      },
+      data: {
+        $ref: '#/components/schemas/User',
+      },
+    },
+  },
 };

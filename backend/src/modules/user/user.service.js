@@ -16,6 +16,7 @@ import {
   LESSON,
   USER_SEGMENT_PROGRESS,
   COMMON,
+  ADMIN,
 } from '../../constants/codes/index.js';
 import { calculateNextSRS } from '../../utils/srs.util.js';
 import { generateQuizOptions } from '../deck/deck.service.js';
@@ -145,7 +146,7 @@ export const updateSegmentProgress = async (
   const text =
     segment.transcript?.normalized || segment.transcript?.original || '';
   const totalWords = text.trim() ? text.trim().split(/\s+/).length : 0;
-  console.log(totalWords);
+  //console.log(totalWords);
 
   if (data.dictation) {
     if (data.dictation.attemptCount !== undefined) {
@@ -158,7 +159,7 @@ export const updateSegmentProgress = async (
     // Tính điểm Dictation dựa vào số lần thử và số lần dùng gợi ý
     const attempts = data.dictation.attemptCount || 1;
     const hints = data.dictation.hintUsedCount || 0;
-    const attemptPenalty = (attempts - 1) * 15;
+    const attemptPenalty = (attempts - 1) * 5;
     const hintPenalty = (hints / totalWords) * 100;
     const score = Math.max(0, Math.round(100 - attemptPenalty - hintPenalty));
     max['dictation.bestScore'] = score;
@@ -380,4 +381,91 @@ export const updateProfile = async (userId, data, file) => {
     avatarUrl: user.avatarUrl,
     email: user.email,
   };
+};
+
+export const listAdminUsers = async (filters) => {
+  const { q, page = 1, limit = 10, status } = filters;
+  const skip = (page - 1) * limit;
+  const query = { role: 'user' };
+  if (q) {
+    query.$or = [
+      { name: { $regex: q, $options: 'i' } },
+      { email: { $regex: q, $options: 'i' } },
+    ];
+  }
+  if (status) {
+    if (status === 'active') {
+      query.isActive = true;
+      query.isVerified = true;
+    } else if (status === 'unverified') {
+      query.isActive = true;
+      query.isVerified = false;
+    } else if (status === 'banned') {
+      query.isActive = false;
+    }
+  }
+  const [data, totalItems] = await Promise.all([
+    User.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }),
+    User.countDocuments(query),
+  ]);
+
+  const items = data.map((user) => {
+    let currentStatus = 'active';
+    if (!user.isActive) currentStatus = 'banned';
+    else if (!user.isVerified) currentStatus = 'unverified';
+    const obj = user.toObject();
+    obj.status = currentStatus;
+    delete obj.passwordHash;
+    return obj;
+  });
+  return {
+    data: items,
+    pagination: {
+      totalItems,
+      page,
+      limit,
+      totalPages: Math.ceil(totalItems / limit) || 1,
+    },
+  };
+};
+
+export const getAdminUserById = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError(ADMIN.USER_NOT_FOUND, 404);
+  }
+  let currentStatus = 'active';
+  if (!user.isActive) currentStatus = 'banned';
+  else if (!user.isVerified) currentStatus = 'unverified';
+  const obj = user.toObject();
+  obj.status = currentStatus;
+  delete obj.passwordHash;
+  return obj;
+};
+
+export const changeAdminUserPassword = async (userId, newPassword) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError(ADMIN.USER_NOT_FOUND, 404);
+  }
+  const salt = await bcrypt.genSalt(10);
+  user.passwordHash = await bcrypt.hash(newPassword, salt);
+  await user.save();
+};
+
+export const changeAdminUserStatus = async (userId, status) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError(ADMIN.USER_NOT_FOUND, 404);
+  }
+  if (status === 'active') {
+    user.isActive = true;
+    user.isVerified = true;
+  } else if (status === 'unverified') {
+    user.isActive = true;
+    user.isVerified = false;
+  } else if (status === 'banned') {
+    user.isActive = false;
+  }
+  await user.save();
 };

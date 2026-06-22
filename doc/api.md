@@ -121,10 +121,10 @@ Vòng đời upload 2 bước: (1) xin presigned PUT → (2) client PUT bytes th
 
 ## **User management**
 
-- GET /api/v1/admin/users — danh sách user, filter theo role, q, page, limit.
+- GET /api/v1/admin/users — danh sách user, filter theo, status, q, page, limit.
 - GET /api/v1/admin/users/{userId} — chi tiết một user.
-- PATCH /api/v1/admin/users/{userId} — cập nhật thông tin hoặc role.
-- DELETE /api/v1/admin/users/{userId} — khóa user.
+- PATCH /api/v1/admin/users/{userId} — cập nhật password.
+- DELETE /api/v1/admin/users/{userId} — khóa / mở khóa user.
 
 ## **CEFR Levels management**
 
