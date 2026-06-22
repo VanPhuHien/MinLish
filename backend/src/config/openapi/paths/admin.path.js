@@ -432,10 +432,31 @@ const DeckOrTopicNotFound = {
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
-      example: {
-        success: false,
-        code: 'DECK_OR_TOPIC_NOT_FOUND',
-        message: 'Deck or topic not found',
+      examples: {
+        DeckNotFound: {
+          summary: 'Không tìm thấy deck',
+          value: {
+            success: false,
+            code: 'DECK_NOT_FOUND',
+            message: 'Deck not found',
+          },
+        },
+        TopicNotFound: {
+          summary: 'Không tìm thấy topic',
+          value: {
+            success: false,
+            code: 'TOPIC_NOT_FOUND',
+            message: 'Topic not found',
+          },
+        },
+        TopicNotInDeck: {
+          summary: 'Topic không thuộc deck',
+          value: {
+            success: false,
+            code: 'INVALID_DATA',
+            message: 'Topic is not belong to the selected deck',
+          },
+        },
       },
     },
   },
@@ -665,6 +686,40 @@ const CardReorderBadRequest = {
               {
                 field: 'topics[0].topicId',
                 message: 'Topic này không thuộc về deck hiện tại',
+              },
+            ],
+          },
+        },
+      },
+    },
+  },
+};
+
+const ImportCardBadRequest = {
+  description: 'Dữ liệu đầu vào không hợp lệ',
+  content: {
+    'application/json': {
+      schema: { $ref: '#/components/schemas/ErrorResponse' },
+      examples: {
+        MissingFileKey: {
+          summary: 'Thiếu fileUrl',
+          value: {
+            success: false,
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
+            errors: [{ field: 'fileUrl', message: 'fileUrl is required' }],
+          },
+        },
+        InvalidMode: {
+          summary: 'Mode không hợp lệ',
+          value: {
+            success: false,
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
+            errors: [
+              {
+                field: 'mode',
+                message: 'mode must be one of: append, replace, upsert',
               },
             ],
           },
@@ -2572,6 +2627,162 @@ export default {
         400: UserInvalidStatus,
         401: { $ref: '#/components/responses/Unauthorized' },
         404: UserNotFound,
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+  },
+  '/admin/decks/{deckId}/topics/{topicId}/export': {
+    get: {
+      tags: ['Admin cards'],
+      summary: 'Export cards của một topic ra file Excel',
+      description:
+        'Xuất toàn bộ cards của một topic thành file Excel (.xlsx) để tải về. Các cột bao gồm: term, translation, pos, phonetics, explanation_vi, explanation_en, examples_vi, examples_en, imageUrl.',
+      security: [{ BearerAuth: [] }],
+      parameters: [
+        {
+          in: 'path',
+          name: 'deckId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID của deck',
+        },
+        {
+          in: 'path',
+          name: 'topicId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID của topic cần export',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'Trả về file Excel chứa danh sách cards',
+        },
+        401: { $ref: '#/components/responses/Unauthorized' },
+        403: { $ref: '#/components/responses/Forbidden' },
+        404: DeckOrTopicNotFound,
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+  },
+  '/admin/decks/{deckId}/topics/{topicId}/import': {
+    post: {
+      tags: ['Admin cards'],
+      summary: 'Import cards vào một topic từ file Excel trên S3',
+      description: `Nhập cards từ file Excel (.xlsx) đã được upload lên S3 thông qua presigned URL.
+
+**Flow:**
+1. Gọi \`POST /file/presigned-url\` với \`{ purpose: "deck-import", contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileSize: ... }\`
+2. Upload file Excel lên S3 qua \`uploadUrl\` nhận được
+3. Gọi endpoint này với \`fileKey\` (key trả về ở bước 1) và \`mode\`
+
+**Định dạng file Excel (header dòng 1):** \`term\` \`translation\` \`pos\` \`phonetics\` \`explanation_vi\` \`explanation_en\` \`examples_vi\` \`examples_en\` \`imageUrl\`
+
+**Các mode:**
+- \`append\` – Chỉ thêm các term chưa tồn tại, bỏ qua nếu đã có.
+- \`replace\` – Xóa toàn bộ cards cũ rồi insert lại từ file.
+- \`upsert\` – Cập nhật nếu term đã tồn tại, thêm mới nếu chưa có.`,
+      security: [{ BearerAuth: [] }],
+      parameters: [
+        {
+          in: 'path',
+          name: 'deckId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID của deck',
+        },
+        {
+          in: 'path',
+          name: 'topicId',
+          required: true,
+          schema: { type: 'string' },
+          description: 'ID của topic cần import vào',
+        },
+      ],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              required: ['fileUrl', 'mode'],
+              properties: {
+                fileUrl: {
+                  type: 'string',
+                  format: 'uri',
+                  description:
+                    'URL công khai (S3) của file Excel đã upload (lấy từ trường `url` khi gọi presigned-url API)',
+                  example:
+                    'https://minlish-english-learning.s3.us-east-1.amazonaws.com/imports/665f.../abc123.xlsx',
+                },
+                mode: {
+                  type: 'string',
+                  enum: ['append', 'replace', 'upsert'],
+                  description: 'Chế độ import',
+                  example: 'upsert',
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: 'Import thành công, trả về summary kết quả',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  success: { type: 'boolean', example: true },
+                  code: { type: 'string', example: 'CARD_IMPORT_SUCCESS' },
+                  message: {
+                    type: 'string',
+                    example: 'Cards imported successfully',
+                  },
+                  data: {
+                    type: 'object',
+                    properties: {
+                      cardsProcessed: {
+                        type: 'integer',
+                        example: 42,
+                        description: 'Số lượng thao tác bulkWrite thực hiện',
+                      },
+                      summary: {
+                        type: 'object',
+                        properties: {
+                          totalRows: { type: 'integer', example: 50 },
+                          inserted: { type: 'integer', example: 30 },
+                          updated: { type: 'integer', example: 10 },
+                          skipped: { type: 'integer', example: 8 },
+                          failed: { type: 'integer', example: 2 },
+                          mode: { type: 'string', example: 'upsert' },
+                          errors: {
+                            type: 'array',
+                            items: {
+                              type: 'object',
+                              properties: {
+                                row: { type: 'integer', example: 5 },
+                                reason: {
+                                  type: 'string',
+                                  example: 'Thiếu cột bắt buộc: translation',
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        400: ImportCardBadRequest,
+        401: { $ref: '#/components/responses/Unauthorized' },
+        403: { $ref: '#/components/responses/Forbidden' },
+        404: DeckOrTopicNotFound,
         500: { $ref: '#/components/responses/ServerError' },
       },
     },

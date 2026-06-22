@@ -63,6 +63,36 @@ export const validateMediaUrl = async (url, purpose, userId, currentUrl) => {
   return key;
 };
 
+export const getFileBufferFromS3 = async (key) => {
+  // S3 không trả file trực tiếp nó trả dạng stream gồm các chunks
+  try {
+    const response = await s3.send(
+      new GetObjectCommand({ Bucket: bucketName, Key: key })
+    );
+    const stream = response.Body;
+    const chunks = [];
+    for await (const chunk of stream) {
+      chunks.push(chunk);
+    }
+    return Buffer.concat(chunks); // gom chunks lại thành file hoàn chỉnh
+  } catch (error) {
+    throw new AppError(FILE.UPLOAD_NOT_FOUND, 404, [], 'File not found on S3');
+  }
+};
+
+export const extractKeyFromUrl = (url) => {
+  const base = (process.env.S3_PUBLIC_BASE_URL || '').replace(/\/$/, '');
+  if (!url || !url.startsWith(`${base}/`)) {
+    throw new AppError(
+      FILE.KEY_OWNERSHIP_MISMATCH,
+      400,
+      [],
+      'url is invalid or not belong to this bucket'
+    );
+  }
+  return url.slice(base.length + 1); //cắt bỏ phần base URL và dấu / phía sau, lấy ra phần S3 key
+};
+
 // Sign a one-time PUT URL so the client uploads straight to S3.
 // The key is generated server-side (scoped by userId) — never taken
 // from the client — and the contentType is baked into the signature.

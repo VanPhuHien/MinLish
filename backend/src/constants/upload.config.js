@@ -12,7 +12,11 @@ export const UPLOAD_CONFIG = Object.freeze({
   },
   'deck-import': {
     prefix: 'imports',
-    allowedTypes: ['text/csv', 'application/json'],
+    allowedTypes: [
+      'text/csv',
+      'application/json',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ],
     maxSize: 5 * 1024 * 1024, // 5MB
   },
   'card-image': {
@@ -20,7 +24,7 @@ export const UPLOAD_CONFIG = Object.freeze({
     allowedTypes: ['image/jpeg', 'image/png', 'image/webp'],
     maxSize: 5 * 1024 * 1024, // 5MB
   },
-  'avatar': {
+  avatar: {
     prefix: 'avatars',
     allowedTypes: ['image/jpeg', 'image/png', 'image/webp'],
     maxSize: 5 * 1024 * 1024, // 5MB
@@ -38,4 +42,5 @@ export const EXT_BY_TYPE = Object.freeze({
   'image/jpeg': 'jpg',
   'image/png': 'png',
   'image/webp': 'webp',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
 });

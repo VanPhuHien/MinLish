@@ -67,4 +67,14 @@ router.get('/users', adminController.listUsers);
 router.get('/users/:userId', adminController.getUserById);
 router.patch('/users/:userId', adminController.changeUserPassword);
 router.delete('/users/:userId', adminController.changeUserStatus);
+
+router.get(
+  '/decks/:deckId/topics/:topicId/export',
+  adminController.exportCards
+);
+router.post(
+  '/decks/:deckId/topics/:topicId/import',
+  adminController.importCards
+);
+
 export default router;

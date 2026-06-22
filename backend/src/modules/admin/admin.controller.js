@@ -5,6 +5,7 @@ import AppError from '../../utils/AppError.js';
 import { ADMIN, COMMON } from '../../constants/codes/index.js';
 import * as lessonService from '../lesson/lesson.service.js';
 import * as userService from '../user/user.service.js';
+import * as importExportService from '../deck/importExport.service.js';
 import { updatePasswordSchema } from '../user/user.validator.js';
 
 export const listTags = async (req, res, next) => {
@@ -488,6 +489,60 @@ export const changeUserStatus = async (req, res, next) => {
     return res
       .status(200)
       .json(successResponse(ADMIN.USER_STATUS_UPDATED_SUCCESS));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const exportCards = async (req, res, next) => {
+  try {
+    const { deckId, topicId } = req.params;
+    const buffer = await importExportService.adminExportCards(deckId, topicId);
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="cards_${topicId}.xlsx"`
+    );
+    return res.send(buffer);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const importCards = async (req, res, next) => {
+  try {
+    const { deckId, topicId } = req.params;
+    const { fileUrl, mode } = req.body;
+    const VALID_MODES = ['append', 'replace', 'upsert'];
+    if (!fileUrl) {
+      return next(
+        new AppError(COMMON.INVALID_DATA, 400, [
+          { field: 'fileUrl', message: 'fileUrl is required' },
+        ])
+      );
+    }
+    if (!mode || !VALID_MODES.includes(mode)) {
+      return next(
+        new AppError(COMMON.INVALID_DATA, 400, [
+          {
+            field: 'mode',
+            message: `mode must be one of: ${VALID_MODES.join(', ')}`,
+          },
+        ])
+      );
+    }
+    const result = await importExportService.adminImportCards(
+      deckId,
+      topicId,
+      fileUrl,
+      mode
+    );
+    return res
+      .status(200)
+      .json(successResponse(ADMIN.CARD_IMPORT_SUCCESS, result));
   } catch (error) {
     next(error);
   }

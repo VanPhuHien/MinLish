@@ -44,6 +44,8 @@ export const ADMIN = Object.freeze({
   CARD_UPDATED_SUCCESS: 'CARD_UPDATED_SUCCESS',
   CARD_DELETED_SUCCESS: 'CARD_DELETED_SUCCESS',
   CARD_REORDERED_SUCCESS: 'CARD_REORDERED_SUCCESS',
+  CARD_EXPORT_SUCCESS: 'CARD_EXPORT_SUCCESS',
+  CARD_IMPORT_SUCCESS: 'CARD_IMPORT_SUCCESS',
 
   USER_NOT_FOUND: 'USER_NOT_FOUND',
   CEFR_LEVEL_NOT_FOUND: 'CEFR_LEVEL_NOT_FOUND',
@@ -102,6 +104,8 @@ export const ADMIN_MESSAGES = {
   CARD_UPDATED_SUCCESS: 'Card updated successfully',
   CARD_DELETED_SUCCESS: 'Card deleted successfully',
   CARD_REORDERED_SUCCESS: 'Cards reordered successfully',
+  CARD_EXPORT_SUCCESS: 'Cards exported successfully',
+  CARD_IMPORT_SUCCESS: 'Cards imported successfully',
 
   USER_NOT_FOUND: 'User not found',
   CEFR_LEVEL_NOT_FOUND: 'CEFR level not found',
