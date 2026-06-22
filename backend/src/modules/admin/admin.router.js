@@ -6,6 +6,7 @@ import * as adminController from './admin.controller.js';
 const router = Router();
 router.use(protect);
 router.use(authorize('admin'));
+router.get('/dashboard', adminController.getDashboardMetrics);
 router.get('/tags', adminController.listTags);
 router.post('/tags', adminController.createTag);
 router.get('/tags/:id', adminController.getTagById);

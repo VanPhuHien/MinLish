@@ -6,6 +6,7 @@ import { ADMIN, COMMON } from '../../constants/codes/index.js';
 import * as lessonService from '../lesson/lesson.service.js';
 import * as userService from '../user/user.service.js';
 import * as importExportService from '../deck/importExport.service.js';
+import * as dashboardService from './dashboard.service.js';
 import { updatePasswordSchema } from '../user/user.validator.js';
 
 export const listTags = async (req, res, next) => {
@@ -543,6 +544,17 @@ export const importCards = async (req, res, next) => {
     return res
       .status(200)
       .json(successResponse(ADMIN.CARD_IMPORT_SUCCESS, result));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getDashboardMetrics = async (req, res, next) => {
+  try {
+    const metrics = await dashboardService.getDashboardMetrics();
+    return res
+      .status(200)
+      .json(successResponse('DASHBOARD_METRICS_SUCCESS', metrics));
   } catch (error) {
     next(error);
   }

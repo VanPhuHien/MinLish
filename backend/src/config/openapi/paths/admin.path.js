@@ -730,6 +730,125 @@ const ImportCardBadRequest = {
 };
 
 export default {
+  '/admin/dashboard': {
+    get: {
+      tags: ['Admin dashboard'],
+      summary: 'Lấy các số liệu thống kê cho dashboard',
+      description:
+        'Lấy các số liệu tổng quan như số người dùng, người dùng hoạt động, bài học, bộ từ vựng, biểu đồ người dùng 6 tháng gần đây, các bài học/bộ từ vựng phổ biến và mới nhất.',
+      security: [{ BearerAuth: [] }],
+      responses: {
+        200: {
+          description: 'Lấy thống kê thành công',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  success: { type: 'boolean', example: true },
+                  code: {
+                    type: 'string',
+                    example: 'DASHBOARD_METRICS_SUCCESS',
+                  },
+                  message: {
+                    type: 'string',
+                    example: 'Dashboard metrics retrieved successfully',
+                  },
+                  data: {
+                    type: 'object',
+                    properties: {
+                      totalUsers: { type: 'integer', example: 100 },
+                      activeUsers: { type: 'integer', example: 80 },
+                      totalLessons: { type: 'integer', example: 50 },
+                      totalDecks: { type: 'integer', example: 10 },
+                      userRegistrationChart: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            label: { type: 'string', example: '1/2026' },
+                            count: { type: 'integer', example: 25 },
+                          },
+                        },
+                      },
+                      popularLessons: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            _id: { type: 'string' },
+                            title: { type: 'string' },
+                            slug: { type: 'string' },
+                            thumbnailUrl: { type: 'string' },
+                            userCount: { type: 'integer' },
+                          },
+                        },
+                      },
+                      popularDecks: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            _id: { type: 'string' },
+                            title: { type: 'string' },
+                            slug: { type: 'string' },
+                            coverImage: { type: 'string' },
+                            cardCount: { type: 'integer' },
+                          },
+                        },
+                      },
+                      recentContent: {
+                        type: 'object',
+                        properties: {
+                          lessons: {
+                            type: 'array',
+                            items: {
+                              type: 'object',
+                              properties: {
+                                _id: { type: 'string' },
+                                title: { type: 'string' },
+                                slug: { type: 'string' },
+                                status: { type: 'string' },
+                                createdAt: {
+                                  type: 'string',
+                                  format: 'date-time',
+                                },
+                                thumbnailUrl: { type: 'string' },
+                              },
+                            },
+                          },
+                          decks: {
+                            type: 'array',
+                            items: {
+                              type: 'object',
+                              properties: {
+                                _id: { type: 'string' },
+                                title: { type: 'string' },
+                                slug: { type: 'string' },
+                                status: { type: 'string' },
+                                createdAt: {
+                                  type: 'string',
+                                  format: 'date-time',
+                                },
+                                coverImage: { type: 'string' },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        401: { $ref: '#/components/responses/Unauthorized' },
+        403: { $ref: '#/components/responses/Forbidden' },
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+  },
   '/admin/cefr-levels': {
     get: {
       tags: ['Admin cefr-levels'],
