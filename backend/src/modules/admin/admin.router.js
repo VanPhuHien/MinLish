@@ -65,9 +65,6 @@ router.delete(
 
 router.get('/users', adminController.listUsers);
 router.get('/users/:userId', adminController.getUserById);
-router.patch(
-  '/users/:userId/change-password',
-  adminController.changeUserPassword
-);
-router.patch('/users/:userId/change-status', adminController.changeUserStatus);
+router.patch('/users/:userId', adminController.changeUserPassword);
+router.delete('/users/:userId', adminController.changeUserStatus);
 export default router;

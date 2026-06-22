@@ -5,6 +5,7 @@ import AppError from '../../utils/AppError.js';
 import { ADMIN, COMMON } from '../../constants/codes/index.js';
 import * as lessonService from '../lesson/lesson.service.js';
 import * as userService from '../user/user.service.js';
+import { updatePasswordSchema } from '../user/user.validator.js';
 
 export const listTags = async (req, res, next) => {
   try {
@@ -461,6 +462,14 @@ export const getUserById = async (req, res, next) => {
 
 export const changeUserPassword = async (req, res, next) => {
   try {
+    const result = updatePasswordSchema.safeParse(req.body);
+    if (!result.success) {
+      const errors = result.error.errors.map((e) => ({
+        field: e.path.join('.'),
+        message: e.message,
+      }));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
+    }
     await userService.changeAdminUserPassword(
       req.params.userId,
       req.body.newPassword

@@ -461,11 +461,11 @@ export const changeAdminUserStatus = async (userId, status) => {
   if (status === 'active') {
     user.isActive = true;
     user.isVerified = true;
-  } else if (status === 'unverified') {
-    user.isActive = true;
-    user.isVerified = false;
   } else if (status === 'banned') {
     user.isActive = false;
-  }
+  } else
+    throw new AppError('INVALID_STATUS', 404, [
+      { field: 'status', message: 'Status must be active or banned' },
+    ]);
   await user.save();
 };

@@ -133,3 +133,24 @@ export const updateProfileSchema = z
       }
     }
   });
+
+export const updatePasswordSchema = z
+  .object({
+    newPassword: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        'Password must be at least 8 characters, including uppercase, lowercase, number, and special character'
+      )
+      .optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.newPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Please enter new password',
+        path: ['newPassword'],
+      });
+    }
+  });
