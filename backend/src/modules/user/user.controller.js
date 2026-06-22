@@ -5,6 +5,7 @@ import {
   USER_CARD_STATE,
   USER_SEGMENT_PROGRESS,
   MESSAGES,
+  USER,
 } from '../../constants/codes/index.js';
 import {
   getLessonSegmentsProgressSchema,
@@ -13,6 +14,7 @@ import {
   getCardStatesSchema,
   getCardStateSchema,
   patchCardStateSchema,
+  updateProfileSchema,
 } from './user.validator.js';
 
 export const getLessonSegmentsProgress = async (req, res, next) => {
@@ -217,6 +219,32 @@ export const upsertCardState = async (req, res, next) => {
       code: USER_CARD_STATE.CARD_STATE_UPSERT_SUCCESS,
       message: MESSAGES[USER_CARD_STATE.CARD_STATE_UPSERT_SUCCESS],
       data: cardState,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateProfile = async (req, res, next) => {
+  try {
+    const result = updateProfileSchema.safeParse(req.body);
+    if (!result.success) {
+      const errors = result.error.errors.map((e) => ({
+        field: e.path.join('.'),
+        message: e.message,
+      }));
+      return next(new AppError(COMMON.INVALID_DATA, 400, errors));
+    }
+
+    const userId = req.user.id;
+    const file = req.file;
+    const data = result.data;
+    const profile = await userService.updateProfile(userId, data, file);
+    res.status(200).json({
+      success: true,
+      code: USER.PROFILE_UPDATE_SUCCESS,
+      message: MESSAGES[USER.PROFILE_UPDATE_SUCCESS],
+      data: profile,
     });
   } catch (error) {
     next(error);

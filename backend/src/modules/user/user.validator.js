@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const objectIdSchema = z
   .string()
-  .regex(/^[0-9a-fA-F]{24}$/, 'ObjectId không hợp lệ');
+  .regex(/^[0-9a-fA-F]{24}$/, 'ObjectId is invalid');
 
 export const getLessonSegmentsProgressSchema = z.object({
   lessonId: objectIdSchema,
@@ -36,7 +36,7 @@ export const updateSegmentProgressSchema = z.object({
     .refine(
       (data) => data.dictation !== undefined || data.shadowing !== undefined,
       {
-        message: 'Ít nhất phải có dictation hoặc shadowing',
+        message: 'There should be at least dictation or shadowing.',
       }
     ),
 });
@@ -84,3 +84,52 @@ export const patchCardStateSchema = z.object({
     flags: flagsSchema.optional(),
   }),
 });
+
+export const updateProfileSchema = z
+  .object({
+    name: z
+      .string()
+      .trim()
+      .min(1, 'Display name cannot be empty')
+      .max(50, 'Display name must be at most 50 characters')
+      .regex(
+        /^[a-zA-Z0-9\sÀ-ỹ]+$/,
+        'Display name must not contain special characters'
+      )
+      .optional(),
+    oldPassword: z.string().optional(),
+    newPassword: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        'Password must be at least 8 characters, including uppercase, lowercase, number, and special character'
+      )
+      .optional(),
+    confirmPassword: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.newPassword || data.oldPassword || data.confirmPassword) {
+      if (!data.oldPassword) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Please enter current password',
+          path: ['oldPassword'],
+        });
+      }
+      if (!data.newPassword) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Please enter new password',
+          path: ['newPassword'],
+        });
+      }
+      if (data.newPassword !== data.confirmPassword) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Password confirmation does not match.',
+          path: ['confirmPassword'],
+        });
+      }
+    }
+  });

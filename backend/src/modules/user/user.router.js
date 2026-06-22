@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { protect } from '../../middlewares/auth.middleware.js';
+import { validateAvatar } from '../../middlewares/fileValidate.middleware.js';
 import * as controller from './user.controller.js';
 
 const router = Router();
@@ -8,12 +9,10 @@ router.get(
   '/me/lessons/:lessonId/segments-progress',
   controller.getLessonSegmentsProgress
 );
-
 router.get(
   '/me/lessons/:lessonId/segments/:segmentId/progress',
   controller.getSegmentProgress
 );
-
 router.patch(
   '/me/lessons/:lessonId/segments/:segmentId/progress',
   controller.updateSegmentProgress
@@ -22,4 +21,7 @@ router.patch(
 router.get('/me/card-states', controller.getCardStates);
 router.get('/me/card-states/:cardId', controller.getCardState);
 router.patch('/me/card-states/:cardId', controller.upsertCardState);
+
+router.patch('/me/profile-update', validateAvatar, controller.updateProfile);
+
 export default router;

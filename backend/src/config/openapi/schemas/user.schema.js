@@ -421,4 +421,56 @@ export default {
       data: { $ref: '#/components/schemas/UserSegmentProgress' },
     },
   },
+  UpdateProfilePayload: {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+        example: 'Khanh Duy',
+        description:
+          'New display name of the user (1-50 characters, no special characters).',
+      },
+      oldPassword: {
+        type: 'string',
+        example: 'OldPassword123!',
+        description:
+          'Current password, required if updating to a new password.',
+      },
+      newPassword: {
+        type: 'string',
+        example: 'NewPassword123!',
+        description:
+          'New password (minimum 8 characters, including uppercase, lowercase, number, and special character).',
+      },
+      confirmPassword: {
+        type: 'string',
+        example: 'NewPassword123!',
+        description: 'Confirm new password, must match newPassword.',
+      },
+      avatar: {
+        type: 'string',
+        format: 'binary',
+        description: 'Avatar image file (JPEG, PNG). Max size 2MB.',
+      },
+    },
+  },
+  UpdateProfileResponse: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean', example: true },
+      code: { type: 'string', example: 'UPDATE_PROFILE_SUCCESS' },
+      message: { type: 'string', example: 'Profile updated successfully' },
+      data: {
+        type: 'object',
+        properties: {
+          name: { type: 'string', example: 'Khanh Duy' },
+          avatarUrl: {
+            type: 'string',
+            example: 'https://cdn.example.com/avatar.png',
+          },
+          email: { type: 'string', example: 'khanhduy@gmail.com' },
+        },
+      },
+    },
+  },
 };

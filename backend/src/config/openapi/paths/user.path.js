@@ -163,6 +163,85 @@ const CardStatePatchBadRequest = {
   },
 };
 
+const UserNotFound = {
+  description: 'User not found',
+  content: {
+    'application/json': {
+      schema: { $ref: '#/components/schemas/ErrorResponse' },
+      example: {
+        success: false,
+        code: 'NOT_FOUND',
+        message: 'User not found',
+      },
+    },
+  },
+};
+
+const ProfileUpdateBadRequest = {
+  description: 'Invalid input data (file error or format error)',
+  content: {
+    'application/json': {
+      schema: { $ref: '#/components/schemas/ErrorResponse' },
+      examples: {
+        IncorrectOldPassword: {
+          summary: 'Old password is incorrect',
+          value: {
+            success: false,
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
+            errors: [
+              { field: 'oldPassword', message: 'Old password is incorrect' },
+            ],
+          },
+        },
+        InvalidName: {
+          summary: 'Invalid display name',
+          value: {
+            success: false,
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
+            errors: [
+              {
+                field: 'name',
+                message: 'Display name must not contain special characters',
+              },
+            ],
+          },
+        },
+        MissingPassword: {
+          summary: 'Missing current or new password',
+          value: {
+            success: false,
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
+            errors: [
+              {
+                field: 'oldPassword',
+                message: 'Please enter current password',
+              },
+              { field: 'newPassword', message: 'Please enter new password' },
+            ],
+          },
+        },
+        PasswordMismatch: {
+          summary: 'Password confirmation does not match',
+          value: {
+            success: false,
+            code: 'INVALID_DATA',
+            message: 'Invalid request data',
+            errors: [
+              {
+                field: 'confirmPassword',
+                message: 'Password confirmation does not match.',
+              },
+            ],
+          },
+        },
+      },
+    },
+  },
+};
+
 export default {
   '/users/me/lessons/{lessonId}/segments-progress': {
     get: {
@@ -465,6 +544,37 @@ export default {
         404: CardStateNotFound,
         401: { $ref: '#/components/responses/Unauthorized' },
         403: { $ref: '#/components/responses/Forbidden' },
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+  },
+  '/users/me/profile-update': {
+    patch: {
+      tags: ['User Profile'],
+      summary: 'Update user profile',
+      description:
+        'Allows the user to update their display name, password, and avatar. Data is sent via multipart/form-data.',
+      security: [{ BearerAuth: [] }],
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: { $ref: '#/components/schemas/UpdateProfilePayload' },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: 'Profile updated successfully',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/UpdateProfileResponse' },
+            },
+          },
+        },
+        400: ProfileUpdateBadRequest,
+        404: UserNotFound,
+        401: { $ref: '#/components/responses/Unauthorized' },
         500: { $ref: '#/components/responses/ServerError' },
       },
     },

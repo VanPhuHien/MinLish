@@ -3,12 +3,19 @@ import LessonSegment from '../../models/lessonSegment.model.js';
 import Lesson from '../../models/lesson.model.js';
 import UserCardState from '../../models/userCardState.model.js';
 import UserLessonProgress from '../../models/userLessonProgress.model.js';
+import User from '../../models/user.model.js';
+import bcrypt from 'bcrypt';
+import {
+  deleteOldAndInsertNewImageInS3,
+  buildPublicUrl,
+} from '../file/file.service.js';
 import AppError from '../../utils/AppError.js';
 import { config } from '../../config/env.js';
 import {
   USER_CARD_STATE,
   LESSON,
   USER_SEGMENT_PROGRESS,
+  COMMON,
 } from '../../constants/codes/index.js';
 import { calculateNextSRS } from '../../utils/srs.util.js';
 import { generateQuizOptions } from '../deck/deck.service.js';
@@ -135,6 +142,10 @@ export const updateSegmentProgress = async (
   const max = {};
   let displayText = '';
   let wordsAccuracy = {};
+  const text =
+    segment.transcript?.normalized || segment.transcript?.original || '';
+  const totalWords = text.trim() ? text.trim().split(/\s+/).length : 0;
+  console.log(totalWords);
 
   if (data.dictation) {
     if (data.dictation.attemptCount !== undefined) {
@@ -145,9 +156,11 @@ export const updateSegmentProgress = async (
     }
 
     // Tính điểm Dictation dựa vào số lần thử và số lần dùng gợi ý
-    const attempt = data.dictation.attemptCount || 1;
+    const attempts = data.dictation.attemptCount || 1;
     const hints = data.dictation.hintUsedCount || 0;
-    const score = Math.max(0, 100 - (attempt - 1) * 10 - hints * 5);
+    const attemptPenalty = (attempts - 1) * 15;
+    const hintPenalty = (hints / totalWords) * 100;
+    const score = Math.max(0, Math.round(100 - attemptPenalty - hintPenalty));
     max['dictation.bestScore'] = score;
   }
 
@@ -332,4 +345,39 @@ export const upsertCardState = async (userId, cardId, data) => {
   }
   await cardState.save();
   return cardState;
+};
+
+export const updateProfile = async (userId, data, file) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError(COMMON.NOT_FOUND, 404, [], 'User not found');
+  }
+
+  if (data.name) {
+    user.name = data.name;
+  }
+  if (data.newPassword && data.oldPassword) {
+    const isMatch = await bcrypt.compare(data.oldPassword, user.passwordHash);
+    if (!isMatch) {
+      throw new AppError(COMMON.INVALID_DATA, 400, [
+        { field: 'oldPassword', message: 'Old password is incorrect' },
+      ]);
+    }
+    const salt = await bcrypt.genSalt(10);
+    user.passwordHash = await bcrypt.hash(data.newPassword, salt);
+  }
+  if (file) {
+    const avatarName = user.avatarUrl ? user.avatarUrl.split('/').pop() : null;
+    const imageName = await deleteOldAndInsertNewImageInS3(
+      { avatarName },
+      file
+    );
+    user.avatarUrl = buildPublicUrl(imageName);
+  }
+  await user.save();
+  return {
+    name: user.name,
+    avatarUrl: user.avatarUrl,
+    email: user.email,
+  };
 };
