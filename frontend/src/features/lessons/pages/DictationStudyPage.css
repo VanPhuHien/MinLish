@@ -97,10 +97,16 @@
   line-height: 1.4;
 }
 
-.media-lesson-source {
+.media-lesson-desc {
   font-size: 13px;
   color: var(--color-on-surface-variant);
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 10;
+  -webkit-box-orient: vertical;
+  font-style: italic;
 }
 
 .media-action-buttons {

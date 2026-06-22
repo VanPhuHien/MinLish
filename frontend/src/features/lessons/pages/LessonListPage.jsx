@@ -22,7 +22,7 @@ function LessonListPage({ onNavigate }) {
   // States cho phân trang và trạng thái tải
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  const [limit] = useState(8) // Hiển thị 8 bài học trên mỗi trang
+  const [limit] = useState(12) // Hiển thị 12 bài học trên mỗi trang
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -180,6 +180,8 @@ function LessonListPage({ onNavigate }) {
               key={item.lesson._id}
               lesson={item.lesson}
               userProgress={item.userProgress}
+              cefrLevels={cefrLevels}
+              tags={tags}
               onClick={handleLessonClick}
             />
           ))}

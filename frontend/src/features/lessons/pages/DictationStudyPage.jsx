@@ -259,11 +259,11 @@ function DictationStudyPage({ lessonId, onNavigate }) {
   }
 
   const currentSegmentData = segments[currentSegmentIndex]
-  const segment = currentSegmentData.segment
-  const userProgress = currentSegmentData.userProgress
+  const segment = currentSegmentData?.segment
+  const userProgress = currentSegmentData?.userProgress
 
   // Tách các từ gốc trong normalized transcript để so khớp
-  const normalizedText = segment.transcript.normalized || ''
+  const normalizedText = segment?.transcript?.normalized || ''
   const refWords = normalizedText.trim().split(/\s+/).filter(Boolean)
   const cleanRefWords = refWords.map(w => w.toLowerCase().replace(/[^a-z0-9]/g, ''))
 
@@ -344,6 +344,7 @@ function DictationStudyPage({ lessonId, onNavigate }) {
 
   // Xử lý phát lại đoạn segment hiện tại
   const handleReplaySegment = () => {
+    if (!segment) return
     setAttemptCount(prev => prev + 1)
     if (playerRef.current && typeof playerRef.current.seekTo === 'function') {
       const startSec = Math.floor(segment.startMs / 1000)
@@ -354,7 +355,7 @@ function DictationStudyPage({ lessonId, onNavigate }) {
 
   // Xử lý gửi tiến độ học khi hoàn thành segment
   const handleNextSegment = async () => {
-    if (isSubmitting) return
+    if (isSubmitting || !segment) return
 
     setIsSubmitting(true)
     try {
@@ -444,8 +445,8 @@ function DictationStudyPage({ lessonId, onNavigate }) {
 
             <div className="media-info-box">
               <h2 className="media-lesson-title">{lesson.title}</h2>
-              <p className="media-lesson-source">
-                {lesson.description ? `Source: ${lesson.description.substring(0, 50)}` : 'Source: MinLish'}
+              <p className="media-lesson-desc">
+                {lesson.description}
               </p>
 
               {/* Nút Nghe lại đoạn này */}

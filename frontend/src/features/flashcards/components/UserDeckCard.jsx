@@ -24,6 +24,14 @@ function UserDeckCard({ deck, onLearn, onEdit, onDelete }) {
       </div>
       <div className="user-deck-card-divider"></div>
       <div className="user-deck-card-footer">
+        {/* Số lượng từ */}
+        <div className="user-deck-card-word-count">
+          <svg className="user-deck-card-word-icon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+            <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z" />
+          </svg>
+          <span>{deck.cardCount || 0} {t('deckDetail.wordsCount')}</span>
+        </div>
+
         <div className="user-deck-card-actions">
           <button className="user-deck-btn-action btn-edit" onClick={handleEditClick} title={t('decks.editDeckTooltip')}>
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -1,8 +1,18 @@
 import './LessonCard.css'
 
-function LessonCard({ lesson, userProgress, onClick }) {
+function LessonCard({ lesson, userProgress, cefrLevels = [], tags = [], onClick }) {
   const hasDictation = lesson.modes?.includes('dictation')
   const hasShadowing = lesson.modes?.includes('shadowing')
+
+  // Lấy danh sách trình độ CEFR của bài học
+  const lessonCefrLevels = (lesson.cefrLevelIds || [])
+    .map(id => cefrLevels.find(level => level._id === id))
+    .filter(Boolean)
+
+  // Lấy danh sách tag chủ đề của bài học
+  const lessonTags = (lesson.tagIds || [])
+    .map(id => tags.find(tag => tag._id === id))
+    .filter(Boolean)
 
   const getModeClass = (mode) => {
     if (!userProgress) return ''
@@ -46,6 +56,22 @@ function LessonCard({ lesson, userProgress, onClick }) {
 
       {/* Phần Nội dung */}
       <div className="lesson-card-body">
+        {/* Các tag cấp độ và chủ đề */}
+        {(lessonCefrLevels.length > 0 || lessonTags.length > 0) && (
+          <div className="lesson-card-tags">
+            {lessonCefrLevels.map(level => (
+              <span key={level._id} className="lesson-tag level-tag">
+                {level.code}
+              </span>
+            ))}
+            {lessonTags.map(tag => (
+              <span key={tag._id} className="lesson-tag topic-tag">
+                {tag.label}
+              </span>
+            ))}
+          </div>
+        )}
+
         <h3 className="lesson-card-title">{lesson.title}</h3>
         <p className="lesson-card-desc">{lesson.description}</p>
         
