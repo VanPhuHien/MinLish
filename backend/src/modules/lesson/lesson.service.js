@@ -10,7 +10,7 @@ import Lesson from '../../models/lesson.model.js';
 import UserLessonProgress from '../../models/userLessonProgress.model.js';
 import UserSegmentProgress from '../../models/userSegmentProgress.model.js';
 import { generateSlug } from '../../utils/generate.js';
-import { getDurationMsViaYtdlp } from '../../utils/youtube.util.js';
+import { getDurationMsViaYtdlp } from '../../utils/videoUrlReadder.util.js';
 
 export const listLessons = async (filters, userId) => {
   const { tagId, cefrLevelId, mode, q, page, limit } = filters;
