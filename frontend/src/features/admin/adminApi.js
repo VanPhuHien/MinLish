@@ -100,6 +100,21 @@ export const listDeckCardsApi = async (deckId, filters = {}) => {
   return response.data;
 };
 
+export const createDeckCardApi = async (deckId, payload) => {
+  const response = await apiClient.post(`/admin/decks/${deckId}/cards`, payload);
+  return response.data;
+};
+
+export const getDeckCardByIdApi = async (deckId, cardId) => {
+  const response = await apiClient.get(`/admin/decks/${deckId}/cards/${cardId}`);
+  return response.data;
+};
+
+export const updateDeckCardApi = async (deckId, cardId, payload) => {
+  const response = await apiClient.put(`/admin/decks/${deckId}/cards/${cardId}`, payload);
+  return response.data;
+};
+
 export const reorderTopicCardsApi = async (topicId, cards) => {
   const response = await apiClient.patch(`/admin/topics/${topicId}/cards/reorder`, { cards });
   return response.data;
@@ -107,6 +122,11 @@ export const reorderTopicCardsApi = async (topicId, cards) => {
 
 export const deleteDeckCardApi = async (deckId, cardId) => {
   const response = await apiClient.delete(`/admin/decks/${deckId}/cards/${cardId}`);
+  return response.data;
+};
+
+export const autoFillCardApi = async (word) => {
+  const response = await apiClient.post("/ai/cards/auto-fill", { word });
   return response.data;
 };
 

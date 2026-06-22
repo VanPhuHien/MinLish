@@ -19,6 +19,8 @@ import AdminDeckCreatePage from './features/admin/pages/deck/AdminDeckCreatePage
 import AdminDeckEditPage from './features/admin/pages/deck/AdminDeckEditPage'
 import AdminDeckTopicPage from './features/admin/pages/topic/AdminDeckTopicPage'
 import AdminCardListPage from './features/admin/pages/card/AdminCardListPage'
+import AdminCardCreatePage from './features/admin/pages/card/AdminCardCreatePage'
+import AdminCardEditPage from './features/admin/pages/card/AdminCardEditPage'
 import AdminLessonListPage from './features/admin/pages/lesson/AdminLessonListPage'
 import AdminLessonCreatePage from './features/admin/pages/lesson/AdminLessonCreatePage'
 import AdminLessonEditPage from './features/admin/pages/lesson/AdminLessonEditPage'
@@ -92,9 +94,25 @@ function App() {
       return <AdminDeckCreatePage onNavigate={navigate} />
     }
     // Match /admin/decks/:deckId/edit pattern
-    if (currentPath.startsWith('/admin/decks/') && currentPath.endsWith('/edit')) {
-      const deckId = currentPath.split('/')[3]
+    const deckEditMatch = currentPath.match(/^\/admin\/decks\/([a-fA-F0-9]{24})\/edit$/)
+    if (deckEditMatch) {
+      const deckId = deckEditMatch[1]
       return <AdminDeckEditPage onNavigate={navigate} deckId={deckId} />
+    }
+    // Match /admin/decks/:deckId/topics/:topicId/cards/new pattern
+    const cardCreateMatch = currentPath.match(/^\/admin\/decks\/([a-fA-F0-9]{24})\/topics\/([a-fA-F0-9]{24})\/cards\/new$/)
+    if (cardCreateMatch) {
+      const deckId = cardCreateMatch[1]
+      const topicId = cardCreateMatch[2]
+      return <AdminCardCreatePage onNavigate={navigate} deckId={deckId} topicId={topicId} />
+    }
+    // Match /admin/decks/:deckId/topics/:topicId/cards/:cardId/edit pattern
+    const cardEditMatch = currentPath.match(/^\/admin\/decks\/([a-fA-F0-9]{24})\/topics\/([a-fA-F0-9]{24})\/cards\/([a-fA-F0-9]{24})\/edit$/)
+    if (cardEditMatch) {
+      const deckId = cardEditMatch[1]
+      const topicId = cardEditMatch[2]
+      const cardId = cardEditMatch[3]
+      return <AdminCardEditPage onNavigate={navigate} deckId={deckId} topicId={topicId} cardId={cardId} />
     }
     // Match /admin/decks/:deckId/topics/:topicId/cards pattern
     const cardListMatch = currentPath.match(/^\/admin\/decks\/([a-fA-F0-9]{24})\/topics\/([a-fA-F0-9]{24})\/cards$/)

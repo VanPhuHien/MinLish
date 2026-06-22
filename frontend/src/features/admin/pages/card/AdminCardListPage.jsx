@@ -163,7 +163,7 @@ function AdminCardListPage({ deckId, topicId, onNavigate }) {
 
       // Persist to database
       const res = await reorderTopicCardsApi(topicId, payload)
-      setSuccessMsg(res.message || 'Sắp xếp lại thẻ thành công')
+      setSuccessMsg(t('api.success.CARD_REORDERED_SUCCESS'))
       setTimeout(() => {
         setSuccessMsg('')
       }, 3000)
@@ -171,7 +171,7 @@ function AdminCardListPage({ deckId, topicId, onNavigate }) {
       // Re-fetch to sync clean data
       await fetchCards(page, searchTerm, selectedPos)
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'Có lỗi xảy ra khi lưu thứ tự')
+      setErrorMsg(err.response?.data?.message || t('api.error.INTERNAL_ERROR'))
       setTimeout(() => {
         setErrorMsg('')
       }, 3000)
@@ -193,7 +193,7 @@ function AdminCardListPage({ deckId, topicId, onNavigate }) {
     if (!cardToDelete) return
     try {
       const res = await deleteDeckCardApi(deckId, cardToDelete._id)
-      setSuccessMsg(res.message || 'Xóa flashcard thành công')
+      setSuccessMsg(t('api.success.CARD_DELETE_SUCCESS'))
       setTimeout(() => {
         setSuccessMsg('')
       }, 3000)
@@ -203,7 +203,7 @@ function AdminCardListPage({ deckId, topicId, onNavigate }) {
       setPage(newPage)
       await fetchCards(newPage, searchTerm, selectedPos)
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'Không thể xóa flashcard')
+      setErrorMsg(err.response?.data?.message || t('api.error.INTERNAL_ERROR'))
       setTimeout(() => {
         setErrorMsg('')
       }, 3000)
@@ -278,7 +278,7 @@ function AdminCardListPage({ deckId, topicId, onNavigate }) {
         <button
           type="button"
           className="admin-create-card-btn"
-          onClick={() => {}}
+          onClick={() => onNavigate(`/admin/decks/${deckId}/topics/${topicId}/cards/new`)}
         >
           <span>{t('admin.addCardBtn') || '+ Thêm thẻ mới'}</span>
         </button>
@@ -395,7 +395,12 @@ function AdminCardListPage({ deckId, topicId, onNavigate }) {
                     <div className="card-title-row">
                       <h3 className="card-translation">{card.translation}</h3>
                       <div className="card-actions">
-                        <button type="button" className="card-action-btn edit-btn" onClick={() => {}} title={t('admin.editTag')}>
+                        <button
+                          type="button"
+                          className="card-action-btn edit-btn"
+                          onClick={() => onNavigate(`/admin/decks/${deckId}/topics/${topicId}/cards/${card._id}/edit`)}
+                          title={t('admin.editCardBtn')}
+                        >
                           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
@@ -506,7 +511,12 @@ function AdminCardListPage({ deckId, topicId, onNavigate }) {
                     </td>
                     <td>
                       <div className="list-row-actions">
-                        <button type="button" className="list-action-btn edit-btn" onClick={() => {}} title={t('admin.editTag')}>
+                        <button
+                          type="button"
+                          className="list-action-btn edit-btn"
+                          onClick={() => onNavigate(`/admin/decks/${deckId}/topics/${topicId}/cards/${card._id}/edit`)}
+                          title={t('admin.editCardBtn')}
+                        >
                           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
