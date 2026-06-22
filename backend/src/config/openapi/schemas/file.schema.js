@@ -10,7 +10,7 @@ export default {
       },
       purpose: {
         type: 'string',
-        enum: ['shadowing-audio', 'deck-import', 'card-image'],
+        enum: ['shadowing-audio', 'deck-import', 'card-image', 'avatar'],
         description:
           'Loại nội dung; quyết định prefix key, whitelist contentType và giới hạn size.',
         example: 'shadowing-audio',

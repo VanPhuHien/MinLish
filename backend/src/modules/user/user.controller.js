@@ -237,9 +237,8 @@ export const updateProfile = async (req, res, next) => {
     }
 
     const userId = req.user.id;
-    const file = req.file;
     const data = result.data;
-    const profile = await userService.updateProfile(userId, data, file);
+    const profile = await userService.updateProfile(userId, data);
     res.status(200).json({
       success: true,
       code: USER.PROFILE_UPDATE_SUCCESS,

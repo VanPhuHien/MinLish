@@ -75,22 +75,7 @@ const UserPasswordBadRequest = {
             errors: [
               {
                 field: 'newPassword',
-                message: 'Password must be at least 8 characters',
-              },
-            ],
-          },
-        },
-        InvalidFormat: {
-          summary: 'Sai định dạng mật khẩu',
-          value: {
-            success: false,
-            code: 'INVALID_DATA',
-            message: 'Invalid request data',
-            errors: [
-              {
-                field: 'newPassword',
-                message:
-                  'Password must be at least 8 characters, including uppercase, lowercase, number, and special character',
+                message: 'Password must be at least 6 characters',
               },
             ],
           },

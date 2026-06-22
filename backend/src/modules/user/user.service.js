@@ -5,10 +5,7 @@ import UserCardState from '../../models/userCardState.model.js';
 import UserLessonProgress from '../../models/userLessonProgress.model.js';
 import User from '../../models/user.model.js';
 import bcrypt from 'bcrypt';
-import {
-  deleteOldAndInsertNewImageInS3,
-  buildPublicUrl,
-} from '../file/file.service.js';
+import { validateMediaUrl } from '../file/file.service.js';
 import AppError from '../../utils/AppError.js';
 import { config } from '../../config/env.js';
 import {
@@ -348,7 +345,7 @@ export const upsertCardState = async (userId, cardId, data) => {
   return cardState;
 };
 
-export const updateProfile = async (userId, data, file) => {
+export const updateProfile = async (userId, data) => {
   const user = await User.findById(userId);
   if (!user) {
     throw new AppError(COMMON.NOT_FOUND, 404, [], 'User not found');
@@ -367,13 +364,16 @@ export const updateProfile = async (userId, data, file) => {
     const salt = await bcrypt.genSalt(10);
     user.passwordHash = await bcrypt.hash(data.newPassword, salt);
   }
-  if (file) {
-    const avatarName = user.avatarUrl ? user.avatarUrl.split('/').pop() : null;
-    const imageName = await deleteOldAndInsertNewImageInS3(
-      { avatarName },
-      file
+  if (data.avatarUrl) {
+    const key = await validateMediaUrl(
+      data.avatarUrl,
+      'avatar',
+      userId,
+      user.avatarUrl
     );
-    user.avatarUrl = buildPublicUrl(imageName);
+    if (key) {
+      user.avatarUrl = data.avatarUrl;
+    }
   }
   await user.save();
   return {

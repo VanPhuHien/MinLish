@@ -178,7 +178,7 @@ const UserNotFound = {
 };
 
 const ProfileUpdateBadRequest = {
-  description: 'Invalid input data (file error or format error)',
+  description: 'Invalid input data (validation error or format error)',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
@@ -553,12 +553,12 @@ export default {
       tags: ['User Profile'],
       summary: 'Update user profile',
       description:
-        'Allows the user to update their display name, password, and avatar. Data is sent via multipart/form-data.',
+        'Allows the user to update their display name, password, and avatar.',
       security: [{ BearerAuth: [] }],
       requestBody: {
         required: true,
         content: {
-          'multipart/form-data': {
+          'application/json': {
             schema: { $ref: '#/components/schemas/UpdateProfilePayload' },
           },
         },

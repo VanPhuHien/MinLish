@@ -447,10 +447,10 @@ export default {
         example: 'NewPassword123!',
         description: 'Confirm new password, must match newPassword.',
       },
-      avatar: {
+      avatarUrl: {
         type: 'string',
-        format: 'binary',
-        description: 'Avatar image file (JPEG, PNG). Max size 2MB.',
+        format: 'uri',
+        description: 'Presigned S3 URL of the uploaded avatar image.',
       },
     },
   },

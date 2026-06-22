@@ -20,6 +20,11 @@ export const UPLOAD_CONFIG = Object.freeze({
     allowedTypes: ['image/jpeg', 'image/png', 'image/webp'],
     maxSize: 5 * 1024 * 1024, // 5MB
   },
+  'avatar': {
+    prefix: 'avatars',
+    allowedTypes: ['image/jpeg', 'image/png', 'image/webp'],
+    maxSize: 5 * 1024 * 1024, // 5MB
+  },
 });
 
 export const EXT_BY_TYPE = Object.freeze({

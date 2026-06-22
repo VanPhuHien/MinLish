@@ -100,13 +100,10 @@ export const updateProfileSchema = z
     oldPassword: z.string().optional(),
     newPassword: z
       .string()
-      .min(8, 'Password must be at least 8 characters')
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        'Password must be at least 8 characters, including uppercase, lowercase, number, and special character'
-      )
+      .min(6, 'Password must be at least 6 characters')
       .optional(),
     confirmPassword: z.string().optional(),
+    avatarUrl: z.string().url().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.newPassword || data.oldPassword || data.confirmPassword) {
@@ -138,11 +135,7 @@ export const updatePasswordSchema = z
   .object({
     newPassword: z
       .string()
-      .min(8, 'Password must be at least 8 characters')
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        'Password must be at least 8 characters, including uppercase, lowercase, number, and special character'
-      )
+      .min(6, 'Password must be at least 6 characters')
       .optional(),
   })
   .superRefine((data, ctx) => {
