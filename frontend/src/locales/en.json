@@ -359,7 +359,6 @@
     "cardPosRequired": "Please choose a part of speech",
     "cardPosLabel": "Part of speech",
     "cardImageAlt": "Vocabulary image",
-    "cardChangeImage": "Change image",
     "cardImageHint": "PNG, JPG up to 5MB",
     "cardTranslationLabel": "Vietnamese meaning",
     "cardTranslationPlaceholder": "Resilient, able to recover after hardship",
@@ -382,7 +381,12 @@
     "cardEditPronunciation": "Edit pronunciation",
     "cardDeletePronunciation": "Delete pronunciation",
     "confirmDeletePronunciationTitle": "Delete pronunciation",
-    "confirmDeletePronunciationMessage": "Are you sure you want to delete this pronunciation?"
+    "confirmDeletePronunciationMessage": "Are you sure you want to delete this pronunciation?",
+    "uploading": "Uploading...",
+    "uploadFailed": "Failed to upload file",
+    "audioPlayFailed": "Failed to play audio",
+    "uploadImage": "Upload Image",
+    "changeImage": "Change Image"
   },
   "api": {
     "success": {

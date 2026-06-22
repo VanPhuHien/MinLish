@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Input from '../../../../components/Input/Input'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
+import { getPresignedUrl, uploadAudioToS3 } from '../../../../utils/s3Upload'
 import {
   autoFillCardApi,
   createDeckCardApi,
@@ -53,8 +54,12 @@ function AdminCardCreatePage({ deckId, topicId, onNavigate }) {
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isAutoFilling, setIsAutoFilling] = useState(false)
+  const [isImageUploading, setIsImageUploading] = useState(false)
+  const [isAudioUploading, setIsAudioUploading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
+  const [playingAudioIndex, setPlayingAudioIndex] = useState(null)
+  const [audioElement, setAudioElement] = useState(null)
 
   useEffect(() => {
     const loadMeta = async () => {
@@ -102,6 +107,83 @@ function AdminCardCreatePage({ deckId, topicId, onNavigate }) {
     imageUrl: form.imageUrl
   })
 
+  const uploadFile = async (file, purpose) => {
+    const contentType = file.type || (purpose === 'card-image' ? 'image/png' : 'audio/wav')
+    const presignedRes = await getPresignedUrl({
+      contentType,
+      purpose,
+      fileSize: file.size
+    })
+
+    if (!presignedRes.success || !presignedRes.data?.uploadUrl) {
+      throw new Error(presignedRes.message || t('admin.uploadFailed'))
+    }
+
+    const { uploadUrl, url } = presignedRes.data
+    await uploadAudioToS3(uploadUrl, file, contentType)
+    return url
+  }
+
+  const handleImageUpload = async (event) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file) return
+
+    setIsImageUploading(true)
+    setErrorMsg('')
+    try {
+      const url = await uploadFile(file, 'card-image')
+      updateField('imageUrl', url)
+    } catch (error) {
+      setErrorMsg(error.response?.data?.message || error.message)
+    } finally {
+      setIsImageUploading(false)
+    }
+  }
+
+  const handleAudioUpload = async (file) => {
+    if (!file) return
+
+    setIsAudioUploading(true)
+    setErrorMsg('')
+    try {
+      const url = await uploadFile(file, 'shadowing-audio')
+      setPhoneticDraft((prev) => ({ ...prev, audio: url, fileName: file.name }))
+    } catch (error) {
+      setErrorMsg(error.response?.data?.message || error.message)
+    } finally {
+      setIsAudioUploading(false)
+    }
+  }
+
+  const handlePlayAudio = (index) => {
+    const phonetic = form.phonetics[index]
+    if (!phonetic.audio) return
+
+    // Dừng audio đang phát nếu có
+    if (audioElement) {
+      audioElement.pause()
+      audioElement.currentTime = 0
+    }
+
+    // Phát audio mới
+    const audio = new Audio(phonetic.audio)
+    audio.play()
+    setPlayingAudioIndex(index)
+    setAudioElement(audio)
+
+    audio.onended = () => {
+      setPlayingAudioIndex(null)
+      setAudioElement(null)
+    }
+
+    audio.onerror = () => {
+      setErrorMsg(t('admin.audioPlayFailed'))
+      setPlayingAudioIndex(null)
+      setAudioElement(null)
+    }
+  }
+
   const handleAutoFill = async () => {
     const word = form.term.trim() || form.translation.trim()
     if (!word) {
@@ -145,7 +227,23 @@ function AdminCardCreatePage({ deckId, topicId, onNavigate }) {
   }
 
   const openEditPronunciationModal = (index) => {
-    setPhoneticDraft(form.phonetics[index] || emptyPhoneticDraft)
+    const phonetic = form.phonetics[index] || emptyPhoneticDraft
+    
+    // Nếu có audio URL nhưng không có fileName, extract từ URL
+    let fileName = phonetic.fileName || ''
+    if (!fileName && phonetic.audio) {
+      try {
+        const url = new URL(phonetic.audio)
+        fileName = url.pathname.split('/').pop() || ''
+      } catch {
+        fileName = phonetic.audio.split('/').pop() || ''
+      }
+    }
+    
+    setPhoneticDraft({
+      ...phonetic,
+      fileName
+    })
     setEditingPronunciationIndex(index)
     setIsPronunciationModalOpen(true)
   }
@@ -155,7 +253,7 @@ function AdminCardCreatePage({ deckId, topicId, onNavigate }) {
     setForm((prev) => ({
       ...prev,
       phonetics: editingPronunciationIndex === null
-        ? [...prev.phonetics, { ...phoneticDraft, audio: '' }]
+        ? [...prev.phonetics, { ...phoneticDraft }]
         : prev.phonetics.map((item, index) =>
             index === editingPronunciationIndex ? { ...item, ...phoneticDraft } : item
           )
@@ -224,7 +322,7 @@ function AdminCardCreatePage({ deckId, topicId, onNavigate }) {
           <button type="button" className="admin-card-cancel-btn" onClick={() => onNavigate(`/admin/decks/${deckId}/topics/${topicId}/cards`)} disabled={isSubmitting}>
             {t('admin.cancelBtn')}
           </button>
-          <button type="button" className="admin-card-save-btn" onClick={handleSubmit} disabled={isSubmitting}>
+          <button type="button" className="admin-card-save-btn" onClick={handleSubmit} disabled={isSubmitting || isImageUploading || isAudioUploading}>
             {isSubmitting ? t('admin.saving') : t('admin.saveChangesBtn')}
           </button>
         </div>
@@ -271,7 +369,10 @@ function AdminCardCreatePage({ deckId, topicId, onNavigate }) {
                 </svg>
               </div>
             )}
-            <button type="button" className="admin-card-upload-btn">{t('admin.cardChangeImage')}</button>
+            <label className={`admin-card-upload-btn ${isImageUploading ? 'is-uploading' : ''}`}>
+              <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageUpload} disabled={isImageUploading} />
+              {isImageUploading ? t('admin.uploading') : (form.imageUrl ? t('admin.changeImage') : t('admin.uploadImage'))}
+            </label>
             <p>{t('admin.cardImageHint')}</p>
           </div>
         </section>
@@ -308,7 +409,13 @@ function AdminCardCreatePage({ deckId, topicId, onNavigate }) {
                     <div><span>{t('admin.cardIpaLabel')}</span><strong>{phonetic.text || '-'}</strong></div>
                     <div><span>{t('admin.cardLocaleLabel')}</span><strong>{phonetic.locale || '-'}</strong></div>
                     <div><span>{t('admin.cardAudioLabel')}</span><strong>{phonetic.fileName || phonetic.audio || t('admin.cardNoAudio')}</strong></div>
-                    <button type="button" className="admin-card-play-btn" aria-label={t('admin.cardPlayAudio')}>
+                    <button 
+                      type="button" 
+                      className="admin-card-play-btn" 
+                      onClick={() => handlePlayAudio(index)}
+                      disabled={!phonetic.audio || playingAudioIndex === index}
+                      aria-label={t('admin.cardPlayAudio')}
+                    >
                       <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
                     </button>
                     <button type="button" className="admin-card-edit-pronunciation-btn" onClick={() => openEditPronunciationModal(index)} aria-label={t('admin.cardEditPronunciation')}>
@@ -347,6 +454,8 @@ function AdminCardCreatePage({ deckId, topicId, onNavigate }) {
           }}
           onConfirm={savePronunciation}
           isEditing={editingPronunciationIndex !== null}
+          isUploading={isAudioUploading}
+          onAudioUpload={handleAudioUpload}
           t={t}
         />
       )}
@@ -365,7 +474,7 @@ function AdminCardCreatePage({ deckId, topicId, onNavigate }) {
   )
 }
 
-function PronunciationModal({ draft, setDraft, onCancel, onConfirm, isEditing, t }) {
+function PronunciationModal({ draft, setDraft, onCancel, onConfirm, isEditing, isUploading, onAudioUpload, t }) {
   return (
     <div className="admin-card-modal-backdrop">
       <div className="admin-card-pronunciation-modal">
@@ -378,20 +487,29 @@ function PronunciationModal({ draft, setDraft, onCancel, onConfirm, isEditing, t
           <label className="admin-card-field"><span>{t('admin.cardLocaleLabel')}</span><input value={draft.locale} onChange={(event) => setDraft((prev) => ({ ...prev, locale: event.target.value }))} placeholder="en-US" /></label>
           <div className="admin-card-field">
             <span>{t('admin.cardAudioLabel')}</span>
-            <label className="admin-card-audio-upload">
-              <input type="file" accept="audio/*" onChange={(event) => setDraft((prev) => ({ ...prev, fileName: event.target.files?.[0]?.name || '' }))} />
+            <label className={`admin-card-audio-upload ${isUploading ? 'is-uploading' : ''}`}>
+              <input
+                type="file"
+                accept="audio/webm,audio/mpeg,audio/mp4,audio/wav,audio/ogg"
+                disabled={isUploading}
+                onChange={(event) => {
+                  const file = event.target.files?.[0]
+                  event.target.value = ''
+                  onAudioUpload(file)
+                }}
+              />
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                 <polyline points="17 8 12 3 7 8" />
                 <line x1="12" y1="3" x2="12" y2="15" />
               </svg>
-              {draft.fileName || t('admin.cardUploadAudio')}
+              {isUploading ? t('admin.uploading') : (draft.fileName || t('admin.cardUploadAudio'))}
             </label>
           </div>
         </div>
         <div className="admin-card-modal-actions">
           <button type="button" className="admin-card-cancel-btn" onClick={onCancel}>{t('admin.cancelBtn')}</button>
-          <button type="button" className="admin-card-save-btn" onClick={onConfirm}>{t('admin.applyBtn')}</button>
+          <button type="button" className="admin-card-save-btn" onClick={onConfirm} disabled={isUploading}>{t('admin.applyBtn')}</button>
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import Input from '../../../../components/Input/Input'
 import TagPickerModal from '../../components/TagPickerModal/TagPickerModal'
 import { createAdminDeckApi, listCefrLevelsApi, listTagsApi } from '../../adminApi'
+import { getPresignedUrl, uploadAudioToS3 } from '../../../../utils/s3Upload'
 import './AdminDeckCreatePage.css'
 
 function AdminDeckCreatePage({ onNavigate }) {
@@ -14,6 +15,7 @@ function AdminDeckCreatePage({ onNavigate }) {
   const [selectedCefr, setSelectedCefr] = useState([])
   const [selectedTags, setSelectedTags] = useState([])
   const [status, setStatus] = useState('draft')
+  const [coverImage, setCoverImage] = useState('')
 
   // Meta data
   const [cefrLevels, setCefrLevels] = useState([])
@@ -24,6 +26,7 @@ function AdminDeckCreatePage({ onNavigate }) {
 
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isImageUploading, setIsImageUploading] = useState(false)
   const [titleError, setTitleError] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
@@ -58,6 +61,40 @@ function AdminDeckCreatePage({ onNavigate }) {
     setSelectedTags((prev) => prev.filter((t) => t._id !== id))
   }
 
+  const uploadImage = async (file) => {
+    const contentType = file.type || 'image/png'
+    const presignedRes = await getPresignedUrl({
+      contentType,
+      purpose: 'card-image',
+      fileSize: file.size
+    })
+
+    if (!presignedRes.success || !presignedRes.data?.uploadUrl) {
+      throw new Error(presignedRes.message || t('admin.uploadFailed'))
+    }
+
+    const { uploadUrl, url } = presignedRes.data
+    await uploadAudioToS3(uploadUrl, file, contentType)
+    return url
+  }
+
+  const handleImageUpload = async (event) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file) return
+
+    setIsImageUploading(true)
+    setErrorMsg('')
+    try {
+      const url = await uploadImage(file)
+      setCoverImage(url)
+    } catch (error) {
+      setErrorMsg(error.response?.data?.message || error.message)
+    } finally {
+      setIsImageUploading(false)
+    }
+  }
+
   const handleSubmit = async () => {
     setTitleError('')
     setErrorMsg('')
@@ -75,6 +112,7 @@ function AdminDeckCreatePage({ onNavigate }) {
         description: description.trim(),
         cefrLevelIds: selectedCefr,
         tagIds: selectedTags.map((t) => t._id),
+        coverImage: coverImage.trim(),
         status,
       }
       const res = await createAdminDeckApi(payload)
@@ -168,17 +206,26 @@ function AdminDeckCreatePage({ onNavigate }) {
             </div>
 
             <div className="admin-create-section-body">
-              {/* Decorative upload area - no functionality */}
               <div className="admin-upload-area">
-                <div className="admin-upload-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" width="36" height="36">
-                    <polyline points="16 16 12 12 8 16" />
-                    <line x1="12" y1="12" x2="12" y2="21" />
-                    <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
-                  </svg>
-                </div>
-                <p className="admin-upload-hint">{t('admin.imageUploadHint')}</p>
-                <p className="admin-upload-desc">{t('admin.imageUploadDesc')}</p>
+                {coverImage ? (
+                  <img src={coverImage} alt={title || t('admin.sectionImage')} className="admin-upload-preview-image" />
+                ) : (
+                  <>
+                    <div className="admin-upload-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" width="36" height="36">
+                        <polyline points="16 16 12 12 8 16" />
+                        <line x1="12" y1="12" x2="12" y2="21" />
+                        <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+                      </svg>
+                    </div>
+                    <p className="admin-upload-hint">{t('admin.imageUploadHint')}</p>
+                    <p className="admin-upload-desc">{t('admin.imageUploadDesc')}</p>
+                  </>
+                )}
+                <label className={`admin-upload-action ${isImageUploading ? 'is-uploading' : ''}`}>
+                  <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageUpload} disabled={isImageUploading} />
+                  {isImageUploading ? t('admin.uploading') : (coverImage ? t('admin.changeImage') : t('admin.uploadImage'))}
+                </label>
               </div>
             </div>
           </div>
@@ -285,14 +332,14 @@ function AdminDeckCreatePage({ onNavigate }) {
               <button
                 className="admin-cancel-btn"
                 onClick={() => onNavigate && onNavigate('/admin/decks')}
-                disabled={isSubmitting}
+                disabled={isSubmitting || isImageUploading}
               >
                 {t('admin.cancelBtn')}
               </button>
               <button
                 className="admin-save-btn"
                 onClick={handleSubmit}
-                disabled={isSubmitting}
+                disabled={isSubmitting || isImageUploading}
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
                   <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />

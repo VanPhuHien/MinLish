@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import Input from '../../../../components/Input/Input'
 import TagPickerModal from '../../components/TagPickerModal/TagPickerModal'
 import { createAdminLessonApi, listCefrLevelsApi, listTagsApi } from '../../adminApi'
+import { getPresignedUrl, uploadAudioToS3 } from '../../../../utils/s3Upload'
 import '../deck/AdminDeckCreatePage.css'
 import './AdminLessonPage.css'
 
@@ -39,6 +40,7 @@ function AdminLessonCreatePage({ onNavigate }) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [sourceUrl, setSourceUrl] = useState('')
+  const [thumbnailUrl, setThumbnailUrl] = useState('')
   const [selectedCefr, setSelectedCefr] = useState([])
   const [selectedTags, setSelectedTags] = useState([])
   const [status, setStatus] = useState('draft')
@@ -48,6 +50,7 @@ function AdminLessonCreatePage({ onNavigate }) {
   const [isTagModalOpen, setIsTagModalOpen] = useState(false)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isImageUploading, setIsImageUploading] = useState(false)
   const [titleError, setTitleError] = useState('')
   const [sourceUrlError, setSourceUrlError] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
@@ -78,6 +81,40 @@ function AdminLessonCreatePage({ onNavigate }) {
     setSelectedTags((prev) => prev.filter((tag) => newTags.find((item) => item._id === tag._id)))
   }
 
+  const uploadFile = async (file, purpose) => {
+    const contentType = file.type || 'image/png'
+    const presignedRes = await getPresignedUrl({
+      contentType,
+      purpose,
+      fileSize: file.size
+    })
+
+    if (!presignedRes.success || !presignedRes.data?.uploadUrl) {
+      throw new Error(presignedRes.message || t('admin.uploadFailed'))
+    }
+
+    const { uploadUrl, url } = presignedRes.data
+    await uploadAudioToS3(uploadUrl, file, contentType)
+    return url
+  }
+
+  const handleImageUpload = async (event) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file) return
+
+    setIsImageUploading(true)
+    setErrorMsg('')
+    try {
+      const url = await uploadFile(file, 'card-image')
+      setThumbnailUrl(url)
+    } catch (error) {
+      setErrorMsg(error.response?.data?.message || error.message)
+    } finally {
+      setIsImageUploading(false)
+    }
+  }
+
   const removeTag = (id) => {
     setSelectedTags((prev) => prev.filter((tag) => tag._id !== id))
   }
@@ -104,6 +141,7 @@ function AdminLessonCreatePage({ onNavigate }) {
         title: title.trim(),
         description: description.trim(),
         sourceUrl: sourceUrl.trim(),
+        thumbnailUrl: thumbnailUrl.trim(),
         cefrLevelIds: selectedCefr,
         tagIds: selectedTags.map((tag) => tag._id),
         status
@@ -203,15 +241,25 @@ function AdminLessonCreatePage({ onNavigate }) {
 
               <div className="admin-lesson-media-row">
                 <div className="admin-upload-area admin-lesson-upload-visual">
-                  <div className="admin-upload-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" width="36" height="36">
-                      <polyline points="16 16 12 12 8 16" />
-                      <line x1="12" y1="12" x2="12" y2="21" />
-                      <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
-                    </svg>
-                  </div>
-                  <p className="admin-upload-hint">{t('admin.lessonThumbnailUploadHint')}</p>
-                  <p className="admin-upload-desc">{t('admin.imageUploadDesc')}</p>
+                  {thumbnailUrl ? (
+                    <img src={thumbnailUrl} alt={title || t('admin.lessonPreviewAlt')} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
+                  ) : (
+                    <>
+                      <div className="admin-upload-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" width="36" height="36">
+                          <polyline points="16 16 12 12 8 16" />
+                          <line x1="12" y1="12" x2="12" y2="21" />
+                          <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+                        </svg>
+                      </div>
+                      <p className="admin-upload-hint">{t('admin.lessonThumbnailUploadHint')}</p>
+                      <p className="admin-upload-desc">{t('admin.imageUploadDesc')}</p>
+                    </>
+                  )}
+                  <label className={`admin-upload-action ${isImageUploading ? 'is-uploading' : ''}`} style={{ marginTop: thumbnailUrl ? '8px' : '0' }}>
+                    <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageUpload} disabled={isImageUploading} />
+                    {isImageUploading ? t('admin.uploading') : (thumbnailUrl ? t('admin.changeImage') : t('admin.uploadImage'))}
+                  </label>
                 </div>
 
                 <div className="admin-lesson-preview">
@@ -315,11 +363,11 @@ function AdminLessonCreatePage({ onNavigate }) {
               <button
                 className="admin-cancel-btn"
                 onClick={() => onNavigate && onNavigate('/admin/lessons')}
-                disabled={isSubmitting}
+                disabled={isSubmitting || isImageUploading}
               >
                 {t('admin.cancelBtn')}
               </button>
-              <button className="admin-save-btn" onClick={handleSubmit} disabled={isSubmitting}>
+              <button className="admin-save-btn" onClick={handleSubmit} disabled={isSubmitting || isImageUploading}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
                   <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
                   <polyline points="17 21 17 13 7 13 7 21" />

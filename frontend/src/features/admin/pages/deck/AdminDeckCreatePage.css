@@ -246,6 +246,36 @@
   background-color: var(--color-surface-container-lowest);
 }
 
+.admin-upload-preview-image {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: var(--rounded-default);
+}
+
+.admin-upload-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+  border: none;
+  background: transparent;
+  color: var(--color-primary);
+  font-family: var(--font-family);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-upload-action input {
+  display: none;
+}
+
+.admin-upload-action.is-uploading {
+  opacity: 0.7;
+  cursor: wait;
+}
+
 .admin-upload-icon {
   color: color-mix(in srgb, var(--color-primary) 38%, transparent);
 }

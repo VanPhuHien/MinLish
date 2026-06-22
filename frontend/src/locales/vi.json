@@ -359,7 +359,6 @@
     "cardPosRequired": "Vui lòng chọn từ loại",
     "cardPosLabel": "Loại từ",
     "cardImageAlt": "Hình ảnh từ vựng",
-    "cardChangeImage": "Thay đổi hình ảnh",
     "cardImageHint": "PNG, JPG up to 5MB",
     "cardTranslationLabel": "Nghĩa tiếng Việt",
     "cardTranslationPlaceholder": "Kiên cường, có khả năng phục hồi nhanh",
@@ -382,7 +381,12 @@
     "cardEditPronunciation": "Chỉnh sửa phát âm",
     "cardDeletePronunciation": "Xóa phát âm",
     "confirmDeletePronunciationTitle": "Xóa phát âm",
-    "confirmDeletePronunciationMessage": "Bạn có chắc chắn muốn xóa phát âm này không?"
+    "confirmDeletePronunciationMessage": "Bạn có chắc chắn muốn xóa phát âm này không?",
+    "uploading": "Đang tải lên...",
+    "uploadFailed": "Tải tệp lên thất bại",
+    "audioPlayFailed": "Không thể phát âm thanh",
+    "uploadImage": "Tải ảnh lên",
+    "changeImage": "Đổi ảnh"
   },
   "api": {
     "success": {
