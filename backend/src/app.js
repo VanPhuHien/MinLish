@@ -1,6 +1,7 @@
 import cookieParser from 'cookie-parser';
 import progressRouter from './modules/progress/progress.router.js';
 import gamificationRouter from './modules/gamification/gamification.router.js';
+import battleRouter from './modules/battle/battle.router.js';
 import vocabularyRouter from './modules/vocabulary/vocabulary.router.js';
 import lessonRouter from './modules/lesson/lesson.router.js';
 import deckRouter from './modules/deck/deck.router.js';
@@ -45,6 +46,7 @@ app.use('/api/v1/s3', fileRouter);
 app.use('/api/v1/vocabulary', vocabularyRouter);
 app.use('/api/v1/progress', progressRouter);
 app.use('/api/v1/gamification', gamificationRouter);
+app.use('/api/v1/battle', battleRouter);
 app.use('/api/v1/ai', aiRouter);
 app.use('/api/v1/admin', adminRouter);
 

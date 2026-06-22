@@ -117,6 +117,75 @@ Vòng đời upload 2 bước: (1) xin presigned PUT → (2) client PUT bytes th
 
 - GET /api/v1/gamification/me/rank — thứ hạng của user hiện tại. Trả về `{ rank, totalXp, totalPlayers }`. `rank = (số người có totalXp > của mình) + 1`. Nếu chưa có hoạt động, rank = tổng số người chơi (xp=0).
 
+## **Battle (1v1 Real-time)**
+
+> Giao tiếp chính qua **WebSocket (socket.io)**. REST chỉ dùng để lấy lịch sử sau trận.
+
+### Kết nối socket
+
+```
+URL: ws://<host>  (cùng port với REST server)
+Auth: socket.handshake.auth = { token: "<access_token>" }
+```
+
+Token phải là **ACCESS** token. Refresh token bị từ chối. Khi token hết hạn cần lấy token mới rồi kết nối lại.
+
+### Client -> Server events
+
+| Event | Payload | Mô tả |
+| :-- | :-- | :-- |
+| `battle:queue:join` | `{ mode: 'mcq' \| 'typing' }` | Vào hàng chờ ghép trận random |
+| `battle:queue:leave` | — | Rời hàng chờ |
+| `battle:room:create` | `{ mode: 'mcq' \| 'typing' }` | Tạo phòng invite, nhận room code |
+| `battle:room:join` | `{ code }` | Vào phòng bằng mã 6 ký tự |
+| `battle:answer` | `{ index, answer }` | Gửi đáp án (index = số thứ tự câu hiện tại) |
+| `battle:rejoin` | `{ matchId }` | Reconnect vào trận đang dở sau khi mất kết nối |
+
+### Server -> Client events
+
+| Event | Payload | Mô tả |
+| :-- | :-- | :-- |
+| `battle:room:created` | `{ code }` | Room code 6 ký tự để chia sẻ |
+| `battle:question` | `{ index, total, term, mode, options, deadlineTs }` | Câu hỏi mới; `deadlineTs` là timestamp (ms) khi hết giờ |
+| `battle:roundResult` | `{ index, correctAnswer, scores }` | Kết quả sau mỗi câu; `scores` = `{ [userId]: number }` |
+| `battle:finished` | `{ scores, winnerId, players }` | Trận kết thúc; `winnerId` null = hòa; `players = [{userId, score, correctCount}]` |
+| `battle:opponentDisconnected` | `{ userId }` | Đối thủ mất kết nối, đang trong grace period (15s) |
+| `battle:opponentReconnected` | `{ userId }` | Đối thủ reconnect kịp |
+| `battle:opponentLeft` | `{ winnerId }` | Đối thủ không quay lại, user hiện tại thắng forfeit |
+| `battle:rejoined` | `{ currentRound, total, term, mode, options, deadlineTs }` | Sync state sau khi reconnect thành công |
+| `battle:abandoned` | — | Cả 2 disconnect → trận bị hủy, không có reward |
+| `battle:queue:timeout` | — | Không tìm được đối thủ trong 30s |
+| `battle:room:expired` | — | Room invite hết hạn (30s không có ai join) |
+| `battle:error` | `{ code }` | Lỗi: `INVALID_MODE`, `ROOM_NOT_FOUND`, `HOST_DISCONNECTED`, `MATCH_NOT_FOUND`, `OPPONENT_UNAVAILABLE` (đối thủ rời ngay trước khi ghép), `MATCH_START_FAILED` (không tạo được trận, vd thiếu câu hỏi) |
+
+### Cơ chế tính điểm
+
+- Đúng: **100 điểm** base + tối đa **50 điểm** speed bonus tỉ lệ với thời gian còn lại
+- Sai hoặc hết giờ: **0 điểm**
+- Mỗi câu 12 giây. Điểm được tính ngay lúc submit, không phụ thuộc đối thủ.
+
+### Reward sau trận
+
+Gate theo 2 lớp — **loại trận** và **nỗ lực**:
+
+- **Streak**: luôn tính cho cả 2 (đã tham gia học thật), bất kể loại trận / kết quả, nếu đã chơi ≥ 1 vòng. Kèm daily bonus +20 XP (1 lần/ngày, idempotent).
+- **XP battle (play/win)**: chỉ trận `matchType='queue'` (ghép random). Trận `invite` (phòng riêng) **không** có XP battle (chống thông đồng farm) — nhưng vẫn tính streak.
+- **Ngưỡng nỗ lực**: chỉ nhận XP battle nếu đúng ≥ `minCorrectForReward` (mặc định **3/10** câu). Dưới ngưỡng = streak-only, 0 XP battle (chống vào trả lời bừa).
+- **Không phạt**: dưới ngưỡng/thua = 0 XP, không trừ.
+
+| Hành động | XP | Điều kiện |
+| :-- | :-- | :-- |
+| Streak (+ daily bonus) | +20/ngày | Mọi trận, đã chơi ≥ 1 vòng |
+| Tham gia (battle_play) | +15 | `queue` **và** đúng ≥ 3 câu |
+| Thắng (battle_win) | +35 | `queue` **và** thắng **và** winner đúng ≥ 3 câu |
+
+XP idempotent: gọi finalize nhiều lần không bị cộng trùng (`refId=matchId` / `dayKey`).
+
+### REST endpoints
+
+- `GET /api/v1/battle/history` — lịch sử trận đã kết thúc của user (protect). Pagination: `page`, `limit` (tối đa 100). Không trả về questions.
+- `GET /api/v1/battle/:id` — chi tiết trận (protect). Chỉ participant xem được (403 nếu không phải). Trả về đầy đủ gồm cả questions.
+
 ## **Admin API**
 
 ## **User management**

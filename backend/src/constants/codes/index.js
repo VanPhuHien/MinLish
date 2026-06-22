@@ -13,12 +13,14 @@ import {
   USER_CARD_STATE_MESSAGES,
 } from './userCardState.codes.js';
 import { GAMIFICATION, GAMIFICATION_MESSAGES } from './gamification.codes.js';
+import { BATTLE, BATTLE_MESSAGES } from './battle.codes.js';
 import {
   USER_SEGMENT_PROGRESS,
   USER_SEGMENT_PROGRESS_MESSAGES,
 } from './userSegmentProgress.codes.js';
 import { USER, USER_MESSAGES } from './user.codes.js';
 import { AI, AI_MESSAGES } from './ai.codes.js';
+
 export {
   COMMON,
   AUTH,
@@ -32,6 +34,7 @@ export {
   ADMIN,
   USER_CARD_STATE,
   GAMIFICATION,
+  BATTLE,
   USER_SEGMENT_PROGRESS,
   USER,
   AI,
@@ -50,6 +53,7 @@ export const MESSAGES = {
   ...ADMIN_MESSAGES,
   ...USER_CARD_STATE_MESSAGES,
   ...GAMIFICATION_MESSAGES,
+  ...BATTLE_MESSAGES,
   ...USER_SEGMENT_PROGRESS_MESSAGES,
   ...USER_MESSAGES,
   ...AI_MESSAGES,

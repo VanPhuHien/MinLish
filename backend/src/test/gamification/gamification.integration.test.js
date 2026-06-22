@@ -67,11 +67,7 @@ describe('recordActivity — streak transitions', () => {
 
   it('same day second action does not increment streak', async () => {
     await service.recordActivity(userId1, 'segment_complete', 'seg-1');
-    await service.recordActivity(
-      userId1,
-      'card_review',
-      'card-1:' + getDayKey()
-    );
+    await service.recordActivity(userId1, 'card_review', 'card-1:' + getDayKey());
 
     const profile = await UserGamification.findOne({ userId: userId1 });
     expect(profile.currentStreak).toBe(1);
@@ -146,11 +142,7 @@ describe('recordActivity — daily streak bonus', () => {
 
   it('awards streak bonus only once per day (same-day second action)', async () => {
     await service.recordActivity(userId1, 'segment_complete', 'seg-1');
-    await service.recordActivity(
-      userId1,
-      'card_review',
-      'card-1:' + getDayKey()
-    );
+    await service.recordActivity(userId1, 'card_review', 'card-1:' + getDayKey());
 
     const bonusEvents = await XpEvent.find({
       userId: userId1,
@@ -161,11 +153,7 @@ describe('recordActivity — daily streak bonus', () => {
 
   it('two activities same day different source: both XP awarded, streak bonus once', async () => {
     await service.recordActivity(userId1, 'segment_complete', 'seg-1');
-    await service.recordActivity(
-      userId1,
-      'card_review',
-      'card-1:' + getDayKey()
-    );
+    await service.recordActivity(userId1, 'card_review', 'card-1:' + getDayKey());
 
     const profile = await UserGamification.findOne({ userId: userId1 });
     expect(profile.totalXp).toBe(
@@ -335,7 +323,7 @@ describe('GET /api/v1/gamification/me', () => {
     expect(res.body.data).toMatchObject({
       totalXp: 200,
       level: 2,
-      xpIntoLevel: 100, // 200 - 100
+      xpIntoLevel: 100,  // 200 - 100
       xpForNextLevel: 200, // 300 - 100
       progressPct: 50,
     });
@@ -370,12 +358,7 @@ describe('GET /api/v1/gamification/leaderboard', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
-    expect(res.body.data).toMatchObject({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 20,
-    });
+    expect(res.body.data).toMatchObject({ items: [], total: 0, page: 1, limit: 20 });
   });
 
   it('orders users by totalXp descending', async () => {
@@ -383,7 +366,7 @@ describe('GET /api/v1/gamification/leaderboard', () => {
     await UserGamification.insertMany([
       { userId: userId1, totalXp: 100, level: 2 },
       { userId: userId2, totalXp: 300, level: 3 },
-      { userId: userId3, totalXp: 50, level: 1 },
+      { userId: userId3, totalXp: 50,  level: 1 },
     ]);
 
     const res = await request(app)
@@ -462,7 +445,7 @@ describe('GET /api/v1/gamification/me/rank', () => {
     await UserGamification.insertMany([
       { userId: userId1, totalXp: 300, level: 3 },
       { userId: userId2, totalXp: 200, level: 2 },
-      { userId: userId3, totalXp: 0, level: 1 },
+      { userId: userId3, totalXp: 0,   level: 1 },
     ]);
 
     const res = await request(app)
@@ -471,11 +454,7 @@ describe('GET /api/v1/gamification/me/rank', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
-    expect(res.body.data).toMatchObject({
-      rank: 3,
-      totalXp: 0,
-      totalPlayers: 3,
-    });
+    expect(res.body.data).toMatchObject({ rank: 3, totalXp: 0, totalPlayers: 3 });
   });
 
   it('returns rank=1 for top user', async () => {
@@ -489,11 +468,7 @@ describe('GET /api/v1/gamification/me/rank', () => {
       .set('Authorization', `Bearer ${makeToken(userId1)}`);
 
     expect(res.status).toBe(200);
-    expect(res.body.data).toMatchObject({
-      rank: 1,
-      totalXp: 500,
-      totalPlayers: 2,
-    });
+    expect(res.body.data).toMatchObject({ rank: 1, totalXp: 500, totalPlayers: 2 });
   });
 
   it('returns correct rank for middle user', async () => {
@@ -509,11 +484,7 @@ describe('GET /api/v1/gamification/me/rank', () => {
       .set('Authorization', `Bearer ${makeToken(userId2)}`);
 
     expect(res.status).toBe(200);
-    expect(res.body.data).toMatchObject({
-      rank: 2,
-      totalXp: 300,
-      totalPlayers: 3,
-    });
+    expect(res.body.data).toMatchObject({ rank: 2, totalXp: 300, totalPlayers: 3 });
   });
 
   it('creates profile on first call (no prior activity)', async () => {

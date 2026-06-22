@@ -134,6 +134,62 @@ export async function recordActivity(userId, source, refId, amountOverride) {
   }
 }
 
+// Streak-only update: bumps the daily streak (+ daily bonus once/day) WITHOUT
+// granting any action XP. Used for activities that count as "learning today"
+// but must not award farmable XP — e.g. invite (private) battle matches.
+// Naturally idempotent: re-running same day is a no-op (lastActiveDayKey check),
+// daily bonus guarded by unique (userId, 'daily_streak', dayKey).
+export async function touchStreak(userId) {
+  const dayKey = getDayKey();
+  const yesterdayKey = getDayKey(new Date(Date.now() - 86400000));
+
+  const doc = await ensureProfile(userId);
+
+  let { currentStreak, longestStreak, lastActiveDayKey } = doc;
+  let streakIncremented = false;
+
+  if (lastActiveDayKey === dayKey) {
+    // Already active today: nothing to do.
+  } else if (lastActiveDayKey === yesterdayKey) {
+    currentStreak = (currentStreak || 0) + 1;
+    streakIncremented = true;
+  } else {
+    currentStreak = 1;
+    streakIncremented = true;
+  }
+
+  longestStreak = Math.max(longestStreak || 0, currentStreak);
+
+  await UserGamification.updateOne(
+    { userId },
+    { $set: { currentStreak, longestStreak, lastActiveDayKey: dayKey } }
+  );
+
+  if (!streakIncremented) return;
+
+  // Award daily streak bonus once per day (idempotent via refId=dayKey).
+  try {
+    await XpEvent.create({
+      userId,
+      source: 'daily_streak',
+      refId: dayKey,
+      amount: XP.dailyStreakBonus,
+    });
+    const bonusDoc = await UserGamification.findOneAndUpdate(
+      { userId },
+      { $inc: { totalXp: XP.dailyStreakBonus }, $set: { lastXpAt: new Date() } },
+      { new: true }
+    );
+    const newLevel = computeLevel(bonusDoc.totalXp);
+    if (newLevel !== bonusDoc.level) {
+      await UserGamification.updateOne({ userId }, { $set: { level: newLevel } });
+    }
+  } catch (err) {
+    if (err.code !== 11000) throw err;
+    // Race: another request already awarded today's streak bonus.
+  }
+}
+
 export async function getProfile(userId) {
   return ensureProfile(userId);
 }

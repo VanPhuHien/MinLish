@@ -11,6 +11,7 @@ import vocabularyPaths from './paths/vocabulary.path.js';
 import metadataPaths from './paths/metadata.path.js';
 import filePaths from './paths/file.path.js';
 import gamificationPaths from './paths/gamification.path.js';
+import battlePaths from './paths/battle.path.js';
 
 import securitySchemes from './components/securitySchemes.js';
 
@@ -25,6 +26,7 @@ import aiSchemas from './schemas/ai.schema.js';
 import vocabularySchemas from './schemas/vocabulary.schema.js';
 import fileSchemas from './schemas/file.schema.js';
 import gamificationSchemas from './schemas/gamification.schema.js';
+import battleSchemas from './schemas/battle.schema.js';
 
 import commonResponses from './responses/common.response.js';
 
@@ -42,6 +44,7 @@ export default {
     ...metadataPaths,
     ...filePaths,
     ...gamificationPaths,
+    ...battlePaths,
   },
   components: {
     securitySchemes,
@@ -57,6 +60,7 @@ export default {
       ...vocabularySchemas,
       ...fileSchemas,
       ...gamificationSchemas,
+      ...battleSchemas,
     },
     responses: {
       ...commonResponses,

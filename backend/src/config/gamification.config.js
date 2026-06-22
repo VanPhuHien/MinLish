@@ -19,7 +19,6 @@ export const XP = {
   dailyStreakBonus: 20,
 };
 
-
 export const SEGMENT_XP = {
   dictation: { pass: 60, xp: 10 },
   shadowing: { pass: 55, xp: 12 },
@@ -33,10 +32,13 @@ export function segmentXp(mode, score) {
 
 export const BATTLE = {
   rounds: 10,
+  startCountdownMs: 3000,
   perQuestionMs: 12000,
+  roundRevealMs: 3000,
   speedBonusMax: 50,
   queueTimeoutMs: 30000,
   reconnectGraceMs: 15000,
+  minCorrectForReward: 3,
 };
 
 export function getDayKey(date = new Date()) {
