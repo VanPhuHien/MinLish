@@ -68,6 +68,7 @@ export async function startMatch(socket1, socket2, mode, matchType = 'queue') {
     currentRound: 0,
     currentDeadlineTs: null,
     roundTimer: null,
+    revealTimer: null,
     graceTimers: {}, // userId -> reconnect grace setTimeout handle
   };
   activeMatches.set(matchId, liveState);
@@ -176,9 +177,12 @@ function advanceRound(liveState, io) {
   // 2. Next round.
   liveState.currentRound += 1;
 
-  // 3 / 4.
+  // 3 / 4. Pause on the reveal so clients can show the answer + scores before the next question.
   if (liveState.currentRound < questions.length) {
-    runRound(liveState, io);
+    liveState.revealTimer = setTimeout(
+      () => runRound(liveState, io),
+      BATTLE.roundRevealMs
+    );
   } else {
     finalizeMatch(liveState, io);
   }
@@ -190,12 +194,13 @@ async function finalizeMatch(liveState, io) {
   if (liveState.status === 'finishing') return;
   liveState.status = 'finishing';
   clearTimeout(liveState.roundTimer);
+  clearTimeout(liveState.revealTimer);
   for (const t of Object.values(liveState.graceTimers)) clearTimeout(t);
 
   const { matchId } = liveState;
   const players = Object.values(liveState.players);
 
-  // 2. Winner 
+  // 2. Winner
   const [p1, p2] = players;
   let winnerId = null;
   if (p1.score > p2.score) winnerId = p1.userId;
@@ -377,6 +382,7 @@ async function finalizeAsForfeit(liveState, io, forfeitUserId) {
   if (liveState.status === 'finishing') return;
   liveState.status = 'finishing';
   clearTimeout(liveState.roundTimer);
+  clearTimeout(liveState.revealTimer);
   for (const t of Object.values(liveState.graceTimers)) clearTimeout(t);
 
   const { matchId } = liveState;
@@ -424,6 +430,7 @@ async function abandonMatch(liveState, io) {
   if (liveState.status === 'finishing') return;
   liveState.status = 'finishing';
   clearTimeout(liveState.roundTimer);
+  clearTimeout(liveState.revealTimer);
   for (const t of Object.values(liveState.graceTimers)) clearTimeout(t);
 
   const { matchId } = liveState;

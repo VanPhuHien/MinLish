@@ -81,6 +81,19 @@ Sai:   score = 0
 - Speed bonus tối đa 50 điểm (trả lời ngay lập tức).
 - Server là nguồn gốc sự thật — không thể gian lận bằng cách delay gửi packet.
 
+**Vòng lặp round (server-authoritative):**
+
+```
+runRound → emit 'battle:question' { index, total, term, mode, options, deadlineTs }
+         → roundTimer (12s) | hoặc cả 2 đã answer → advanceRound
+advanceRound → emit 'battle:roundResult' { index, correctAnswer, scores }  ← lộ đáp án + điểm
+             → pause roundRevealMs (3s) để client hiện đáp án
+             → runRound câu kế (deadlineTs mới full 12s) | hoặc finalizeMatch
+```
+
+- Đáp án đúng chỉ lộ ở `battle:roundResult` (không bao giờ gửi kèm `battle:question`).
+- Reveal pause (`roundRevealMs`) đặt **server-side**: câu kế chỉ broadcast sau pause nên `deadlineTs` luôn đủ 12s, đồng bộ 2 client.
+
 ---
 
 ## 5. Xử lý Disconnect
@@ -142,6 +155,7 @@ Reward được wrap trong `try/catch` riêng — lỗi gamification không bao 
 | :------------------------ | :------ | :---------------------------------- |
 | `BATTLE.rounds`           | 10      | Số câu hỏi mỗi trận                 |
 | `BATTLE.perQuestionMs`    | 12000   | Thời gian mỗi câu (ms)              |
+| `BATTLE.roundRevealMs`    | 3000    | Pause hiện đáp án giữa các round (ms) |
 | `BATTLE.speedBonusMax`    | 50      | Speed bonus tối đa mỗi câu          |
 | `BATTLE.queueTimeoutMs`   | 30000   | Thời gian chờ ghép trận tối đa (ms) |
 | `BATTLE.reconnectGraceMs` | 15000   | Thời gian reconnect (ms)            |
