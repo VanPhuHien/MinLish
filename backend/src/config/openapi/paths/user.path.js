@@ -1,3 +1,5 @@
+import { USER, MESSAGES } from "../../../constants/codes/index.js";
+
 const LessonNotFound = {
   description: 'Không tìm thấy lesson',
   content: {
@@ -574,6 +576,40 @@ export default {
         },
         400: ProfileUpdateBadRequest,
         404: UserNotFound,
+        401: { $ref: '#/components/responses/Unauthorized' },
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+  },
+  '/users/me/stats': {
+    get: {
+      tags: ['User Profile'],
+      summary: 'Lấy số liệu thống kê của user',
+      description: 'Lấy tổng số lesson đã học và tổng số card đã review của user hiện tại để hiển thị trên profile.',
+      security: [{ BearerAuth: [] }],
+      responses: {
+        200: {
+          description: 'Lấy số liệu thống kê của user thành công',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  success: { type: 'boolean', example: true },
+                  code: { type: 'string', example: USER.STATS_GET_SUCCESS },
+                  message: { type: 'string', example: MESSAGES[USER.STATS_GET_SUCCESS] },
+                  data: {
+                    type: 'object',
+                    properties: {
+                      learnedLessons: { type: 'integer', example: 10 },
+                      reviewedCards: { type: 'integer', example: 150 },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
         401: { $ref: '#/components/responses/Unauthorized' },
         500: { $ref: '#/components/responses/ServerError' },
       },

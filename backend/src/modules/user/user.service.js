@@ -414,6 +414,17 @@ export const updateProfile = async (userId, data) => {
   };
 };
 
+export const getUserStats = async (userId) => {
+  const [learnedLessons, reviewedCards] = await Promise.all([
+    UserLessonProgress.countDocuments({ userId }),
+    UserCardState.countDocuments({ userId }),
+  ]);
+  return {
+    learnedLessons,
+    reviewedCards,
+  };
+};
+
 export const listAdminUsers = async (filters) => {
   const { q, page = 1, limit = 10, status } = filters;
   const skip = (page - 1) * limit;

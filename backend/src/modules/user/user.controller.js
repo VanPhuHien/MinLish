@@ -249,3 +249,18 @@ export const updateProfile = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getUserStats = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const stats = await userService.getUserStats(userId);
+    res.status(200).json({
+      success: true,
+      code: USER.STATS_GET_SUCCESS,
+      message: MESSAGES[USER.STATS_GET_SUCCESS],
+      data: stats,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
