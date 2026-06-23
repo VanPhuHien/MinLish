@@ -199,3 +199,27 @@ export const getAdminDashboardApi = async () => {
   const response = await apiClient.get("/admin/dashboard");
   return response.data;
 };
+
+export const listAdminUsersApi = async (filters = {}) => {
+  const response = await apiClient.get("/admin/users", { params: filters });
+  return response.data;
+};
+
+export const getAdminUserByIdApi = async (userId) => {
+  const response = await apiClient.get(`/admin/users/${userId}`);
+  return response.data;
+};
+
+export const changeAdminUserStatusApi = async (userId, status, banReason) => {
+  const response = await apiClient.delete(`/admin/users/${userId}`, {
+    data: { status, banReason },
+  });
+  return response.data;
+};
+
+export const changeAdminUserPasswordApi = async (userId, newPassword) => {
+  const response = await apiClient.patch(`/admin/users/${userId}`, {
+    newPassword,
+  });
+  return response.data;
+};

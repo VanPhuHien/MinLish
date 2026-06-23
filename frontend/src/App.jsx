@@ -28,6 +28,7 @@ import AdminLessonCreatePage from './features/admin/pages/lesson/AdminLessonCrea
 import AdminLessonEditPage from './features/admin/pages/lesson/AdminLessonEditPage'
 import AdminLessonSegmentsPage from './features/admin/pages/lesson/AdminLessonSegmentsPage'
 import AdminDashboardPage from './features/admin/pages/dashboard/AdminDashboardPage'
+import AdminUsersPage from './features/admin/pages/user/AdminUsersPage'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from './context/AuthContext'
 import './App.css'
@@ -153,6 +154,9 @@ function App() {
           {t('admin.lessonDetailPlaceholder')}
         </div>
       )
+    }
+    if (currentPath === '/admin/users') {
+      return <AdminUsersPage onNavigate={navigate} />
     }
     // /admin or /admin/* -> render dashboard
     return <AdminDashboardPage onNavigate={navigate} />
