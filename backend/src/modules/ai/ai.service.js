@@ -205,10 +205,9 @@ export const generateCardDetailsFromAI = async (inputStr) => {
   - translation: nghĩa tiếng Việt (bắt buộc)
   - pos: từ loại (chọn duy nhất một trong các pos sau theo đúng phát âm: adjective, adverb, auxiliary verb, collocation,
        conjunction, determiner, idiom, interjection, modal verb, noun, phrasal verb, phrase, preposition, pronoun, verb)
-  - phonetics: mảng chứa object có dạng { text: "phát âm IPA", audio: "url đảm bảo nghe được từ nguồn từ điển uy tín en-GB, en-US", locale: "en-UK" hoặc "en-US" hoặc cả 2}
+  - phonetics: mảng chứa object có dạng { text: "phát âm IPA", locale: "en-UK" hoặc "en-US" hoặc cả 2}
   - explanation: object chứa { vi: "giải thích tiếng Việt", en: "giải thích tiếng Anh" }
   - examples: object chứa { vi: "ví dụ tiếng Việt", en: "ví dụ tiếng Anh" }
-  - imageUrl: link hình ảnh từ web liên quan
   Đảm bảo kết quả trả về là JSON hợp lệ, đầy đủ ngoặc và đúng format.`;
 
     const result = await generateWithRetry(prompt);
