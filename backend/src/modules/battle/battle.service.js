@@ -77,7 +77,9 @@ export const generateQuestions = async (count, mode) => {
     const used = new Set([correct]);
     const distractors = [];
 
-    for (const d of distractorPool) {
+    // Shuffle the pool per question so each card gets its own random distractors
+    // (iterating the pool in fixed order would reuse the same first 3 every time).
+    for (const d of shuffle(distractorPool)) {
       if (distractors.length >= 3) break;
       const norm = normalize(d.translation);
       if (!used.has(norm)) {
