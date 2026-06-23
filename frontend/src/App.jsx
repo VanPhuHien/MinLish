@@ -14,6 +14,7 @@ import DeckDetailPage from './features/flashcards/pages/DeckDetailPage'
 import UserDeckDetailPage from './features/flashcards/pages/UserDeckDetailPage'
 import ReviewPage from './features/flashcards/pages/ReviewPage'
 import SavedCardsPage from './features/flashcards/pages/SavedCardsPage'
+import ProfilePage from './features/profile/ProfilePage'
 import BattleLobbyPage from './features/battle/pages/BattleLobbyPage'
 import BattlePlayPage from './features/battle/pages/BattlePlayPage'
 import AdminLayout from './features/admin/layout/AdminLayout'
@@ -201,6 +202,8 @@ function App() {
         return <DeckListPage onNavigate={navigate} />
       case '/review':
         return <ReviewPage onNavigate={navigate} />
+      case '/profile':
+        return <ProfilePage onNavigate={navigate} />
       case '/profile/saved':
         return <SavedCardsPage onNavigate={navigate} />
       case '/battle':
