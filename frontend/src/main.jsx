@@ -5,12 +5,15 @@ import './index.css'
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { ThemeProvider } from './context/ThemeContext.jsx'
+import { BattleSocketProvider } from './features/battle/context/BattleSocketContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider>
       <AuthProvider>
-        <App />
+        <BattleSocketProvider>
+          <App />
+        </BattleSocketProvider>
       </AuthProvider>
     </ThemeProvider>
   </StrictMode>,

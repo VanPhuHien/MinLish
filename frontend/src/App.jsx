@@ -13,6 +13,8 @@ import DeckListPage from './features/flashcards/pages/DeckListPage'
 import DeckDetailPage from './features/flashcards/pages/DeckDetailPage'
 import UserDeckDetailPage from './features/flashcards/pages/UserDeckDetailPage'
 import ReviewPage from './features/flashcards/pages/ReviewPage'
+import BattleLobbyPage from './features/battle/pages/BattleLobbyPage'
+import BattlePlayPage from './features/battle/pages/BattlePlayPage'
 import AdminLayout from './features/admin/layout/AdminLayout'
 import AdminDeckListPage from './features/admin/pages/deck/AdminDeckListPage'
 import AdminDeckCreatePage from './features/admin/pages/deck/AdminDeckCreatePage'
@@ -48,6 +50,12 @@ function App() {
       } else {
         // Redirect non-admin users to login if they try to access admin pages
         if (currentPath.startsWith('/admin')) {
+          navigate('/login')
+        }
+
+        // Redirect unauthenticated users trying to access private user routes
+        const privateUserPaths = ['/battle', '/battle/play', '/review']
+        if (!user && (privateUserPaths.includes(currentPath) || currentPath.startsWith('/profile'))) {
           navigate('/login')
         }
       }
@@ -191,6 +199,10 @@ function App() {
         return <DeckListPage onNavigate={navigate} />
       case '/review':
         return <ReviewPage onNavigate={navigate} />
+      case '/battle':
+        return <BattleLobbyPage onNavigate={navigate} />
+      case '/battle/play':
+        return <BattlePlayPage onNavigate={navigate} />
       case '/forgot-password':
         return <ForgotPasswordPage onNavigate={navigate} />
       case '/reset-password':
