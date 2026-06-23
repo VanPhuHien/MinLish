@@ -2708,9 +2708,13 @@ export default {
               properties: {
                 status: {
                   type: 'string',
-                  enum: ['active', 'unverified', 'banned'],
+                  enum: ['active', 'banned'],
                   description:
-                    'Trạng thái tài khoản. active: hoạt động, unverified: chưa xác thực, banned: bị khóa',
+                    'Trạng thái tài khoản. active: hoạt động, banned: bị khóa',
+                },
+                banReason: {
+                  type: 'string',
+                  description: 'Lý do khóa tài khoản',
                 },
               },
             },

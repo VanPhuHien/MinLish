@@ -23,4 +23,6 @@ router.patch('/me/card-states/:cardId', controller.upsertCardState);
 
 router.patch('/me/profile-update', controller.updateProfile);
 
+router.get('/me/stats', controller.getUserStats);
+
 export default router;
