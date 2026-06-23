@@ -2,7 +2,7 @@ import Tag from '../../models/tag.model.js';
 import Lesson from '../../models/lesson.model.js';
 import Deck from '../../models/deck.model.js';
 import AppError from '../../utils/AppError.js';
-import { TAG, COMMON } from '../../constants/codes/index.js';
+import { TAG, COMMON, ADMIN } from '../../constants/codes/index.js';
 import { generateSlug } from '../../utils/generate.js';
 
 export const listTags = async ({ usedBy } = {}) => {
@@ -39,12 +39,7 @@ const checkDuplicateTag = async (payload, excludeId = null) => {
   if (label) {
     conditions.push({ label });
   } else {
-    throw new AppError(COMMON.INVALID_DATA, 400, [
-      {
-        field: 'label',
-        message: 'The label field is required',
-      },
-    ]);
+    throw new AppError(ADMIN.TAG_LABEL_REQUIRED, 400);
   }
   const query = {
     $or: conditions,
@@ -55,12 +50,7 @@ const checkDuplicateTag = async (payload, excludeId = null) => {
 
   const existing = await Tag.findOne(query);
   if (existing) {
-    throw new AppError(TAG.TAG_LABEL_EXISTS, 409, [
-      {
-        field: 'label',
-        message: 'This tag label already exists',
-      },
-    ]);
+    throw new AppError(TAG.TAG_LABEL_EXISTS, 409);
   }
 };
 

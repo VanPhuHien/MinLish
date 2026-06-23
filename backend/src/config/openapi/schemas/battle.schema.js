@@ -16,9 +16,21 @@ export default {
         ],
         description: 'ID người chơi (populated thành object name/avatarUrl).',
       },
-      score: { type: 'integer', description: 'Tổng điểm trong trận.', example: 420 },
-      correctCount: { type: 'integer', description: 'Số câu trả lời đúng.', example: 4 },
-      connected: { type: 'boolean', description: 'Còn kết nối lúc kết thúc trận.', example: true },
+      score: {
+        type: 'integer',
+        description: 'Tổng điểm trong trận.',
+        example: 420,
+      },
+      correctCount: {
+        type: 'integer',
+        description: 'Số câu trả lời đúng.',
+        example: 4,
+      },
+      connected: {
+        type: 'boolean',
+        description: 'Còn kết nối lúc kết thúc trận.',
+        example: true,
+      },
     },
   },
 
@@ -32,18 +44,21 @@ export default {
       cardId: { type: 'string', example: '664f1a2b3c4d5e6f7a8b9c0d' },
       term: {
         type: 'string',
-        description: 'Prompt hiển thị. mcq: từ tiếng Anh. typing: nghĩa tiếng Việt.',
+        description:
+          'Prompt hiển thị. mcq: từ tiếng Anh. typing: nghĩa tiếng Việt.',
         example: 'ephemeral',
       },
       correctAnswer: {
         type: 'string',
-        description: 'Đáp án đúng (đã normalize). mcq: nghĩa tiếng Việt. typing: từ tiếng Anh.',
+        description:
+          'Đáp án đúng (đã normalize). mcq: nghĩa tiếng Việt. typing: từ tiếng Anh.',
         example: 'phù du',
       },
       options: {
         type: 'array',
         items: { type: 'string' },
-        description: 'mcq: 4 nghĩa tiếng Việt (1 đúng + 3 distractor). typing: rỗng [].',
+        description:
+          'mcq: 4 nghĩa tiếng Việt (1 đúng + 3 distractor). typing: rỗng [].',
         example: ['phù du', 'vĩnh cửu', 'mạnh mẽ', 'yên tĩnh'],
       },
     },
@@ -58,7 +73,8 @@ export default {
       matchType: {
         type: 'string',
         enum: ['queue', 'invite'],
-        description: 'queue = ghép random (được trao XP). invite = phòng riêng (friendly-only, KHÔNG trao XP).',
+        description:
+          'queue = ghép random (được trao XP). invite = phòng riêng (friendly-only, KHÔNG trao XP).',
         example: 'queue',
       },
       status: {
@@ -66,10 +82,14 @@ export default {
         enum: ['waiting', 'in_progress', 'finished', 'abandoned'],
         example: 'finished',
       },
-      players: { type: 'array', items: { $ref: '#/components/schemas/BattlePlayer' } },
+      players: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/BattlePlayer' },
+      },
       winnerId: {
         nullable: true,
-        description: 'Người thắng (null nếu hòa). Populated thành object name/avatarUrl.',
+        description:
+          'Người thắng (null nếu hòa). Populated thành object name/avatarUrl.',
         oneOf: [
           { type: 'string', example: '664f1a2b3c4d5e6f7a8b9c0d' },
           {
@@ -95,7 +115,10 @@ export default {
       {
         type: 'object',
         properties: {
-          questions: { type: 'array', items: { $ref: '#/components/schemas/BattleQuestion' } },
+          questions: {
+            type: 'array',
+            items: { $ref: '#/components/schemas/BattleQuestion' },
+          },
         },
       },
     ],
@@ -104,10 +127,17 @@ export default {
   BattleHistoryData: {
     type: 'object',
     properties: {
-      items: { type: 'array', items: { $ref: '#/components/schemas/BattleMatchSummary' } },
+      items: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/BattleMatchSummary' },
+      },
       page: { type: 'integer', example: 1 },
       limit: { type: 'integer', example: 20 },
-      total: { type: 'integer', description: 'Tổng số trận finished của user.', example: 17 },
+      total: {
+        type: 'integer',
+        description: 'Tổng số trận finished của user.',
+        example: 17,
+      },
     },
   },
   BattleHistoryResponse: {

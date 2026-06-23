@@ -4,7 +4,7 @@ import Topic from '../../models/topic.model.js';
 import Card from '../../models/card.model.js';
 import UserCardState from '../../models/userCardState.model.js';
 import AppError from '../../utils/AppError.js';
-import { DECK, COMMON, ADMIN } from '../../constants/codes/index.js';
+import { DECK, COMMON, ADMIN, MESSAGES } from '../../constants/codes/index.js';
 import { generateSlug } from '../../utils/generate.js';
 
 // Public deck endpoints serve the SYSTEM catalog only.
@@ -185,6 +185,7 @@ export const listAdminDecks = async (filters) => {
 };
 
 export const createAdminDeck = async (payload) => {
+  if (!payload.title) throw new AppError(ADMIN.DECK_TITLE_REQUIRED, 400);
   let slug = payload.slug;
   if (!payload.slug) slug = generateSlug(payload.title);
   const existing = await Deck.findOne({ slug });
@@ -214,6 +215,8 @@ export const getAdminDeckById = async (deckId) => {
 };
 
 export const updateAdminDeck = async (deckId, payload) => {
+  if (!payload.title) throw new AppError(ADMIN.DECK_TITLE_REQUIRED, 400);
+
   const deck = await Deck.findById(deckId);
   if (!deck) throw new AppError(DECK.DECK_NOT_FOUND, 404);
 

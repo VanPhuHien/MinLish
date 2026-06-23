@@ -6,13 +6,17 @@ const queue = []; // [{ userId, socketId, mode, timer }]
 export const joinQueue = (socket, mode) => {
   const userId = socket.user.id;
 
-  const opponentIdx = queue.findIndex((q) => q.mode === mode && q.userId !== userId);
+  const opponentIdx = queue.findIndex(
+    (q) => q.mode === mode && q.userId !== userId
+  );
 
   if (opponentIdx !== -1) {
     const opponent = queue[opponentIdx];
     clearTimeout(opponent.timer);
     queue.splice(opponentIdx, 1);
-    return { opponent: { socketId: opponent.socketId, userId: opponent.userId } };
+    return {
+      opponent: { socketId: opponent.socketId, userId: opponent.userId },
+    };
   }
 
   if (queue.some((q) => q.userId === userId)) return null;
@@ -58,7 +62,12 @@ export const createRoom = (socket, mode) => {
     socket.emit('battle:room:expired');
   }, BATTLE.queueTimeoutMs);
 
-  invites.set(code, { hostUserId: socket.user.id, socketId: socket.id, mode, timer });
+  invites.set(code, {
+    hostUserId: socket.user.id,
+    socketId: socket.id,
+    mode,
+    timer,
+  });
   return code;
 };
 
@@ -70,7 +79,11 @@ export const joinRoom = (socket, code) => {
 
   clearTimeout(invite.timer);
   invites.delete(code);
-  return { hostSocketId: invite.socketId, hostUserId: invite.hostUserId, mode: invite.mode };
+  return {
+    hostSocketId: invite.socketId,
+    hostUserId: invite.hostUserId,
+    mode: invite.mode,
+  };
 };
 
 export const cancelRoom = (socketId) => {

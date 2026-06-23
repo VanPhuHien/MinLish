@@ -10,15 +10,15 @@ export const getDashboardMetrics = async () => {
   const totalLessons = await Lesson.countDocuments();
   const totalDecks = await Deck.countDocuments({ ownerType: 'system' });
 
-  // User registration chart (6 tháng trước)
-  const sixMonthsAgo = new Date();
-  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
-  sixMonthsAgo.setDate(1);
-  sixMonthsAgo.setHours(0, 0, 0, 0);
+  // User registration chart (12 tháng trước)
+  const twelveMonthsAgo = new Date();
+  twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 11);
+  twelveMonthsAgo.setDate(1);
+  twelveMonthsAgo.setHours(0, 0, 0, 0);
   const userChartRaw = await User.aggregate([
     {
       $match: {
-        createdAt: { $gte: sixMonthsAgo },
+        createdAt: { $gte: twelveMonthsAgo },
       },
     },
     {
@@ -36,20 +36,21 @@ export const getDashboardMetrics = async () => {
   ]);
 
   // Format chart data
-  const userRegistrationChart = [];
-  for (let i = 5; i >= 0; i--) {
+  const userRegistrationChart12Months = [];
+  for (let i = 11; i >= 0; i--) {
     const d = new Date();
     d.setMonth(d.getMonth() - i);
     const year = d.getFullYear();
-    const month = d.getMonth() + 1;
+    const month = d.getMonth() + 1; // +1 do Date.getMonth() trả về tháng bắt đầu từ 0
     const record = userChartRaw.find(
       (r) => r._id.year === year && r._id.month === month
     );
-    userRegistrationChart.push({
+    userRegistrationChart12Months.push({
       label: `${month}/${year}`,
       count: record ? record.count : 0,
     });
   }
+  const userRegistrationChart6Months = userRegistrationChart12Months.slice(-6);
 
   const popularLessonsRaw = await UserLessonProgress.aggregate([
     {
@@ -69,13 +70,14 @@ export const getDashboardMetrics = async () => {
       },
     },
     { $unwind: '$lesson' },
+    //biến array lesson: [{ _id: "l1", title: "A" }] thành object lesson: { _id: "l1", title: "A" }
     {
       $project: {
         _id: '$lesson._id',
         title: '$lesson.title',
         slug: '$lesson.slug',
         thumbnailUrl: '$lesson.thumbnailUrl',
-        userCount: 1,
+        userCount: 1, //userCount (1 = giữ nguyên)
       },
     },
   ]);
@@ -129,7 +131,8 @@ export const getDashboardMetrics = async () => {
     activeUsers,
     totalLessons,
     totalDecks,
-    userRegistrationChart,
+    userRegistrationChart6Months,
+    userRegistrationChart12Months,
     popularLessons: popularLessonsRaw,
     popularDecks: popularDecksRaw,
     recentContent: {

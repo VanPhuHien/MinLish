@@ -1,4 +1,13 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest';
+import {
+  describe,
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  afterEach,
+  vi,
+} from 'vitest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import { createServer } from 'http';
@@ -34,7 +43,10 @@ const clearActiveMatches = () => {
 const CARD_COUNT = 50;
 // Map term_N → translation_N (matches seeded cards; normalize lowercases them already)
 const termAnswerMap = Object.fromEntries(
-  Array.from({ length: CARD_COUNT }, (_, i) => [`term_${i}`, `translation_${i}`])
+  Array.from({ length: CARD_COUNT }, (_, i) => [
+    `term_${i}`,
+    `translation_${i}`,
+  ])
 );
 
 const makeToken = (userId) =>
@@ -55,7 +67,10 @@ const connectSocket = (userId) =>
 
 const waitFor = (socket, event, ms = 5000) =>
   new Promise((resolve, reject) => {
-    const t = setTimeout(() => reject(new Error(`Timeout waiting for "${event}"`)), ms);
+    const t = setTimeout(
+      () => reject(new Error(`Timeout waiting for "${event}"`)),
+      ms
+    );
     socket.once(event, (d) => {
       clearTimeout(t);
       resolve(d);
@@ -72,7 +87,8 @@ const closeSocket = (s) =>
 // Set up question listeners BEFORE emitting queue:join to avoid missing first question.
 // Returns a Promise that resolves to { fin1, fin2 } when battle:finished arrives on both clients.
 const playFullMatch = (c1, c2, mode, c1Delay = 0, c2Delay = 0) => {
-  const makeHandler = (client, delay) =>
+  const makeHandler =
+    (client, delay) =>
     ({ term, index, options }) => {
       const answer = termAnswerMap[term] ?? options?.[0] ?? 'answer';
       setTimeout(() => client.emit('battle:answer', { index, answer }), delay);
@@ -404,11 +420,17 @@ describe('Group 4 — Reward idempotency', () => {
 
       const { winnerId } = fin1;
       if (winnerId) {
-        const winXp = await XpEvent.findOne({ userId: winnerId, source: 'battle_win' });
+        const winXp = await XpEvent.findOne({
+          userId: winnerId,
+          source: 'battle_win',
+        });
         expect(winXp).not.toBeNull();
 
         const loserId = Object.keys(fin1.scores).find((id) => id !== winnerId);
-        const loserWinXp = await XpEvent.findOne({ userId: loserId, source: 'battle_win' });
+        const loserWinXp = await XpEvent.findOne({
+          userId: loserId,
+          source: 'battle_win',
+        });
         expect(loserWinXp).toBeNull();
       }
     } finally {
@@ -422,7 +444,11 @@ describe('Group 4 — Reward idempotency', () => {
     await gamService.recordActivity(uid1, 'battle_play', refId);
     await gamService.recordActivity(uid1, 'battle_play', refId); // duplicate → silently skipped
 
-    const events = await XpEvent.find({ userId: uid1, source: 'battle_play', refId });
+    const events = await XpEvent.find({
+      userId: uid1,
+      source: 'battle_play',
+      refId,
+    });
     expect(events).toHaveLength(1);
   });
 });
@@ -488,7 +514,11 @@ describe('Group 5 — Disconnect / forfeit', () => {
       c1.disconnect();
 
       // Also collect the socket event (best-effort; DB check is the authoritative assertion)
-      const opponentLeftPromise = waitFor(c2, 'battle:opponentLeft', BATTLE.reconnectGraceMs + 1500);
+      const opponentLeftPromise = waitFor(
+        c2,
+        'battle:opponentLeft',
+        BATTLE.reconnectGraceMs + 1500
+      );
 
       // Wait grace period + buffer to allow forfeit to complete
       await new Promise((r) => setTimeout(r, BATTLE.reconnectGraceMs + 500));
@@ -501,7 +531,10 @@ describe('Group 5 — Disconnect / forfeit', () => {
       expect(match?.status).toBe('finished');
       expect(match?.winnerId?.toString()).toBe(uid2.toString());
 
-      const winXp = await XpEvent.findOne({ userId: uid2, source: 'battle_win' });
+      const winXp = await XpEvent.findOne({
+        userId: uid2,
+        source: 'battle_win',
+      });
       expect(winXp).not.toBeNull();
     } finally {
       await closeSocket(c2);
@@ -543,9 +576,24 @@ describe('Group 6 — REST history', () => {
   // Without real User docs, Mongoose populate sets userId = null → isParticipant check fails.
   beforeAll(async () => {
     await User.insertMany([
-      { _id: uid1, email: `u1-${uid1}@test.com`, passwordHash: 'x', name: 'User1' },
-      { _id: uid2, email: `u2-${uid2}@test.com`, passwordHash: 'x', name: 'User2' },
-      { _id: uidOther, email: `u3-${uidOther}@test.com`, passwordHash: 'x', name: 'Other' },
+      {
+        _id: uid1,
+        email: `u1-${uid1}@test.com`,
+        passwordHash: 'x',
+        name: 'User1',
+      },
+      {
+        _id: uid2,
+        email: `u2-${uid2}@test.com`,
+        passwordHash: 'x',
+        name: 'User2',
+      },
+      {
+        _id: uidOther,
+        email: `u3-${uidOther}@test.com`,
+        passwordHash: 'x',
+        name: 'Other',
+      },
     ]);
   });
 

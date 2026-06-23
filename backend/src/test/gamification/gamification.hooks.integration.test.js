@@ -8,11 +8,7 @@ import UserSegmentProgress from '../../models/userSegmentProgress.model.js';
 import UserCardState from '../../models/userCardState.model.js';
 import * as userService from '../../modules/user/user.service.js';
 import * as gam from '../../modules/gamification/gamification.service.js';
-import {
-  segmentXp,
-  getDayKey,
-  XP,
-} from '../../config/gamification.config.js';
+import { segmentXp, getDayKey, XP } from '../../config/gamification.config.js';
 
 let mongod;
 const userId = new mongoose.Types.ObjectId();
@@ -97,7 +93,10 @@ describe('updateSegmentProgress — dictation XP', () => {
       lessonId,
       startMs: 0,
       endMs: 1000,
-      transcript: { original: 'the quick brown fox jumps', normalized: 'the quick brown fox jumps' },
+      transcript: {
+        original: 'the quick brown fox jumps',
+        normalized: 'the quick brown fox jumps',
+      },
       translation: 'x',
     });
     segmentId = seg._id;

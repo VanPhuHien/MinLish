@@ -1,15 +1,28 @@
-import { joinQueue, leaveQueue, createRoom, joinRoom, cancelRoom } from './matchmaking.js';
-import { startMatch, handleAnswer, handleDisconnect, handleRejoin } from './engine.js';
+import {
+  joinQueue,
+  leaveQueue,
+  createRoom,
+  joinRoom,
+  cancelRoom,
+} from './matchmaking.js';
+import {
+  startMatch,
+  handleAnswer,
+  handleDisconnect,
+  handleRejoin,
+} from './engine.js';
 
 export function registerBattleHandlers(io) {
   io.on('connection', (socket) => {
     socket.on('battle:queue:join', async ({ mode }) => {
-      if (!['mcq', 'typing'].includes(mode)) return socket.emit('battle:error', { code: 'INVALID_MODE' });
+      if (!['mcq', 'typing'].includes(mode))
+        return socket.emit('battle:error', { code: 'INVALID_MODE' });
       const paired = joinQueue(socket, mode);
       if (!paired) return;
 
       const opponentSocket = io.sockets.sockets.get(paired.opponent.socketId);
-      if (!opponentSocket) return socket.emit('battle:error', { code: 'OPPONENT_UNAVAILABLE' });
+      if (!opponentSocket)
+        return socket.emit('battle:error', { code: 'OPPONENT_UNAVAILABLE' });
 
       try {
         await startMatch(socket, opponentSocket, mode, 'queue');
@@ -23,16 +36,19 @@ export function registerBattleHandlers(io) {
     socket.on('battle:queue:leave', () => leaveQueue(socket.id));
 
     socket.on('battle:room:create', ({ mode }) => {
-      if (!['mcq', 'typing'].includes(mode)) return socket.emit('battle:error', { code: 'INVALID_MODE' });
+      if (!['mcq', 'typing'].includes(mode))
+        return socket.emit('battle:error', { code: 'INVALID_MODE' });
       const code = createRoom(socket, mode);
       socket.emit('battle:room:created', { code });
     });
 
     socket.on('battle:room:join', async ({ code }) => {
       const result = joinRoom(socket, code);
-      if (!result) return socket.emit('battle:error', { code: 'ROOM_NOT_FOUND' });
+      if (!result)
+        return socket.emit('battle:error', { code: 'ROOM_NOT_FOUND' });
       const hostSocket = io.sockets.sockets.get(result.hostSocketId);
-      if (!hostSocket) return socket.emit('battle:error', { code: 'HOST_DISCONNECTED' });
+      if (!hostSocket)
+        return socket.emit('battle:error', { code: 'HOST_DISCONNECTED' });
 
       try {
         await startMatch(hostSocket, socket, result.mode, 'invite');

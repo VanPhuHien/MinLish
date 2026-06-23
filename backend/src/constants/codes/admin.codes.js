@@ -1,17 +1,23 @@
 export const ADMIN = Object.freeze({
+  DASHBOARD_METRICS_SUCCESS: 'DASHBOARD_METRICS_SUCCESS',
+
   USER_LIST_SUCCESS: 'USER_LIST_SUCCESS',
   USER_DETAIL_SUCCESS: 'USER_DETAIL_SUCCESS',
   USER_UPDATED_SUCCESS: 'USER_UPDATED_SUCCESS',
   USER_DELETED_SUCCESS: 'USER_DELETED_SUCCESS',
   USER_PASSWORD_CHANGED_SUCCESS: 'USER_PASSWORD_CHANGED_SUCCESS',
   USER_STATUS_UPDATED_SUCCESS: 'USER_STATUS_UPDATED_SUCCESS',
-  DASHBOARD_METRICS_SUCCESS: 'DASHBOARD_METRICS_SUCCESS',
+  USER_NOT_FOUND: 'USER_NOT_FOUND',
+
+  CEFR_LEVEL_NOT_FOUND: 'CEFR_LEVEL_NOT_FOUND',
 
   TAG_LIST_SUCCESS: 'TAG_LIST_SUCCESS',
   TAG_CREATED_SUCCESS: 'TAG_CREATED_SUCCESS',
   TAG_DETAIL_SUCCESS: 'TAG_DETAIL_SUCCESS',
   TAG_UPDATED_SUCCESS: 'TAG_UPDATED_SUCCESS',
   TAG_DELETED_SUCCESS: 'TAG_DELETED_SUCCESS',
+  TAG_NOT_FOUND: 'TAG_NOT_FOUND',
+  TAG_LABEL_REQUIRED: 'TAG_LABEL_REQUIRED',
 
   LESSON_LIST_SUCCESS: 'LESSON_LIST_SUCCESS',
   LESSON_CREATED_SUCCESS: 'LESSON_CREATED_SUCCESS',
@@ -19,18 +25,38 @@ export const ADMIN = Object.freeze({
   LESSON_UPDATED_SUCCESS: 'LESSON_UPDATED_SUCCESS',
   LESSON_DELETED_SUCCESS: 'LESSON_DELETED_SUCCESS',
   LESSON_PUBLISHED_SUCCESS: 'LESSON_PUBLISHED_SUCCESS',
+  LESSON_NOT_FOUND: 'LESSON_NOT_FOUND',
+  LESSON_SLUG_EXISTS: 'LESSON_SLUG_EXISTS',
+  LESSON_TITLE_REQUIRED: 'LESSON_TITLE_REQUIRED',
+  LESSON_SOURCE_URL_REQUIRED: 'LESSON_SOURCE_URL_REQUIRED',
+  LESSON_SOURCE_URL_INVALID: 'LESSON_SOURCE_URL_INVALID',
+  LESSON_STATUS_INVALID: 'LESSON_STATUS_INVALID',
+  LESSON_ALREADY_PUBLISHED: 'LESSON_ALREADY_PUBLISHED',
+  LESSON_NO_SEGMENT: 'LESSON_NO_SEGMENT',
 
   SEGMENT_LIST_SUCCESS: 'SEGMENT_LIST_SUCCESS',
   SEGMENT_CREATED_SUCCESS: 'SEGMENT_CREATED_SUCCESS',
   SEGMENT_DETAIL_SUCCESS: 'SEGMENT_DETAIL_SUCCESS',
   SEGMENT_UPDATED_SUCCESS: 'SEGMENT_UPDATED_SUCCESS',
   SEGMENT_DELETED_SUCCESS: 'SEGMENT_DELETED_SUCCESS',
+  SEGMENT_NOT_FOUND: 'SEGMENT_NOT_FOUND',
+  SEGMENT_START_MS_INVALID: 'SEGMENT_START_MS_INVALID',
+  SEGMENT_END_MS_INVALID: 'SEGMENT_END_MS_INVALID',
+  SEGMENT_END_MS_LESS_THAN_START_MS: 'SEGMENT_END_MS_LESS_THAN_START_MS',
+  SEGMENT_END_MS_EXCEEDS_DURATION: 'SEGMENT_END_MS_EXCEEDS_DURATION',
+  SEGMENT_TIME_OVERLAPS: 'SEGMENT_TIME_OVERLAPS',
+  SEGMENT_TRANSCRIPT_ORIGINAL_REQUIRED: 'SEGMENT_TRANSCRIPT_ORIGINAL_REQUIRED',
+  SEGMENT_TRANSCRIPT_NORMALIZED_REQUIRED:
+    'SEGMENT_TRANSCRIPT_NORMALIZED_REQUIRED',
+  SEGMENT_TRANSLATION_REQUIRED: 'SEGMENT_TRANSLATION_REQUIRED',
 
   DECK_LIST_SUCCESS: 'DECK_LIST_SUCCESS',
   DECK_CREATED_SUCCESS: 'DECK_CREATED_SUCCESS',
   DECK_DETAIL_SUCCESS: 'DECK_DETAIL_SUCCESS',
   DECK_UPDATED_SUCCESS: 'DECK_UPDATED_SUCCESS',
   DECK_DELETED_SUCCESS: 'DECK_DELETED_SUCCESS',
+  DECK_NOT_FOUND: 'DECK_NOT_FOUND',
+  DECK_TITLE_REQUIRED: 'DECK_TITLE_REQUIRED',
 
   TOPIC_LIST_SUCCESS: 'TOPIC_LIST_SUCCESS',
   TOPIC_CREATED_SUCCESS: 'TOPIC_CREATED_SUCCESS',
@@ -38,6 +64,7 @@ export const ADMIN = Object.freeze({
   TOPIC_UPDATED_SUCCESS: 'TOPIC_UPDATED_SUCCESS',
   TOPIC_DELETED_SUCCESS: 'TOPIC_DELETED_SUCCESS',
   TOPIC_REORDERED_SUCCESS: 'TOPIC_REORDERED_SUCCESS',
+  TOPIC_NOT_FOUND: 'TOPIC_NOT_FOUND',
 
   CARD_LIST_SUCCESS: 'CARD_LIST_SUCCESS',
   CARD_CREATED_SUCCESS: 'CARD_CREATED_SUCCESS',
@@ -47,32 +74,31 @@ export const ADMIN = Object.freeze({
   CARD_REORDERED_SUCCESS: 'CARD_REORDERED_SUCCESS',
   CARD_EXPORT_SUCCESS: 'CARD_EXPORT_SUCCESS',
   CARD_IMPORT_SUCCESS: 'CARD_IMPORT_SUCCESS',
-
-  USER_NOT_FOUND: 'USER_NOT_FOUND',
-  CEFR_LEVEL_NOT_FOUND: 'CEFR_LEVEL_NOT_FOUND',
-  TAG_NOT_FOUND: 'TAG_NOT_FOUND',
-  LESSON_NOT_FOUND: 'LESSON_NOT_FOUND',
-  SEGMENT_NOT_FOUND: 'SEGMENT_NOT_FOUND',
-  DECK_NOT_FOUND: 'DECK_NOT_FOUND',
-  TOPIC_NOT_FOUND: 'TOPIC_NOT_FOUND',
   CARD_NOT_FOUND: 'CARD_NOT_FOUND',
-  LESSON_SLUG_EXISTS: 'LESSON_SLUG_EXISTS',
+  FILE_URL_REQUIRED: 'FILE_URL_REQUIRED',
+  MODE_INVALID: 'MODE_INVALID',
 });
 
 export const ADMIN_MESSAGES = {
+  DASHBOARD_METRICS_SUCCESS: 'Dashboard metrics retrieved successfully',
+
   USER_LIST_SUCCESS: 'Users retrieved successfully',
   USER_DETAIL_SUCCESS: 'User detail retrieved successfully',
   USER_UPDATED_SUCCESS: 'User updated successfully',
   USER_DELETED_SUCCESS: 'User deleted/locked successfully',
   USER_PASSWORD_CHANGED_SUCCESS: 'Password changed successfully',
   USER_STATUS_UPDATED_SUCCESS: 'User status updated successfully',
-  DASHBOARD_METRICS_SUCCESS: 'Dashboard metrics retrieved successfully',
+  USER_NOT_FOUND: 'User not found',
+
+  CEFR_LEVEL_NOT_FOUND: 'CEFR level not found',
 
   TAG_LIST_SUCCESS: 'Tags retrieved successfully',
   TAG_CREATED_SUCCESS: 'Tag created successfully',
   TAG_DETAIL_SUCCESS: 'Tag detail retrieved successfully',
   TAG_UPDATED_SUCCESS: 'Tag updated successfully',
   TAG_DELETED_SUCCESS: 'Tag deleted successfully',
+  TAG_NOT_FOUND: 'Tag not found',
+  TAG_LABEL_REQUIRED: 'The label field is required',
 
   LESSON_LIST_SUCCESS: 'Lessons retrieved successfully',
   LESSON_CREATED_SUCCESS: 'Lesson created successfully',
@@ -80,18 +106,44 @@ export const ADMIN_MESSAGES = {
   LESSON_UPDATED_SUCCESS: 'Lesson updated successfully',
   LESSON_DELETED_SUCCESS: 'Lesson deleted/archived successfully',
   LESSON_PUBLISHED_SUCCESS: 'Lesson published successfully',
+  LESSON_NOT_FOUND: 'Lesson not found',
+  LESSON_SLUG_EXISTS:
+    'The lesson slug already exists in the system. Please adjust the slug or title.',
+  LESSON_TITLE_REQUIRED: 'The title field is required.',
+  LESSON_SOURCE_URL_REQUIRED: 'The sourceURL field is required.',
+  LESSON_SOURCE_URL_INVALID: 'The sourceUrl must be a valid YouTube link.',
+  LESSON_STATUS_INVALID:
+    'The status field must be draft, published or archived.',
+  LESSON_ALREADY_PUBLISHED: 'Lesson is already published',
+  LESSON_NO_SEGMENT: 'Cannot publish a lesson with no segment',
 
   SEGMENT_LIST_SUCCESS: 'Segments retrieved successfully',
   SEGMENT_CREATED_SUCCESS: 'Segment created successfully',
   SEGMENT_DETAIL_SUCCESS: 'Segment detail retrieved successfully',
   SEGMENT_UPDATED_SUCCESS: 'Segment updated successfully',
   SEGMENT_DELETED_SUCCESS: 'Segment deleted successfully',
+  SEGMENT_NOT_FOUND: 'Segment not found',
+  SEGMENT_START_MS_INVALID:
+    'The startMs field is mandatory, must be a number and >= 0.',
+  SEGMENT_END_MS_INVALID:
+    'The endMs field is mandatory, must be a number and > 0.',
+  SEGMENT_END_MS_LESS_THAN_START_MS:
+    'The endMs field must be larger than the startMs field.',
+  SEGMENT_END_MS_EXCEEDS_DURATION:
+    'The endMs field must not exceed the audio length of the lesson.',
+  SEGMENT_TIME_OVERLAPS:
+    'The time allocated for this segment overlaps with that of other segments.',
+  SEGMENT_TRANSCRIPT_ORIGINAL_REQUIRED: 'The original field is required.',
+  SEGMENT_TRANSCRIPT_NORMALIZED_REQUIRED: 'The normalized field is required.',
+  SEGMENT_TRANSLATION_REQUIRED: 'The translation field is required.',
 
   DECK_LIST_SUCCESS: 'Decks retrieved successfully',
   DECK_CREATED_SUCCESS: 'Deck created successfully',
   DECK_DETAIL_SUCCESS: 'Deck detail retrieved successfully',
   DECK_UPDATED_SUCCESS: 'Deck updated successfully',
   DECK_DELETED_SUCCESS: 'Deck deleted/archived successfully',
+  DECK_NOT_FOUND: 'Deck not found',
+  DECK_TITLE_REQUIRED: 'The title field is required',
 
   TOPIC_LIST_SUCCESS: 'Topics retrieved successfully',
   TOPIC_CREATED_SUCCESS: 'Topic created successfully',
@@ -99,6 +151,7 @@ export const ADMIN_MESSAGES = {
   TOPIC_UPDATED_SUCCESS: 'Topic updated successfully',
   TOPIC_DELETED_SUCCESS: 'Topic deleted successfully',
   TOPIC_REORDERED_SUCCESS: 'Topics reordered successfully',
+  TOPIC_NOT_FOUND: 'Topic not found',
 
   CARD_LIST_SUCCESS: 'Cards retrieved successfully',
   CARD_CREATED_SUCCESS: 'Card created successfully',
@@ -108,16 +161,7 @@ export const ADMIN_MESSAGES = {
   CARD_REORDERED_SUCCESS: 'Cards reordered successfully',
   CARD_EXPORT_SUCCESS: 'Cards exported successfully',
   CARD_IMPORT_SUCCESS: 'Cards imported successfully',
-
-  USER_NOT_FOUND: 'User not found',
-  CEFR_LEVEL_NOT_FOUND: 'CEFR level not found',
-  TAG_NOT_FOUND: 'Tag not found',
-  LESSON_NOT_FOUND: 'Lesson not found',
-  SEGMENT_NOT_FOUND: 'Segment not found',
-  DECK_NOT_FOUND: 'Deck not found',
-  TOPIC_NOT_FOUND: 'Topic not found',
   CARD_NOT_FOUND: 'Card not found',
-
-  LESSON_SLUG_EXISTS:
-    'The lesson slug already exists in the system. Please adjust the slug or title.',
+  FILE_URL_REQUIRED: 'fileUrl is required',
+  MODE_INVALID: 'mode must be one of: append, replace, upsert',
 };

@@ -21,7 +21,6 @@ export const getHistory = async (req, res, next) => {
   }
 };
 
-
 export const getMatch = async (req, res, next) => {
   try {
     const match = await service.getMatchById(req.params.id);

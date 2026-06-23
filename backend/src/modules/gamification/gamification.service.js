@@ -177,12 +177,18 @@ export async function touchStreak(userId) {
     });
     const bonusDoc = await UserGamification.findOneAndUpdate(
       { userId },
-      { $inc: { totalXp: XP.dailyStreakBonus }, $set: { lastXpAt: new Date() } },
+      {
+        $inc: { totalXp: XP.dailyStreakBonus },
+        $set: { lastXpAt: new Date() },
+      },
       { new: true }
     );
     const newLevel = computeLevel(bonusDoc.totalXp);
     if (newLevel !== bonusDoc.level) {
-      await UserGamification.updateOne({ userId }, { $set: { level: newLevel } });
+      await UserGamification.updateOne(
+        { userId },
+        { $set: { level: newLevel } }
+      );
     }
   } catch (err) {
     if (err.code !== 11000) throw err;

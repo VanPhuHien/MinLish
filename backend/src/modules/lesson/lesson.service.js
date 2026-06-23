@@ -154,27 +154,23 @@ export const listAdminLessons = async (filters) => {
 };
 
 const validateData = (data) => {
-  const errors = [];
   if (!data.title) {
-    errors.push({ field: 'title', message: 'The title field is required.' });
+    throw new AppError(ADMIN.LESSON_TITLE_REQUIRED, 400);
   }
   if (!data.sourceUrl) {
-    errors.push({
-      field: 'sourceUrl',
-      message: 'The sourceURL field is required.',
-    });
+    throw new AppError(ADMIN.LESSON_SOURCE_URL_REQUIRED, 400);
+  } else {
+    const isYoutubeLink =
+      /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+    if (!isYoutubeLink.test(data.sourceUrl)) {
+      throw new AppError(ADMIN.LESSON_SOURCE_URL_INVALID, 400);
+    }
   }
   if (
     data.status &&
     !['draft', 'published', 'archived'].includes(data.status)
   ) {
-    errors.push({
-      field: 'status',
-      message: 'The status field must be draft, published or archived.',
-    });
-  }
-  if (errors.length > 0) {
-    throw new AppError(COMMON.INVALID_DATA, 400, errors);
+    throw new AppError(ADMIN.LESSON_STATUS_INVALID, 400);
   }
 };
 
@@ -265,22 +261,12 @@ export const publishAdminLesson = async (lessonId) => {
   if (!lesson) throw new AppError(LESSON.LESSON_NOT_FOUND, 404);
 
   if (lesson.status === 'published') {
-    throw new AppError(
-      COMMON.INVALID_DATA,
-      400,
-      undefined,
-      'Lesson is already published'
-    );
+    throw new AppError(ADMIN.LESSON_ALREADY_PUBLISHED, 400);
   }
 
   const segmentCount = await LessonSegment.countDocuments({ lessonId });
   if (segmentCount === 0) {
-    throw new AppError(
-      COMMON.INVALID_DATA,
-      400,
-      undefined,
-      'Cannot publish a lesson with no segments'
-    );
+    throw new AppError(ADMIN.LESSON_NO_SEGMENT, 400);
   }
 
   lesson.status = 'published';
@@ -297,57 +283,32 @@ export const listAdminLessonSegments = async (lessonId) => {
 };
 
 const validateSegmentData = (data) => {
-  const errors = [];
   if (
     data.startMs === undefined ||
     typeof data.startMs !== 'number' ||
     data.startMs < 0
   ) {
-    errors.push({
-      field: 'startMs',
-      message: 'The startMs field is mandatory, must be a number and >= 0.',
-    });
+    throw new AppError(ADMIN.SEGMENT_START_MS_INVALID, 400);
   }
-  if (data.endMs === undefined || typeof data.endMs !== 'number') {
-    errors.push({
-      field: 'endMs',
-      message: 'The endMs field is mandatory and must be a number.',
-    });
+  if (
+    data.endMs === undefined ||
+    typeof data.endMs !== 'number' ||
+    data.endMs <= 0
+  ) {
+    throw new AppError(ADMIN.SEGMENT_END_MS_INVALID, 400);
   } else {
-    if (data.endMs <= 0) {
-      errors.push({
-        field: 'endMs',
-        message: 'The endMs field must be > 0.',
-      });
-    }
-
     if (data.endMs <= data.startMs) {
-      errors.push({
-        field: 'endMs',
-        message: 'The endMs field must be larger than the startMs field.',
-      });
+      throw new AppError(ADMIN.SEGMENT_END_MS_LESS_THAN_START_MS, 400);
     }
   }
   if (!data.transcript?.original) {
-    errors.push({
-      field: 'transcript.original',
-      message: 'The original field is required.',
-    });
+    throw new AppError(ADMIN.SEGMENT_TRANSCRIPT_ORIGINAL_REQUIRED, 400);
   }
   if (!data.transcript?.normalized) {
-    errors.push({
-      field: 'transcript.normalized',
-      message: 'The normalized field is required.',
-    });
+    throw new AppError(ADMIN.SEGMENT_TRANSCRIPT_NORMALIZED_REQUIRED, 400);
   }
   if (!data.translation) {
-    errors.push({
-      field: 'translation',
-      message: 'The translation field is required.',
-    });
-  }
-  if (errors.length > 0) {
-    throw new AppError(COMMON.INVALID_DATA, 400, errors);
+    throw new AppError(ADMIN.SEGMENT_TRANSLATION_REQUIRED, 400);
   }
 };
 
@@ -361,13 +322,7 @@ export const createAdminLessonSegment = async (lessonId, data) => {
     lesson.durationMs > 0 &&
     data.endMs > lesson.durationMs
   ) {
-    throw new AppError(COMMON.INVALID_DATA, 400, [
-      {
-        field: 'endMs',
-        message:
-          'The endMs field must not exceed the audio length of the lesson.',
-      },
-    ]);
+    throw new AppError(ADMIN.SEGMENT_END_MS_EXCEEDS_DURATION, 400);
   }
 
   const overlappingSegments = await LessonSegment.find({
@@ -376,13 +331,7 @@ export const createAdminLessonSegment = async (lessonId, data) => {
     endMs: { $gt: data.startMs },
   });
   if (overlappingSegments.length > 0) {
-    throw new AppError(COMMON.INVALID_DATA, 400, [
-      {
-        field: 'startMs/endMs',
-        message:
-          'The time allocated for this segment overlaps with that of other segments.',
-      },
-    ]);
+    throw new AppError(ADMIN.SEGMENT_TIME_OVERLAPS, 400);
   }
 
   const segment = await LessonSegment.create({
@@ -418,13 +367,7 @@ export const updateAdminLessonSegment = async (lessonId, segmentId, data) => {
     lesson.durationMs > 0 &&
     data.endMs > lesson.durationMs
   ) {
-    throw new AppError(COMMON.INVALID_DATA, 400, [
-      {
-        field: 'endMs',
-        message:
-          'The endMs field must not exceed the audio length of the lesson.',
-      },
-    ]);
+    throw new AppError(ADMIN.SEGMENT_END_MS_EXCEEDS_DURATION, 400);
   }
 
   const overlappingSegments = await LessonSegment.find({
@@ -434,13 +377,7 @@ export const updateAdminLessonSegment = async (lessonId, segmentId, data) => {
     endMs: { $gt: data.startMs },
   });
   if (overlappingSegments.length > 0) {
-    throw new AppError(COMMON.INVALID_DATA, 400, [
-      {
-        field: 'startMs/endMs',
-        message:
-          'The time allocated for this segment overlaps with that of other segments.',
-      },
-    ]);
+    throw new AppError(ADMIN.SEGMENT_TIME_OVERLAPS, 400);
   }
 
   segment.startMs = data.startMs;

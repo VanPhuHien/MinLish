@@ -4,7 +4,7 @@ import Topic from '../../models/topic.model.js';
 import Card from '../../models/card.model.js';
 import User from '../../models/user.model.js';
 import AppError from '../../utils/AppError.js';
-import { COMMON, ADMIN } from '../../constants/codes/index.js';
+import { COMMON, ADMIN, MESSAGES } from '../../constants/codes/index.js';
 import {
   getFileBufferFromS3,
   extractKeyFromUrl,
@@ -179,7 +179,11 @@ export const adminExportCards = async (deckId, topicId) => {
 };
 
 export const adminImportCards = async (deckId, topicId, fileUrl, mode) => {
-  const { topic } = await ensureAdminDeckTopicAccess(deckId, topicId);
+  const VALID_MODES = ['append', 'replace', 'upsert'];
+  if (!fileUrl) throw new AppError(ADMIN.FILE_URL_REQUIRED, 400);
+  if (!mode || !VALID_MODES.includes(mode))
+    throw new AppError(ADMIN.MODE_INVALID, 400);
+  await ensureAdminDeckTopicAccess(deckId, topicId);
 
   const fileKey = extractKeyFromUrl(fileUrl);
   const fileBuffer = await getFileBufferFromS3(fileKey);
@@ -187,10 +191,6 @@ export const adminImportCards = async (deckId, topicId, fileUrl, mode) => {
   const workbook = new exceljs.Workbook();
   await workbook.xlsx.load(fileBuffer);
   const worksheet = workbook.worksheets[0];
-
-  if (!worksheet) {
-    throw new AppError(COMMON.INVALID_DATA, 400, [], 'Excel file has no data');
-  }
 
   const parsedRows = [];
   let headers = [];
@@ -324,8 +324,10 @@ export const adminImportCards = async (deckId, topicId, fileUrl, mode) => {
 
   if (bulkOps.length > 0) {
     await Card.bulkWrite(bulkOps);
+  }
 
-    // Update card counts
+  // Update card counts
+  if (bulkOps.length > 0 || mode === 'replace') {
     const actualCardCount = await Card.countDocuments({ deckId, topicId });
     const diff = actualCardCount - existingCards.length;
 

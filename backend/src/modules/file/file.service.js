@@ -2,13 +2,11 @@ import {
   S3Client,
   PutObjectCommand,
   GetObjectCommand,
-  DeleteObjectCommand,
   HeadObjectCommand,
 } from '@aws-sdk/client-s3';
 import crypto from 'crypto';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import 'dotenv';
-import sharp from 'sharp';
 import AppError from '../../utils/AppError.js';
 import { FILE } from '../../constants/codes/index.js';
 import { UPLOAD_CONFIG, EXT_BY_TYPE } from '../../constants/upload.config.js';
@@ -136,63 +134,4 @@ export const createUploadPresignedUrl = async (
   );
 
   return { uploadUrl, key, url: buildPublicUrl(key), expiresIn: 60 };
-};
-
-/**
- * @param {User} data
- * @returns {String}
- */
-const resolveAvatarKey = (data) => {
-  if (!data) return null;
-  return data.profile?.avatarName || data.avatarName || null;
-};
-
-const checkValidImageExtensionFile = (file) => {
-  return file.mimetype === 'image/jpeg' || file.mimetype === 'image/png';
-};
-
-export const getImagePresignedUrl = async (data) => {
-  const key = resolveAvatarKey(data);
-  if (!key) return null;
-
-  const getObjectParams = {
-    Bucket: bucketName,
-    Key: key,
-  };
-  return await getSignedUrl(s3, new GetObjectCommand(getObjectParams), {
-    expiresIn: 60, // 60 seconds
-  });
-};
-
-/**
- * @param {User} data
- */
-export const deleteOldAndInsertNewImageInS3 = async (data, file) => {
-  if (!checkValidImageExtensionFile(file))
-    throw new AppError(FILE.INVALID_IMAGE_FORMAT, 400);
-
-  const oldKey = resolveAvatarKey(data);
-  if (oldKey) {
-    await s3.send(
-      new DeleteObjectCommand({
-        Bucket: bucketName,
-        Key: oldKey,
-      })
-    );
-  }
-
-  const imageName = randomImageName();
-  const buffer = await sharp(file.buffer)
-    .resize({ height: 500, width: 500, fit: 'contain' })
-    .toBuffer();
-
-  await s3.send(
-    new PutObjectCommand({
-      Bucket: bucketName,
-      Key: imageName,
-      Body: buffer,
-      ContentType: file.mimetype,
-    })
-  );
-  return imageName;
 };

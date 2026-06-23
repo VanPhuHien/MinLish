@@ -2,7 +2,11 @@ import mongoose from 'mongoose';
 
 const playerSchema = new mongoose.Schema(
   {
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     score: { type: Number, default: 0 },
     correctCount: { type: Number, default: 0 },
     connected: { type: Boolean, default: true },
@@ -32,7 +36,11 @@ const battleMatchSchema = new mongoose.Schema(
     },
     players: [playerSchema],
     questions: [questionSchema],
-    winnerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    winnerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
     startedAt: { type: Date },
     finishedAt: { type: Date },
   },
@@ -40,4 +48,5 @@ const battleMatchSchema = new mongoose.Schema(
 );
 
 export const BattleMatch =
-  mongoose.models.BattleMatch || mongoose.model('BattleMatch', battleMatchSchema, 'battle_matches');
+  mongoose.models.BattleMatch ||
+  mongoose.model('BattleMatch', battleMatchSchema, 'battle_matches');

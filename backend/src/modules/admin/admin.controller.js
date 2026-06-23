@@ -6,7 +6,7 @@ import { ADMIN, COMMON } from '../../constants/codes/index.js';
 import * as lessonService from '../lesson/lesson.service.js';
 import * as userService from '../user/user.service.js';
 import * as importExportService from '../deck/importExport.service.js';
-import * as dashboardService from './dashboard.service.js';
+import * as adminService from './admin.service.js';
 import { updatePasswordSchema } from '../user/user.validator.js';
 
 export const listTags = async (req, res, next) => {
@@ -104,15 +104,6 @@ export const getDeckById = async (req, res, next) => {
 
 export const updateDeck = async (req, res, next) => {
   try {
-    if (!req.body.title)
-      next(
-        new AppError(COMMON.INVALID_DATA, 400, [
-          {
-            field: 'title',
-            message: 'The title field is required',
-          },
-        ])
-      );
     const deck = await deckService.updateAdminDeck(req.params.id, req.body);
     return res
       .status(200)
@@ -517,24 +508,6 @@ export const importCards = async (req, res, next) => {
   try {
     const { deckId, topicId } = req.params;
     const { fileUrl, mode } = req.body;
-    const VALID_MODES = ['append', 'replace', 'upsert'];
-    if (!fileUrl) {
-      return next(
-        new AppError(COMMON.INVALID_DATA, 400, [
-          { field: 'fileUrl', message: 'fileUrl is required' },
-        ])
-      );
-    }
-    if (!mode || !VALID_MODES.includes(mode)) {
-      return next(
-        new AppError(COMMON.INVALID_DATA, 400, [
-          {
-            field: 'mode',
-            message: `mode must be one of: ${VALID_MODES.join(', ')}`,
-          },
-        ])
-      );
-    }
     const result = await importExportService.adminImportCards(
       deckId,
       topicId,
@@ -551,10 +524,10 @@ export const importCards = async (req, res, next) => {
 
 export const getDashboardMetrics = async (req, res, next) => {
   try {
-    const metrics = await dashboardService.getDashboardMetrics();
+    const metrics = await adminService.getDashboardMetrics();
     return res
       .status(200)
-      .json(successResponse('DASHBOARD_METRICS_SUCCESS', metrics));
+      .json(successResponse(ADMIN.DASHBOARD_METRICS_SUCCESS, metrics));
   } catch (error) {
     next(error);
   }
