@@ -59,6 +59,12 @@ export function registerBattleHandlers(io) {
       }
     });
 
+    // Host cancels their open room before anyone joins.
+    socket.on('battle:room:leave', () => {
+      cancelRoom(socket.id);
+      socket.emit('battle:room:left');
+    });
+
     socket.on('battle:answer', (payload) => handleAnswer(socket, payload));
     socket.on('battle:rejoin', (payload) => handleRejoin(socket, payload));
 
