@@ -9,7 +9,8 @@
     "profile": "Thông tin cá nhân",
     "logout": "Đăng xuất",
     "login": "Đăng nhập",
-    "savedWords": "Từ đã lưu"
+    "savedWords": "Từ đã lưu",
+    "leaderboard": "Bảng xếp hạng"
   },
   "pagination": {
     "jumpToPage": "Đi đến trang"
@@ -909,5 +910,23 @@
     "errMatchStartFailed": "Không thể bắt đầu trận đấu. Vui lòng thử lại!",
     "errMatchNotFound": "Không tìm thấy trận đấu!",
     "errUnknown": "Đã xảy ra lỗi không xác định. Vui lòng thử lại!"
+  },
+  "leaderboard": {
+    "title": "Bảng xếp hạng Cao thủ",
+    "subtitle": "Bảng xếp hạng toàn hệ thống dựa trên tổng điểm kinh nghiệm (XP) tích lũy.",
+    "yourRankCard": "Xếp hạng của bạn",
+    "yourRankLabel": "Hạng {{rank}}",
+    "yourXp": "{{xp}} XP",
+    "tableRank": "Hạng",
+    "tableUser": "Người học",
+    "tableLevel": "Cấp độ",
+    "tableXp": "Tổng XP",
+    "loading": "Đang tải bảng xếp hạng...",
+    "empty": "Chưa có dữ liệu xếp hạng.",
+    "errorLoad": "Không thể tải bảng xếp hạng. Vui lòng thử lại sau.",
+    "topLearner": "Cao thủ hàng đầu",
+    "rankingSubtitle": "Xếp hạng toàn hệ thống",
+    "currentLevel": "Cấp {{level}}",
+    "anonymousUser": "Người dùng ẩn danh"
   }
 }

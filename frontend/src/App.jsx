@@ -17,6 +17,7 @@ import SavedCardsPage from './features/flashcards/pages/SavedCardsPage'
 import ProfilePage from './features/profile/pages/ProfilePage'
 import BattleLobbyPage from './features/battle/pages/BattleLobbyPage'
 import BattlePlayPage from './features/battle/pages/BattlePlayPage'
+import LeaderboardPage from './features/gamification/pages/LeaderboardPage'
 import AdminLayout from './features/admin/layout/AdminLayout'
 import AdminDeckListPage from './features/admin/pages/deck/AdminDeckListPage'
 import AdminDeckCreatePage from './features/admin/pages/deck/AdminDeckCreatePage'
@@ -58,7 +59,7 @@ function App() {
         }
 
         // Redirect unauthenticated users trying to access private user routes
-        const privateUserPaths = ['/battle', '/battle/play', '/review']
+        const privateUserPaths = ['/battle', '/battle/play', '/review', '/leaderboard']
         if (!user && (privateUserPaths.includes(currentPath) || currentPath.startsWith('/profile'))) {
           navigate('/login')
         }
@@ -214,6 +215,8 @@ function App() {
         return <ForgotPasswordPage onNavigate={navigate} />
       case '/reset-password':
         return <ResetPasswordPage email={forgotPasswordEmail} onNavigate={navigate} />
+      case '/leaderboard':
+        return <LeaderboardPage onNavigate={navigate} />
       default:
         return (
           <main className="main-content">

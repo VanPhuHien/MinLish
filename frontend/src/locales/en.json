@@ -9,7 +9,8 @@
     "profile": "Profile",
     "logout": "Log out",
     "login": "Log in",
-    "savedWords": "Saved Words"
+    "savedWords": "Saved Words",
+    "leaderboard": "Leaderboard"
   },
   "pagination": {
     "jumpToPage": "Go to page"
@@ -909,5 +910,23 @@
     "errMatchStartFailed": "Failed to start match. Please try again!",
     "errMatchNotFound": "Match not found!",
     "errUnknown": "An unknown error occurred. Please try again!"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "subtitle": "System rankings based on total cumulative XP.",
+    "yourRankCard": "Your Rank",
+    "yourRankLabel": "Rank {{rank}}",
+    "yourXp": "{{xp}} XP",
+    "tableRank": "Rank",
+    "tableUser": "User",
+    "tableLevel": "Level",
+    "tableXp": "Total XP",
+    "loading": "Loading leaderboard...",
+    "empty": "No ranking data available.",
+    "errorLoad": "Failed to load leaderboard. Please try again later.",
+    "topLearner": "Top Learner",
+    "rankingSubtitle": "System rankings",
+    "currentLevel": "Lvl {{level}}",
+    "anonymousUser": "Anonymous User"
   }
 }

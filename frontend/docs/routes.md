@@ -145,6 +145,42 @@ Hàm điều hướng:
   - Tự động thống kê số lượng thẻ cần ôn tập trong ngày.
   - Ôn tập bằng cách lật thẻ Flashcard 3D (Xem nghĩa, từ loại, ví dụ) và đánh giá độ thuộc (Học lại, Khó, Tốt, Dễ) để thiết lập chu kỳ lặp lại tiếp theo.
 
+### /profile/saved (Trang từ vựng đã lưu)
+- **Mô tả**: Trang hiển thị danh sách toàn bộ các thẻ từ vựng đã được người dùng đánh dấu sao (starred) để ôn tập riêng biệt.
+- **Quyền truy cập**: Private (Yêu cầu đăng nhập).
+- **Chức năng**:
+  - Gọi API hiển thị danh sách từ vựng đã lưu, phân trang thông qua component `Pagination`.
+  - Hiển thị chi tiết từ vựng: Phiên âm IPA, phát âm thanh US/UK, từ loại, nghĩa, giải thích và ví dụ song ngữ.
+  - Cho phép người dùng bỏ đánh dấu sao trực tiếp (unstar) để xóa từ vựng khỏi danh sách lưu trữ.
+
+### /battle (Trang sảnh đấu trường)
+- **Mô tả**: Sảnh chờ tham gia thi đấu từ vựng đối kháng thời gian thực giữa các người dùng.
+- **Quyền truy cập**: Private (Yêu cầu đăng nhập).
+- **Chức năng**:
+  - Chọn chế độ thi đấu: MCQ (Trắc nghiệm chọn nghĩa từ) hoặc Typing (Gõ từ vựng theo định nghĩa).
+  - Cung cấp các hành động: Ghép trận nhanh trực tuyến (Quick Match), tạo phòng đấu riêng tư (Create Room) và tham gia phòng của bạn bè qua mã mời 6 chữ số (Join Room).
+  - Hiển thị lịch sử thi đấu phân trang của người dùng hiện tại (kết quả thắng/thua, tỷ số trận đấu).
+  - Kết nối và truyền nhận dữ liệu thời gian thực thông qua WebSockets (`useBattleSocket`).
+
+### /battle/play (Trang thi đấu đối kháng)
+- **Mô tả**: Giao diện thi đấu đối kháng trực tiếp theo từng vòng đấu từ vựng.
+- **Quyền truy cập**: Private (Yêu cầu đăng nhập).
+- **Chức năng**:
+  - Hiển thị màn hình đếm ngược chờ bắt đầu trận đấu cùng thông tin đối thủ.
+  - Hiển thị bảng điểm thời gian thực của cả hai người chơi.
+  - Hiển thị câu hỏi (MCQ hoặc Typing) theo từng vòng và đếm ngược thời gian trả lời.
+  - Hiển thị kết quả chi tiết từng vòng đấu và kết quả chung cuộc (Thắng/Thua/Hòa, điểm XP nhận được) khi trận đấu kết thúc.
+  - Xử lý trạng thái mất kết nối tạm thời của đối thủ thông qua lớp phủ cảnh báo đếm ngược.
+
+### /leaderboard (Trang Bảng xếp hạng)
+- **Mô tả**: Trang hiển thị bảng xếp hạng tích lũy điểm kinh nghiệm (XP) của người dùng toàn hệ thống.
+- **Quyền truy cập**: Private (Yêu cầu đăng nhập).
+- **Chức năng**:
+  - Hiển thị khu vực Podium TOP 3 người dùng đứng đầu bảng xếp hạng trực quan.
+  - Hiển thị danh sách bảng xếp hạng chi tiết phân trang bằng component `Pagination`.
+  - Hiển thị card "Xếp hạng của bạn" (Your Rank) biểu thị thứ hạng hiện tại và tổng điểm XP của chính người dùng đăng nhập.
+  - Xử lý đồng bộ ảnh đại diện placeholder theo tông màu hệ thống.
+
 ---
 
 ## 3. Routes dành riêng cho Quản trị viên (Admin)

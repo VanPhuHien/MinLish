@@ -99,12 +99,19 @@ function Header({ onNavigate, currentPath = window.location.pathname }) {
             >
               {t('header.battle')}
             </a>
+            <a
+              href="/leaderboard"
+              onClick={(e) => handleClick('/leaderboard', e)}
+              className={`header-nav-link desktop-only ${currentPath.startsWith('/leaderboard') ? 'active' : ''}`}
+            >
+              {t('header.leaderboard')}
+            </a>
 
             {/* Dropdown "More" cho mobile */}
             <div className="header-more-menu mobile-only" ref={moreDropdownRef}>
               <button 
                 onClick={() => setIsMoreOpen((prev) => !prev)} 
-                className={`header-nav-link header-more-btn ${(currentPath.startsWith('/review') || currentPath.startsWith('/battle')) ? 'active' : ''}`}
+                className={`header-nav-link header-more-btn ${(currentPath.startsWith('/review') || currentPath.startsWith('/battle') || currentPath.startsWith('/leaderboard')) ? 'active' : ''}`}
               >
                 <span>{t('header.more')}</span>
                 <svg className={`more-chevron ${isMoreOpen ? 'rotated' : ''}`} viewBox="0 0 24 24" width="14" height="14">
@@ -126,6 +133,13 @@ function Header({ onNavigate, currentPath = window.location.pathname }) {
                     className={`dropdown-item ${currentPath.startsWith('/battle') ? 'active' : ''}`}
                   >
                     {t('header.battle')}
+                  </a>
+                  <a 
+                    href="/leaderboard" 
+                    onClick={(e) => handleClick('/leaderboard', e)} 
+                    className={`dropdown-item ${currentPath.startsWith('/leaderboard') ? 'active' : ''}`}
+                  >
+                    {t('header.leaderboard')}
                   </a>
                 </div>
               )}
