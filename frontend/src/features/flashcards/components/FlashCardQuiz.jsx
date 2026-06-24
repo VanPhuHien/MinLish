@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { patchCardState } from '../flashcardsApi'
 import './FlashCardQuiz.css'
 
-function FlashCardQuiz({ cardItem, mode = 'learn', onSuccess, onHide }) {
+function FlashCardQuiz({ cardItem, mode = 'learn', onSuccess, onHide, onCardStateChange }) {
   const { t, i18n } = useTranslation()
   const [selectedOption, setSelectedOption] = useState(null)
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -46,6 +46,9 @@ function FlashCardQuiz({ cardItem, mode = 'learn', onSuccess, onHide }) {
       const response = await patchCardState(card._id, payload)
       if (response.success) {
         setIsStarred(nextStarred)
+        if (onCardStateChange) {
+          onCardStateChange(card._id, response.data)
+        }
       } else {
         setError(response.message || t('api.common.UNKNOWN_ERROR'))
       }

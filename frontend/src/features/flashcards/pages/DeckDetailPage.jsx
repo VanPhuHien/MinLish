@@ -131,6 +131,21 @@ function DeckDetailPage({ deckId, isSystem = true, onNavigate }) {
     }
   }
 
+  // Cập nhật userCardState cho thẻ khi có thay đổi (ví dụ: đánh dấu sao)
+  const handleCardStateChange = (cardId, updatedState) => {
+    setCards((prevCards) =>
+      prevCards.map((item) => {
+        if (item.card._id === cardId) {
+          return {
+            ...item,
+            userCardState: updatedState
+          }
+        }
+        return item
+      })
+    )
+  }
+
   const handleBackClick = (e) => {
     e.preventDefault()
     if (onNavigate) {
@@ -266,6 +281,7 @@ function DeckDetailPage({ deckId, isSystem = true, onNavigate }) {
                       cardItem={cards[currentCardIndex]}
                       mode="learn"
                       onSuccess={handleCardSuccess}
+                      onCardStateChange={handleCardStateChange}
                     />
                   ) : (
                     <FlashCardQuiz
@@ -273,6 +289,7 @@ function DeckDetailPage({ deckId, isSystem = true, onNavigate }) {
                       cardItem={cards[currentCardIndex]}
                       mode="learn"
                       onSuccess={handleCardSuccess}
+                      onCardStateChange={handleCardStateChange}
                     />
                   )
                 ) : (

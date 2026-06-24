@@ -102,6 +102,21 @@ function ReviewPage({ onNavigate }) {
     setTargetHideCard(null)
   }
 
+  // Cập nhật userCardState cho thẻ khi có thay đổi (ví dụ: đánh dấu sao)
+  const handleCardStateChange = (cardId, updatedState) => {
+    setCards((prevCards) =>
+      prevCards.map((item) => {
+        if (item.card._id === cardId) {
+          return {
+            ...item,
+            userCardState: updatedState
+          }
+        }
+        return item
+      })
+    )
+  }
+
   const handleBackClick = (e) => {
     e.preventDefault()
     if (onNavigate) {
@@ -202,6 +217,7 @@ function ReviewPage({ onNavigate }) {
                       mode="review"
                       onSuccess={handleCardSuccess}
                       onHide={handleRequestHide}
+                      onCardStateChange={handleCardStateChange}
                     />
                   ) : (
                     <FlashCardQuiz
@@ -210,6 +226,7 @@ function ReviewPage({ onNavigate }) {
                       mode="review"
                       onSuccess={handleCardSuccess}
                       onHide={handleRequestHide}
+                      onCardStateChange={handleCardStateChange}
                     />
                   )
                 ) : (
