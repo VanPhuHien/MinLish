@@ -2800,6 +2800,7 @@ export default {
 3. Gọi endpoint này với \`fileKey\` (key trả về ở bước 1) và \`mode\`
 
 **Định dạng file Excel (header dòng 1):** \`term\` \`translation\` \`pos\` \`phonetics\` \`explanation_vi\` \`explanation_en\` \`examples_vi\` \`examples_en\` \`imageUrl\`
+- Các cột bắt buộc phải có để import thành công: term và translation
 
 **Các mode:**
 - \`append\` – Chỉ thêm các term chưa tồn tại, bỏ qua nếu đã có.

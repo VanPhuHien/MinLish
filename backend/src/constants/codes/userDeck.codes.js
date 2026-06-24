@@ -15,11 +15,19 @@ export const USER_DECK = Object.freeze({
   DECK_DETAIL_SUCCESS: 'DECK_DETAIL_SUCCESS',
   MY_DECK_LIST_SUCCESS: 'MY_DECK_LIST_SUCCESS',
   DECK_CREATE_SUCCESS: 'DECK_CREATE_SUCCESS',
+  CARD_IMPORT_SUCCESS: 'CARD_IMPORT_SUCCESS',
   // error
   DECK_NOT_FOUND: 'DECK_NOT_FOUND',
   DECK_OR_TOPIC_NOT_FOUND: 'DECK_OR_TOPIC_NOT_FOUND',
   DECK_OR_CARD_NOT_FOUND: 'DECK_OR_CARD_NOT_FOUND',
   MAX_DECKS_REACHED: 'MAX_DECKS_REACHED',
+  FILE_URL_REQUIRED: 'FILE_URL_REQUIRED',
+  MODE_INVALID: 'MODE_INVALID',
+  IMPORT_PERMISSION_DENIED: 'IMPORT_PERMISSION_DENIED',
+  EXPORT_PERMISSION_DENIED: 'EXPORT_PERMISSION_DENIED',
+  TOPIC_NOT_BELONG_TO_DECK: 'TOPIC_NOT_BELONG_TO_DECK',
+  TOPIC_NOT_FOUND: 'TOPIC_NOT_FOUND',
+  USER_NOT_FOUND: 'USER_NOT_FOUND',
 });
 
 export const USER_DECK_MESSAGES = {
@@ -42,4 +50,12 @@ export const USER_DECK_MESSAGES = {
   DECK_OR_TOPIC_NOT_FOUND: 'Deck or topic not found',
   DECK_OR_CARD_NOT_FOUND: 'Deck or card not found',
   MAX_DECKS_REACHED: 'You have reached the maximum number of decks allowed',
+  CARD_IMPORT_SUCCESS: 'Cards imported successfully',
+  FILE_URL_REQUIRED: 'File URL is required',
+  MODE_INVALID: 'Invalid mode',
+  IMPORT_PERMISSION_DENIED: "You don't have permission to import into this deck. Only the owner can import",
+  EXPORT_PERMISSION_DENIED: "You don't have permission to export this deck",
+  TOPIC_NOT_BELONG_TO_DECK: 'Topic is not belong to the selected deck',
+  TOPIC_NOT_FOUND: 'Topic not found',
+  USER_NOT_FOUND: 'User not found',
 };

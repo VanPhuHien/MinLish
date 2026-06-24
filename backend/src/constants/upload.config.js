@@ -13,8 +13,6 @@ export const UPLOAD_CONFIG = Object.freeze({
   'deck-import': {
     prefix: 'imports',
     allowedTypes: [
-      'text/csv',
-      'application/json',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     ],
     maxSize: 5 * 1024 * 1024, // 5MB

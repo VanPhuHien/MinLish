@@ -4,7 +4,7 @@ import Topic from '../../models/topic.model.js';
 import Card from '../../models/card.model.js';
 import User from '../../models/user.model.js';
 import AppError from '../../utils/AppError.js';
-import { COMMON, ADMIN, MESSAGES } from '../../constants/codes/index.js';
+import { COMMON, ADMIN, USER_DECK } from '../../constants/codes/index.js';
 import {
   getFileBufferFromS3,
   extractKeyFromUrl,
@@ -115,75 +115,89 @@ const ensureUserDeckTopicAccess = async ({
     Topic.findById(topicId),
   ]);
 
-  if (!deck) throw new AppError('Deck not found', 404);
-  if (!topic) throw new AppError('Topic not found', 404);
+  if (!deck) throw new AppError(USER_DECK.DECK_NOT_FOUND, 404);
+  if (!topic) throw new AppError(USER_DECK.TOPIC_NOT_FOUND, 404);
 
   if (String(topic.deckId) !== String(deck._id)) {
-    throw new AppError('Topic is not belong to the selected deck', 400);
+    throw new AppError(USER_DECK.TOPIC_NOT_BELONG_TO_DECK, 400);
   }
 
   const user = await User.findById(userId);
-  if (!user) throw new AppError('User not found', 404);
+  if (!user) throw new AppError(USER_DECK.USER_NOT_FOUND, 404);
 
-  const isOwner = String(deck.ownerId) === String(user._id);
+  const isOwner = String(deck.ownerId) === String(userId);
 
   if (writeAccess && !isOwner) {
-    throw new AppError(
-      "You don't have permission to import into this deck. Only the owner can import",
-      403
-    );
+      throw new AppError(USER_DECK.IMPORT_PERMISSION_DENIED, 403);
   }
 
   if (!writeAccess) {
-    const canRead = isOwner || deck.status === 'published';
-    if (!canRead) {
-      throw new AppError("You don't have permission to export this deck", 403);
+    if (!(isOwner || deck.status === 'published')) {//Không sở hữu và không publish
+      throw new AppError(USER_DECK.EXPORT_PERMISSION_DENIED, 403);
     }
   }
 
   return { user, deck, topic, isOwner };
 };
 
-export const adminExportCards = async (deckId, topicId) => {
-  await ensureAdminDeckTopicAccess(deckId, topicId);
+const exportCards = async (deckId, topicId, isUser = false) => {
   const cards = await Card.find({ deckId, topicId }).sort({ order: 1 });
   const workbook = new exceljs.Workbook();
   const worksheet = workbook.addWorksheet('Cards');
-  worksheet.columns = [
-    { header: 'term', key: 'term', width: 20 },
-    { header: 'translation', key: 'translation', width: 25 },
-    { header: 'pos', key: 'pos', width: 15 },
-    { header: 'phonetics', key: 'phonetics', width: 25 },
-    { header: 'explanation_vi', key: 'explanation_vi', width: 30 },
-    { header: 'explanation_en', key: 'explanation_en', width: 30 },
-    { header: 'examples_vi', key: 'examples_vi', width: 30 },
-    { header: 'examples_en', key: 'examples_en', width: 30 },
-    { header: 'imageUrl', key: 'imageUrl', width: 30 },
-  ];
-  cards.forEach((card) => {
-    worksheet.addRow({
-      term: card.term,
-      translation: card.translation,
-      pos: card.pos || '',
-      phonetics: JSON.stringify(card.phonetics || []),
-      explanation_vi: card.explanation?.vi || '',
-      explanation_en: card.explanation?.en || '',
-      examples_vi: card.examples?.vi || '',
-      examples_en: card.examples?.en || '',
-      imageUrl: card.imageUrl || '',
+
+  if (isUser) {
+    worksheet.columns = [
+      { header: 'term', key: 'term', width: 20 },
+      { header: 'translation', key: 'translation', width: 25 },
+      { header: 'explanation_vi', key: 'explanation_vi', width: 30 },
+      { header: 'examples_en', key: 'examples_en', width: 30 },
+      { header: 'pos', key: 'pos', width: 15 },
+    ];
+    cards.forEach((card) => {
+      worksheet.addRow({
+        term: card.term,
+        translation: card.translation,
+        explanation_vi: card.explanation?.vi || '',
+        examples_en: card.examples?.en || '',
+        pos: card.pos || '',
+      });
     });
-  });
+  } else {
+    worksheet.columns = [
+      { header: 'term', key: 'term', width: 20 },
+      { header: 'translation', key: 'translation', width: 25 },
+      { header: 'pos', key: 'pos', width: 15 },
+      { header: 'phonetics', key: 'phonetics', width: 25 },
+      { header: 'explanation_vi', key: 'explanation_vi', width: 30 },
+      { header: 'explanation_en', key: 'explanation_en', width: 30 },
+      { header: 'examples_vi', key: 'examples_vi', width: 30 },
+      { header: 'examples_en', key: 'examples_en', width: 30 },
+      { header: 'imageUrl', key: 'imageUrl', width: 30 },
+    ];
+    cards.forEach((card) => {
+      worksheet.addRow({
+        term: card.term,
+        translation: card.translation,
+        pos: card.pos || '',
+        phonetics: JSON.stringify(card.phonetics || []),
+        explanation_vi: card.explanation?.vi || '',
+        explanation_en: card.explanation?.en || '',
+        examples_vi: card.examples?.vi || '',
+        examples_en: card.examples?.en || '',
+        imageUrl: card.imageUrl || '',
+      });
+    });
+  }
 
   const buffer = await workbook.xlsx.writeBuffer();
   return buffer;
 };
 
-export const adminImportCards = async (deckId, topicId, fileUrl, mode) => {
+const importCards = async (deckId, topicId, fileUrl, mode, codeModule, isUser = false) => {
   const VALID_MODES = ['append', 'replace', 'upsert'];
-  if (!fileUrl) throw new AppError(ADMIN.FILE_URL_REQUIRED, 400);
+  if (!fileUrl) throw new AppError(codeModule.FILE_URL_REQUIRED, 400);
   if (!mode || !VALID_MODES.includes(mode))
-    throw new AppError(ADMIN.MODE_INVALID, 400);
-  await ensureAdminDeckTopicAccess(deckId, topicId);
+    throw new AppError(codeModule.MODE_INVALID, 400);
 
   const fileKey = extractKeyFromUrl(fileUrl);
   const fileBuffer = await getFileBufferFromS3(fileKey);
@@ -240,16 +254,29 @@ export const adminImportCards = async (deckId, topicId, fileUrl, mode) => {
             term: row.term,
             translation: row.translation,
             pos: row.pos || '',
-            phonetics,
-            explanation: {
-              vi: row.explanation_vi || '',
-              en: row.explanation_en || '',
-            },
-            examples: {
-              vi: row.examples_vi || '',
-              en: row.examples_en || '',
-            },
-            imageUrl: row.imageUrl || '',
+            ...(isUser
+              ? {
+                  explanation: {
+                    vi: row.explanation_vi || '',
+                    en: '',
+                  },
+                  examples: {
+                    vi: '',
+                    en: row.examples_en || '',
+                  },
+                }
+              : {
+                  phonetics,
+                  explanation: {
+                    vi: row.explanation_vi || '',
+                    en: row.explanation_en || '',
+                  },
+                  examples: {
+                    vi: row.examples_vi || '',
+                    en: row.examples_en || '',
+                  },
+                  imageUrl: row.imageUrl || '',
+                }),
           },
         },
       });
@@ -264,21 +291,35 @@ export const adminImportCards = async (deckId, topicId, fileUrl, mode) => {
         if (row.phonetics) phonetics = JSON.parse(row.phonetics);
       } catch (e) {}
 
-      const cardData = {
-        term: row.term,
-        translation: row.translation,
-        pos: row.pos || '',
-        phonetics,
-        explanation: {
-          vi: row.explanation_vi || '',
-          en: row.explanation_en || '',
-        },
-        examples: {
-          vi: row.examples_vi || '',
-          en: row.examples_en || '',
-        },
-        imageUrl: row.imageUrl || '',
-      };
+      const cardData = isUser
+        ? {
+            term: row.term,
+            translation: row.translation,
+            pos: row.pos || '',
+            explanation: {
+              vi: row.explanation_vi || '',
+              en: '',
+            },
+            examples: {
+              vi: '',
+              en: row.examples_en || '',
+            },
+          }
+        : {
+            term: row.term,
+            translation: row.translation,
+            pos: row.pos || '',
+            phonetics,
+            explanation: {
+              vi: row.explanation_vi || '',
+              en: row.explanation_en || '',
+            },
+            examples: {
+              vi: row.examples_vi || '',
+              en: row.examples_en || '',
+            },
+            imageUrl: row.imageUrl || '',
+          };
 
       if (mode === 'append') {
         if (!existed) {
@@ -344,4 +385,24 @@ export const adminImportCards = async (deckId, topicId, fileUrl, mode) => {
   }
 
   return { summary, cardsProcessed: bulkOps.length };
+};
+
+export const adminExportCards = async (deckId, topicId) => {
+  await ensureAdminDeckTopicAccess(deckId, topicId);
+  return exportCards(deckId, topicId);
+};
+
+export const userExportCards = async (userId, deckId, topicId) => {
+  await ensureUserDeckTopicAccess({ userId, deckId, topicId, writeAccess: false });
+  return exportCards(deckId, topicId, true);
+};
+
+export const adminImportCards = async (deckId, topicId, fileUrl, mode) => {
+  await ensureAdminDeckTopicAccess(deckId, topicId);
+  return importCards(deckId, topicId, fileUrl, mode, ADMIN);
+};
+
+export const userImportCards = async (userId, deckId, topicId, fileUrl, mode) => {
+  await ensureUserDeckTopicAccess({ userId, deckId, topicId, writeAccess: true });
+  return importCards(deckId, topicId, fileUrl, mode, USER_DECK, true);
 };

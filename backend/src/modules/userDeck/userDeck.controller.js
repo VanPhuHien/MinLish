@@ -15,6 +15,7 @@ import {
   updateCardSchema,
 } from './userDeck.validator.js';
 import * as service from './userDeck.service.js';
+import * as importExportService from '../deck/importExport.service.js';
 
 export const listMyDeckCards = async (req, res, next) => {
   try {
@@ -380,6 +381,45 @@ export const createDeck = async (req, res, next) => {
     return res
       .status(201)
       .json(successResponse(USER_DECK.DECK_CREATE_SUCCESS, deck));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const exportCards = async (req, res, next) => {
+  try {
+    const { deckId, topicId } = req.params;
+    const userId = req.user.id;
+    const buffer = await importExportService.userExportCards(userId, deckId, topicId);
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="cards_${topicId}.xlsx"`
+    );
+    return res.send(buffer);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const importCards = async (req, res, next) => {
+  try {
+    const { deckId, topicId } = req.params;
+    const { fileUrl, mode } = req.body;
+    const userId = req.user.id;
+    const result = await importExportService.userImportCards(
+      userId,
+      deckId,
+      topicId,
+      fileUrl,
+      mode
+    );
+    return res
+      .status(200)
+      .json(successResponse(USER_DECK.CARD_IMPORT_SUCCESS, result));
   } catch (error) {
     next(error);
   }

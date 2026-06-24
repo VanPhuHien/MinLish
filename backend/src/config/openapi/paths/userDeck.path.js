@@ -307,6 +307,207 @@ export default {
       },
     },
   },
+  '/users/me/decks/{deckId}/topics/{topicId}/export': {
+    get: {
+      ...bearerAuth,
+      tags: [TAG],
+      summary: 'Export cards của topic',
+      description:
+        'Xuất danh sách card trong topic ra file Excel. Yêu cầu đăng nhập bằng Bearer token và phải là chủ sở hữu deck.',
+      parameters: [deckIdParam, topicIdParam],
+      responses: {
+        200: {
+          description: 'Xuất file thành công. Trả về file .xlsx',
+        },
+        400: {
+          description: 'Lỗi xác thực (Topic không thuộc Deck)',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' },
+              example: {
+                success: false,
+                code: 'TOPIC_NOT_BELONG_TO_DECK',
+                message: 'Topic is not belong to the selected deck',
+              },
+            },
+          },
+        },
+        401: { $ref: '#/components/responses/Unauthorized' },
+        403: {
+          description: 'Không có quyền export',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' },
+              example: {
+                success: false,
+                code: 'EXPORT_PERMISSION_DENIED',
+                message: "You don't have permission to export this deck",
+              },
+            },
+          },
+        },
+        404: {
+          description: 'Không tìm thấy deck, topic hoặc user',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' },
+              examples: {
+                DeckNotFound: {
+                  value: {
+                    success: false,
+                    code: 'DECK_NOT_FOUND',
+                    message: 'Deck not found',
+                  },
+                },
+                TopicNotFound: {
+                  value: {
+                    success: false,
+                    code: 'TOPIC_NOT_FOUND',
+                    message: 'Topic not found',
+                  },
+                },
+              },
+            },
+          },
+        },
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+  },
+  '/users/me/decks/{deckId}/topics/{topicId}/import': {
+    post: {
+      ...bearerAuth,
+      tags: [TAG],
+      summary: 'Import cards vào topic',
+      description:
+        'Nhập danh sách card từ file Excel vào topic. Yêu cầu đăng nhập bằng Bearer token và phải là chủ sở hữu deck.\n\n**Định dạng file Excel (header dòng 1):** `term` `translation` `explanation_vi` `examples_en` `pos`\n- Các cột bắt buộc phải có: term và translation',
+      parameters: [deckIdParam, topicIdParam],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              required: ['fileUrl', 'mode'],
+              properties: {
+                fileUrl: {
+                  type: 'string',
+                  description: 'URL của file Excel đã được upload',
+                  example: 'https://s3.amazonaws.com/.../cards.xlsx',
+                },
+                mode: {
+                  type: 'string',
+                  enum: ['append', 'replace', 'upsert'],
+                  description:
+                    'Chế độ import: append (thêm mới), replace (thay thế toàn bộ), upsert (cập nhật nếu đã tồn tại)',
+                  example: 'append',
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: 'Import cards thành công.',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/SuccessResponse' },
+              example: {
+                success: true,
+                code: 'CARD_IMPORT_SUCCESS',
+                message: 'Cards imported successfully',
+                data: {
+                  summary: {
+                    totalRows: 3,
+                    inserted: 1,
+                    updated: 2,
+                    skipped: 0,
+                    failed: 0,
+                    mode: 'upsert',
+                    requiredColumns: ['term', 'translation'],
+                    errors: [],
+                  },
+                  cardsProcessed: 3,
+                },
+              },
+            },
+          },
+        },
+        400: {
+          description: 'Dữ liệu đầu vào không hợp lệ',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' },
+              examples: {
+                fileRequired: {
+                  value: {
+                    success: false,
+                    code: 'FILE_URL_REQUIRED',
+                    message: 'File URL is required',
+                  },
+                },
+                modeInvalid: {
+                  value: {
+                    success: false,
+                    code: 'MODE_INVALID',
+                    message: 'mode must be one of: append, replace, upsert',
+                  },
+                },
+                topicNotBelong: {
+                  value: {
+                    success: false,
+                    code: 'TOPIC_NOT_BELONG_TO_DECK',
+                    message: 'Topic is not belong to the selected deck',
+                  },
+                },
+              },
+            },
+          },
+        },
+        401: { $ref: '#/components/responses/Unauthorized' },
+        403: {
+          description: 'Không có quyền import',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' },
+              example: {
+                success: false,
+                code: 'IMPORT_PERMISSION_DENIED',
+                message:
+                  "You don't have permission to import into this deck. Only the owner can import",
+              },
+            },
+          },
+        },
+        404: {
+          description: 'Không tìm thấy deck, topic',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' },
+              examples: {
+                DeckNotFound: {
+                  value: {
+                    success: false,
+                    code: 'DECK_NOT_FOUND',
+                    message: 'Deck not found',
+                  },
+                },
+                TopicNotFound: {
+                  value: {
+                    success: false,
+                    code: 'TOPIC_NOT_FOUND',
+                    message: 'Topic not found',
+                  },
+                },
+              },
+            },
+          },
+        },
+        500: { $ref: '#/components/responses/ServerError' },
+      },
+    },
+  },
 
   // ==================== CARD ====================
   '/users/me/decks/{deckId}/cards': {
