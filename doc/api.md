@@ -219,7 +219,6 @@ XP idempotent: gọi finalize nhiều lần không bị cộng trùng (`refId=ma
 - GET /api/v1/admin/lessons/{lessonId} — chi tiết lesson bất kể trạng thái.
 - PUT /api/v1/admin/lessons/{lessonId} — cập nhật lesson.
 - DELETE /api/v1/admin/lessons/{lessonId} — xóa hoặc archive lesson.
-- POST /api/v1/admin/lessons/{lessonId}/publish — publish lesson.
 
 ## **Lesson segments management**
 

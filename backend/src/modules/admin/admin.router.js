@@ -47,7 +47,6 @@ router.post('/lessons', adminController.createLesson);
 router.get('/lessons/:lessonId', adminController.getLessonById);
 router.put('/lessons/:lessonId', adminController.updateLesson);
 router.delete('/lessons/:lessonId', adminController.deleteLesson);
-router.post('/lessons/:lessonId/publish', adminController.publishLesson);
 
 router.get('/lessons/:lessonId/segments', adminController.listLessonSegments);
 router.post('/lessons/:lessonId/segments', adminController.createLessonSegment);

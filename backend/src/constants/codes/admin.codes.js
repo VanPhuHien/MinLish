@@ -32,7 +32,6 @@ export const ADMIN = Object.freeze({
   LESSON_SOURCE_URL_INVALID: 'LESSON_SOURCE_URL_INVALID',
   LESSON_SOURCE_URL_DISABLED_PLAYBACK: 'LESSON_SOURCE_URL_DISABLED_PLAYBACK',
   LESSON_STATUS_INVALID: 'LESSON_STATUS_INVALID',
-  LESSON_ALREADY_PUBLISHED: 'LESSON_ALREADY_PUBLISHED',
   LESSON_NO_SEGMENT: 'LESSON_NO_SEGMENT',
 
   SEGMENT_LIST_SUCCESS: 'SEGMENT_LIST_SUCCESS',
@@ -115,9 +114,9 @@ export const ADMIN_MESSAGES = {
   LESSON_SOURCE_URL_INVALID: 'The sourceUrl must be a valid YouTube link.',
   LESSON_STATUS_INVALID:
     'The status field must be draft, published or archived.',
-  LESSON_ALREADY_PUBLISHED: 'Lesson is already published',
   LESSON_NO_SEGMENT: 'Cannot publish a lesson with no segment',
-  LESSON_SOURCE_URL_DISABLED_PLAYBACK: 'Video is unavailable. Video owner has disabled playback on other websites',
+  LESSON_SOURCE_URL_DISABLED_PLAYBACK:
+    'Video is unavailable. Video owner has disabled playback on other websites',
 
   SEGMENT_LIST_SUCCESS: 'Segments retrieved successfully',
   SEGMENT_CREATED_SUCCESS: 'Segment created successfully',

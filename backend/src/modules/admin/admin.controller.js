@@ -348,17 +348,6 @@ export const deleteLesson = async (req, res, next) => {
   }
 };
 
-export const publishLesson = async (req, res, next) => {
-  try {
-    const lesson = await lessonService.publishAdminLesson(req.params.lessonId);
-    return res
-      .status(200)
-      .json(successResponse(ADMIN.LESSON_PUBLISHED_SUCCESS, lesson));
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const listLessonSegments = async (req, res, next) => {
   try {
     const segments = await lessonService.listAdminLessonSegments(

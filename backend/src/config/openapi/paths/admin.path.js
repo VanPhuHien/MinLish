@@ -1474,52 +1474,6 @@ export default {
       },
     },
   },
-  '/admin/lessons/{lessonId}/publish': {
-    post: {
-      tags: ['Admin lessons'],
-      summary: 'Publish lesson',
-      description:
-        'Chuyển trạng thái lesson từ draft sang published và ghi nhận publishedAt.',
-      security: [{ BearerAuth: [] }],
-      parameters: [
-        {
-          in: 'path',
-          name: 'lessonId',
-          required: true,
-          schema: { type: 'string' },
-          description: 'ID của lesson',
-        },
-      ],
-      responses: {
-        200: {
-          description: 'Publish lesson thành công',
-          content: {
-            'application/json': {
-              schema: {
-                allOf: [
-                  { $ref: '#/components/schemas/LessonResponse' },
-                  {
-                    type: 'object',
-                    properties: {
-                      message: {
-                        type: 'string',
-                        example: 'Publish lesson thành công',
-                      },
-                    },
-                  },
-                ],
-              },
-            },
-          },
-        },
-        400: LessonPublishBadRequest,
-        404: LessonNotFound,
-        401: { $ref: '#/components/responses/Unauthorized' },
-        403: { $ref: '#/components/responses/Forbidden' },
-        500: { $ref: '#/components/responses/ServerError' },
-      },
-    },
-  },
   '/admin/lessons/{lessonId}/segments': {
     get: {
       tags: ['Admin lesson segments'],

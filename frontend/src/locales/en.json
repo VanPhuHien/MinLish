@@ -690,7 +690,6 @@
       "LESSON_SOURCE_URL_INVALID": "The sourceUrl must be a valid YouTube link.",
       "LESSON_SOURCE_URL_DISABLED_PLAYBACK": "Video is unavailable. Video owner has disabled playback on other websites.",
       "LESSON_STATUS_INVALID": "The status field must be draft, published or archived.",
-      "LESSON_ALREADY_PUBLISHED": "Lesson is already published.",
       "LESSON_NO_SEGMENT": "Cannot publish a lesson with no segment.",
       "SEGMENT_NOT_FOUND": "Segment not found",
       "SEGMENT_START_MS_INVALID": "The startMs field is mandatory, must be a number and >= 0.",
