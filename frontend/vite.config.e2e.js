@@ -7,8 +7,9 @@ export default defineConfig({
   envPrefix: ['VITE_', 'OTP_', 'API_'],
   test: {
     globals: true,
-    environment: 'jsdom',
-    setupFiles: './src/setupTests.js',
-    include: ['tests/unit/**/*.test.{js,jsx}'],
+    testTimeout: 60000,
+    hookTimeout: 50000,
+    include: ['tests/e2e/**/*.e2e.test.{js,jsx}'],
+    globalSetup: './tests/e2e/globalSetup.js',
   },
 })
