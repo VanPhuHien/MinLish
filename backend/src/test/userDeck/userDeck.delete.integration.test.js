@@ -66,7 +66,7 @@ describe('DELETE /api/v1/users/me/decks/:deckId', () => {
         .set('Authorization', `Bearer ${validToken}`);
 
       expect(res.status).toBe(200);
-      expect(res.body.message).toBe('Xóa deck thành công.');
+      expect(res.body.message).toBe('Deck deleted successfully');
 
       const inDb = await Deck.findById(deck._id);
       expect(inDb).toBeNull();

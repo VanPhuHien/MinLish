@@ -90,7 +90,7 @@ describe('DELETE /api/v1/users/me/decks/:deckId/topics/:topicId', () => {
         .set('Authorization', `Bearer ${validToken}`);
 
       expect(res.status).toBe(200);
-      expect(res.body.message).toBe('Xóa topic thành công.');
+      expect(res.body.message).toBe('Topic deleted successfully');
       expect(await Topic.findById(topic._id)).toBeNull();
     });
 

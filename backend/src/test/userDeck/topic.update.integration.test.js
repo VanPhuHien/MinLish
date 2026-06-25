@@ -74,7 +74,7 @@ describe('PUT /api/v1/users/me/decks/:deckId/topics/:topicId', () => {
         .send({ name: 'New Name' });
 
       expect(res.status).toBe(200);
-      expect(res.body.message).toBe('Cập nhật topic thành công.');
+      expect(res.body.message).toBe('Topic updated successfully');
       expect(res.body.data.name).toBe('New Name');
 
       const inDb = await Topic.findById(topic._id);

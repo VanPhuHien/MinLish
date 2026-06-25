@@ -308,7 +308,7 @@ describe('GET /api/v1/decks/:deckId/topics', () => {
       expect(res.status).toBe(200);
       expect(res.body).toMatchObject({
         success: true,
-        message: 'Lấy danh sách topic trong deck thành công.',
+        message: 'Deck topics retrieved successfully',
         data: {
           deck: { title: 'Travel', slug: 'travel' },
           topics: expect.any(Array),

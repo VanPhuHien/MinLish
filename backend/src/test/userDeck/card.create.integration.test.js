@@ -79,7 +79,7 @@ describe('POST /api/v1/users/me/decks/:deckId/cards', () => {
         .send({ topicId: topic._id, term: 'family', translation: 'gia đình' });
 
       expect(res.status).toBe(201);
-      expect(res.body.message).toBe('Tạo card thành công.');
+      expect(res.body.message).toBe('Card created successfully');
       expect(res.body.data.term).toBe('family');
       expect(res.body.data.translation).toBe('gia đình');
       expect(res.body.data.deckId).toBe(deck._id.toString());

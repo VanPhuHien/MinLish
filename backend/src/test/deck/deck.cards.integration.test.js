@@ -250,7 +250,7 @@ describe('GET /api/v1/decks/:deckId/topics/:topicId/cards', () => {
       expect(res.status).toBe(200);
       expect(res.body).toMatchObject({
         success: true,
-        message: 'Lấy danh sách card trong topic thành công.',
+        message: 'Topic cards retrieved successfully',
         data: { cards: expect.any(Array) },
       });
       expect(res.body.data.cards[0]).toMatchObject({

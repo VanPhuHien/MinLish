@@ -90,7 +90,7 @@ describe('DELETE /api/v1/users/me/decks/:deckId/cards/:cardId', () => {
         .set('Authorization', `Bearer ${validToken}`);
 
       expect(res.status).toBe(200);
-      expect(res.body.message).toBe('Xóa card thành công.');
+      expect(res.body.message).toBe('Card deleted successfully');
       expect(await Card.findById(card._id)).toBeNull();
     });
 

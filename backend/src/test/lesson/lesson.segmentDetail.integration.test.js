@@ -16,6 +16,9 @@ const validToken = generateToken(
   '15m'
 );
 
+const authGet = (u) =>
+  request(app).get(u).set('Authorization', `Bearer ${validToken}`);
+
 beforeAll(async () => {
   mongod = await MongoMemoryServer.create();
   await mongoose.connect(mongod.getUri());
@@ -56,12 +59,21 @@ const url = (lessonId, segmentId) =>
   `/api/v1/lessons/${lessonId}/segments/${segmentId}`;
 
 describe('GET /api/v1/lessons/:lessonId/segments/:segmentId', () => {
-  describe('optional auth + userProgress', () => {
-    it('returns the segment without a token (userProgress null)', async () => {
+  describe('auth + userProgress', () => {
+    it('returns 401 without a token', async () => {
       const lesson = await makeLesson();
       const seg = await makeSegment(lesson._id);
 
       const res = await request(app).get(url(lesson._id, seg._id));
+
+      expect(res.status).toBe(401);
+    });
+
+    it('returns the segment with userProgress null when no progress', async () => {
+      const lesson = await makeLesson();
+      const seg = await makeSegment(lesson._id);
+
+      const res = await authGet(url(lesson._id, seg._id));
 
       expect(res.status).toBe(200);
       expect(res.body.data.segment._id).toBe(seg._id.toString());
@@ -78,9 +90,7 @@ describe('GET /api/v1/lessons/:lessonId/segments/:segmentId', () => {
         shadowing: { attemptCount: 1, bestScore: 78, completed: false },
       });
 
-      const res = await request(app)
-        .get(url(lesson._id, seg._id))
-        .set('Authorization', `Bearer ${validToken}`);
+      const res = await authGet(url(lesson._id, seg._id));
 
       const up = res.body.data.userProgress;
       expect(up).not.toBeNull();
@@ -97,14 +107,12 @@ describe('GET /api/v1/lessons/:lessonId/segments/:segmentId', () => {
         dictation: { bestScore: 99 },
       });
 
-      const res = await request(app)
-        .get(url(lesson._id, seg._id))
-        .set('Authorization', `Bearer ${validToken}`);
+      const res = await authGet(url(lesson._id, seg._id));
 
       expect(res.body.data.userProgress).toBeNull();
     });
 
-    it('treats an invalid token as anonymous (200, not 401)', async () => {
+    it('returns 401 for an invalid token', async () => {
       const lesson = await makeLesson();
       const seg = await makeSegment(lesson._id);
 
@@ -112,8 +120,7 @@ describe('GET /api/v1/lessons/:lessonId/segments/:segmentId', () => {
         .get(url(lesson._id, seg._id))
         .set('Authorization', 'Bearer not.a.valid.token');
 
-      expect(res.status).toBe(200);
-      expect(res.body.data.userProgress).toBeNull();
+      expect(res.status).toBe(401);
     });
   });
 
@@ -122,7 +129,7 @@ describe('GET /api/v1/lessons/:lessonId/segments/:segmentId', () => {
       const lesson = await makeLesson();
       const ghost = new mongoose.Types.ObjectId();
 
-      const res = await request(app).get(url(lesson._id, ghost));
+      const res = await authGet(url(lesson._id, ghost));
 
       expect(res.status).toBe(404);
     });
@@ -132,7 +139,7 @@ describe('GET /api/v1/lessons/:lessonId/segments/:segmentId', () => {
       const otherLesson = await makeLesson({ slug: 'b' });
       const seg = await makeSegment(otherLesson._id);
 
-      const res = await request(app).get(url(lesson._id, seg._id));
+      const res = await authGet(url(lesson._id, seg._id));
 
       expect(res.status).toBe(404);
     });
@@ -141,7 +148,7 @@ describe('GET /api/v1/lessons/:lessonId/segments/:segmentId', () => {
       const lesson = await makeLesson({ status: 'draft' });
       const seg = await makeSegment(lesson._id);
 
-      const res = await request(app).get(url(lesson._id, seg._id));
+      const res = await authGet(url(lesson._id, seg._id));
 
       expect(res.status).toBe(404);
     });
@@ -150,7 +157,7 @@ describe('GET /api/v1/lessons/:lessonId/segments/:segmentId', () => {
   describe('input validation', () => {
     it('returns 400 for invalid segmentId', async () => {
       const lesson = await makeLesson();
-      const res = await request(app).get(
+      const res = await authGet(
         `/api/v1/lessons/${lesson._id}/segments/notanid`
       );
 
@@ -168,12 +175,12 @@ describe('GET /api/v1/lessons/:lessonId/segments/:segmentId', () => {
       const lesson = await makeLesson();
       const seg = await makeSegment(lesson._id, 3000);
 
-      const res = await request(app).get(url(lesson._id, seg._id));
+      const res = await authGet(url(lesson._id, seg._id));
 
       expect(res.status).toBe(200);
       expect(res.body).toMatchObject({
         success: true,
-        message: 'Lấy chi tiết segment thành công',
+        message: 'Segment detail retrieved successfully',
         data: {
           segment: { startMs: 3000 },
         },

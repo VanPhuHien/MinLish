@@ -46,7 +46,7 @@ describe('GET /api/v1/decks', () => {
       expect(res.status).toBe(200);
       expect(res.body).toMatchObject({
         success: true,
-        message: 'Lấy danh sách deck thành công.',
+        message: 'Decks retrieved successfully',
         data: {
           decks: expect.any(Array),
           pagination: {

@@ -60,7 +60,7 @@ describe('PUT /api/v1/users/me/decks/:deckId', () => {
         .send({ title: 'New Title' });
 
       expect(res.status).toBe(200);
-      expect(res.body.message).toBe('Cập nhật deck thành công.');
+      expect(res.body.message).toBe('Deck updated successfully');
       expect(res.body.data.title).toBe('New Title');
 
       const inDb = await Deck.findById(deck._id);

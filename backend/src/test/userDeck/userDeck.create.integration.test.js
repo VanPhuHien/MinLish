@@ -47,7 +47,7 @@ describe('POST /api/v1/users/me/decks', () => {
       expect(res.status).toBe(201);
       expect(res.body).toMatchObject({
         success: true,
-        message: 'Tạo deck thành công.',
+        message: 'Deck created successfully',
         data: {
           title: 'My Words',
           ownerType: 'user',
@@ -117,7 +117,7 @@ describe('POST /api/v1/users/me/decks', () => {
 
       expect(fourth.status).toBe(400);
       expect(fourth.body.success).toBe(false);
-      expect(fourth.body.message).toMatch(/tối đa 3/i);
+      expect(fourth.body.message).toMatch(/at most 3/i);
 
       // Still only 3 in DB
       const count = await Deck.countDocuments({ ownerId: testUserId });

@@ -51,7 +51,7 @@ describe('GET /api/v1/lessons', () => {
       expect(res.status).toBe(200);
       expect(res.body).toMatchObject({
         success: true,
-        message: 'Lấy danh sách bài học thành công.',
+        message: 'Lessons retrieved successfully',
         data: {
           lessons: expect.any(Array),
           pagination: {
@@ -105,10 +105,7 @@ describe('GET /api/v1/lessons', () => {
       await UserLessonProgress.create({
         userId: testUserId,
         lessonId: lesson._id,
-        status: 'in_progress',
-        progressPct: 35,
-        lastStartMs: 4000,
-        selectedMode: 'dictation',
+        dictation: { status: 'in_progress', progressPct: 35, lastStartMs: 4000 },
       });
 
       const res = await request(app)
@@ -117,8 +114,9 @@ describe('GET /api/v1/lessons', () => {
 
       const up = res.body.data.lessons[0].userProgress;
       expect(up).not.toBeNull();
-      expect(up.progressPct).toBe(35);
-      expect(up.lastStartMs).toBe(4000);
+      expect(up.dictation.progressPct).toBe(35);
+      expect(up.dictation.lastStartMs).toBe(4000);
+      expect(up.dictation.status).toBe('in_progress');
     });
 
     it("does not attach another user's progress", async () => {

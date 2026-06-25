@@ -34,7 +34,7 @@ describe('GET /api/v1/cefr-levels', () => {
     const res = await request(app).get(url);
 
     expect(res.status).toBe(200);
-    expect(res.body.message).toBe('Lấy danh sách CEFR level thành công.');
+    expect(res.body.message).toBe('CEFR levels retrieved successfully');
     expect(res.body.data.map((l) => l.code)).toEqual(['a1', 'a2', 'b1']);
   });
 

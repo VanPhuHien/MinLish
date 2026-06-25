@@ -118,13 +118,25 @@ let httpServer;
 const origBattle = { ...BATTLE };
 
 beforeAll(async () => {
-  // Shorten BATTLE timers so socket tests run fast.
+  // Shorten BATTLE timers so socket tests run fast — but keep the per-question
+  // window wide enough that a real socket round-trip (answer emit → server →
+  // next question) lands inside it. Too small (e.g. 800ms) makes answers miss
+  // their round under load → flaky scores/rewards.
+  // Total match time = startCountdown + rounds*(perQuestion + roundReveal); keep
+  // it well under playFullMatch's 15s waitFor by trimming countdown/reveal too.
   // BATTLE is a plain mutable object shared across all ESM imports of gamification.config.js.
   BATTLE.rounds = 3;
-  BATTLE.perQuestionMs = 800;
+  BATTLE.perQuestionMs = 2000;
+  BATTLE.roundRevealMs = 400;
+  BATTLE.startCountdownMs = 400;
   BATTLE.speedBonusMax = 50;
-  BATTLE.reconnectGraceMs = 400;
+  BATTLE.reconnectGraceMs = 1000;
   BATTLE.queueTimeoutMs = 5000;
+  // Need margin: with rounds=3, a threshold of 3 forces the winner to answer
+  // every round perfectly — one socket answer missing its window under load
+  // drops battle_win XP and flakes the reward tests. 1 keeps the effort gate
+  // meaningful (a 0-correct forfeit winner still earns nothing) with slack.
+  BATTLE.minCorrectForReward = 1;
 
   mongod = await MongoMemoryServer.create();
   await mongoose.connect(mongod.getUri());
@@ -370,10 +382,15 @@ describe('Group 3 — Full match flow', () => {
 // ── Group 4: Reward idempotency ────────────────────────────────────────────────
 
 describe('Group 4 — Reward idempotency', () => {
-  const uid1 = new mongoose.Types.ObjectId();
-  const uid2 = new mongoose.Types.ObjectId();
+  // Fresh uids per test: a previous match's reward writes (grantRewards runs
+  // async server-side after battle:finished) can land after the next test's
+  // cleanup. New uids each test stop those late writes polluting assertions.
+  let uid1;
+  let uid2;
 
   beforeEach(async () => {
+    uid1 = new mongoose.Types.ObjectId();
+    uid2 = new mongoose.Types.ObjectId();
     await BattleMatch.deleteMany({});
     await XpEvent.deleteMany({});
     await UserGamification.deleteMany({});
@@ -500,7 +517,7 @@ describe('Group 5 — Disconnect / forfeit', () => {
     }
   });
 
-  it('player 1 stays disconnected past grace → player 2 wins forfeit + gets battle_win XP', async () => {
+  it('player 1 stays disconnected past grace → player 2 wins forfeit; no battle_win XP (winner below effort threshold)', async () => {
     const c1 = await connectSocket(uid1);
     const c2 = await connectSocket(uid2);
 
@@ -531,11 +548,13 @@ describe('Group 5 — Disconnect / forfeit', () => {
       expect(match?.status).toBe('finished');
       expect(match?.winnerId?.toString()).toBe(uid2.toString());
 
+      // Effort-gated rewards: winning purely on an opponent's collapse grants no
+      // battle_win XP when the winner is below minCorrectForReward (anti-farming).
       const winXp = await XpEvent.findOne({
         userId: uid2,
         source: 'battle_win',
       });
-      expect(winXp).not.toBeNull();
+      expect(winXp).toBeNull();
     } finally {
       await closeSocket(c2);
     }

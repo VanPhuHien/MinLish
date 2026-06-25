@@ -71,7 +71,7 @@ describe('GET /api/v1/users/me/decks/:deckId/topics/:topicId', () => {
         .set('Authorization', `Bearer ${validToken}`);
 
       expect(res.status).toBe(200);
-      expect(res.body.message).toBe('Lấy chi tiết topic thành công.');
+      expect(res.body.message).toBe('Topic detail retrieved successfully');
       expect(res.body.data._id).toBe(topic._id.toString());
       expect(res.body.data.name).toBe('Family');
       expect(res.body.data.deckId).toBe(deck._id.toString());

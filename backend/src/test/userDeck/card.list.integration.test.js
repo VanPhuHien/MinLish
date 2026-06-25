@@ -83,7 +83,7 @@ describe('GET /api/v1/users/me/decks/:deckId/cards', () => {
         .set('Authorization', `Bearer ${validToken}`);
 
       expect(res.status).toBe(200);
-      expect(res.body.message).toBe('Lấy danh sách card thành công.');
+      expect(res.body.message).toBe('Cards retrieved successfully');
       expect(res.body.data.cards.map((c) => c.term)).toEqual(['a', 'b']);
       expect(res.body.data.pagination).toMatchObject({
         page: 1,

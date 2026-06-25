@@ -75,7 +75,7 @@ describe('GET /api/v1/users/me/decks/:deckId/topics', () => {
         .set('Authorization', `Bearer ${validToken}`);
 
       expect(res.status).toBe(200);
-      expect(res.body.message).toBe('Lấy danh sách topic thành công.');
+      expect(res.body.message).toBe('Topics retrieved successfully');
       expect(res.body.data.deck._id).toBe(deck._id.toString());
       expect(res.body.data.topics).toEqual([]);
     });

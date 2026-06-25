@@ -62,7 +62,7 @@ describe('POST /api/v1/users/me/decks/:deckId/topics', () => {
         .send({ name: 'Family' });
 
       expect(res.status).toBe(201);
-      expect(res.body.message).toBe('Tạo topic thành công.');
+      expect(res.body.message).toBe('Topic created successfully');
       expect(res.body.data.name).toBe('Family');
       expect(res.body.data.deckId).toBe(deck._id.toString());
       expect(res.body.data.order).toBe(1);

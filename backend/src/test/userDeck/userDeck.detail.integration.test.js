@@ -128,7 +128,7 @@ describe('GET /api/v1/users/me/decks/:deckId', () => {
       expect(res.status).toBe(200);
       expect(res.body).toMatchObject({
         success: true,
-        message: 'Lấy chi tiết deck thành công.',
+        message: 'Deck detail retrieved successfully',
         data: { title: 'X', ownerType: 'user', status: 'published' },
       });
       expect(res.body.data._id).toBe(deck._id.toString());

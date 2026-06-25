@@ -39,7 +39,7 @@ describe('GET /api/v1/tags', () => {
     const res = await request(app).get(url);
 
     expect(res.status).toBe(200);
-    expect(res.body.message).toBe('Lấy danh sách tag thành công.');
+    expect(res.body.message).toBe('Tags retrieved successfully');
     expect(res.body.data.map((t) => t.label)).toEqual(['Daily life', 'Movie']);
   });
 

@@ -85,7 +85,7 @@ describe('GET /api/v1/users/me/decks/:deckId/cards/:cardId', () => {
         .set('Authorization', `Bearer ${validToken}`);
 
       expect(res.status).toBe(200);
-      expect(res.body.message).toBe('Lấy chi tiết card thành công.');
+      expect(res.body.message).toBe('Card detail retrieved successfully');
       expect(res.body.data._id).toBe(card._id.toString());
       expect(res.body.data.term).toBe('family');
       expect(res.body.data.deckId).toBe(deck._id.toString());

@@ -173,7 +173,7 @@ describe('GET /api/v1/decks/:deckId', () => {
       expect(res.status).toBe(200);
       expect(res.body).toMatchObject({
         success: true,
-        message: 'Lấy chi tiết deck thành công.',
+        message: 'Deck detail retrieved successfully',
         data: {
           title: 'Travel Vocabulary',
           slug: 'travel-vocabulary',

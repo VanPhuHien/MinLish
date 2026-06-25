@@ -90,7 +90,7 @@ describe('PUT /api/v1/users/me/decks/:deckId/cards/:cardId', () => {
         .send({ term: 'work', translation: 'công việc' });
 
       expect(res.status).toBe(200);
-      expect(res.body.message).toBe('Cập nhật card thành công.');
+      expect(res.body.message).toBe('Card updated successfully');
       expect(res.body.data.term).toBe('work');
       expect(res.body.data.translation).toBe('công việc');
     });

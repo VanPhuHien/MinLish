@@ -80,7 +80,7 @@ describe('GET /api/v1/vocabulary/search', () => {
         .set('Authorization', `Bearer ${validToken}`);
 
       expect(res.status).toBe(200);
-      expect(res.body.message).toBe('Tìm kiếm từ vựng thành công.');
+      expect(res.body.message).toBe('Vocabulary search successful');
       expect(res.body.data).toHaveLength(1);
       expect(res.body.data[0]).toMatchObject({
         term: 'family',
