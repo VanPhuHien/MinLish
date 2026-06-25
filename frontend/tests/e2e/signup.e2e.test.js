@@ -69,9 +69,13 @@ describe('Đăng ký & Xác thực OTP - E2E Test bằng Selenium', () => {
     // 3. Chờ chuyển hướng đến trang verify-email
     await driver.wait(until.urlContains('/verify-email'), 10000)
 
-    // 4. Chờ 1.5s để backend tạo OTP và lưu vào Redis, sau đó lấy mã OTP từ Redis
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    const otpCode = await getOtpFromRedis(uniqueEmail)
+    // 4. Lấy mã OTP từ Redis (thực hiện truy vấn lặp tối đa 5 giây cho đến khi nhận được giá trị)
+    let otpCode = null
+    for (let attempt = 0; attempt < 10; attempt++) {
+      otpCode = await getOtpFromRedis(uniqueEmail)
+      if (otpCode) break
+      await new Promise((resolve) => setTimeout(resolve, 500))
+    }
     expect(otpCode).toBeTruthy()
     expect(otpCode.length).toBe(6)
 

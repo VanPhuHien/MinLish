@@ -51,7 +51,11 @@ describe('Quản trị viên Admin - E2E Test bằng Selenium', () => {
       // 3. Kiểm thử Validation: Nhấn Lưu khi tiêu đề trống
       await driver.executeScript('arguments[0].click();', saveBtn)
       const errorSpan = await driver.wait(until.elementLocated(By.className('input-error-message')), 10000)
-      const errorText = await errorSpan.getText()
+      let errorText = ''
+      await driver.wait(async () => {
+        errorText = await errorSpan.getText()
+        return errorText.trim().length > 0
+      }, 5000)
       expect(errorText).toBeTruthy()
 
       // 4. Điền thông tin hợp lệ
@@ -102,7 +106,11 @@ describe('Quản trị viên Admin - E2E Test bằng Selenium', () => {
 
       // 3. Xác minh xuất hiện thông báo lỗi của URL nguồn
       const errorAlert = await driver.wait(until.elementLocated(By.className('admin-alert error')), 10000)
-      const errorText1 = await errorAlert.getText()
+      let errorText1 = ''
+      await driver.wait(async () => {
+        errorText1 = await errorAlert.getText()
+        return errorText1.trim().length > 0
+      }, 5000)
       expect(errorText1).toBeTruthy()
 
       // 4. Nhập sai định dạng URL Youtube và kiểm tra validation
@@ -113,7 +121,11 @@ describe('Quản trị viên Admin - E2E Test bằng Selenium', () => {
       await driver.executeScript('arguments[0].click();', currentSaveBtn1)
 
       const errorAlert2 = await driver.wait(until.elementLocated(By.className('admin-alert error')), 10000)
-      const errorText2 = await errorAlert2.getText()
+      let errorText2 = ''
+      await driver.wait(async () => {
+        errorText2 = await errorAlert2.getText()
+        return errorText2.trim().length > 0
+      }, 5000)
       expect(errorText2).toBeTruthy()
 
       // 5. Nhập URL Youtube hợp lệ và chọn CEFR level

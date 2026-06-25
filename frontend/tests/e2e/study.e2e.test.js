@@ -119,9 +119,12 @@ describe('Học từ vựng & Đồng bộ Starred - E2E Test bằng Selenium', 
     // 7. Click để thay đổi trạng thái Star
     try {
       await driver.executeScript("arguments[0].click();", starBtn)
-      await new Promise((resolve) => setTimeout(resolve, 1500)) // Đợi API gọi xong
-      const activeStarBtn = await driver.findElement(By.className('flashcard-star-btn'))
-      const starredClassAfterClick = await activeStarBtn.getAttribute('class')
+      let starredClassAfterClick = ''
+      await driver.wait(async () => {
+        const activeStarBtn = await driver.findElement(By.className('flashcard-star-btn'))
+        starredClassAfterClick = await activeStarBtn.getAttribute('class')
+        return starredClassAfterClick.includes('starred') === !isInitiallyStarred
+      }, 10000)
       console.log('--- E2E Debug: starredClassAfterClick =', starredClassAfterClick)
       expect(starredClassAfterClick.includes('starred')).toBe(!isInitiallyStarred)
     } catch (err) {
@@ -146,9 +149,12 @@ describe('Học từ vựng & Đồng bộ Starred - E2E Test bằng Selenium', 
 
     // 10. Click vào ngôi sao ở Quiz để đổi ngược lại trạng thái
     await driver.executeScript("arguments[0].click();", quizStarBtn)
-    await new Promise((resolve) => setTimeout(resolve, 1500)) // Đợi API
-    const activeQuizStarBtn = await driver.findElement(By.className('quiz-star-btn'))
-    const quizStarredClassAfterClick = await activeQuizStarBtn.getAttribute('class')
+    let quizStarredClassAfterClick = ''
+    await driver.wait(async () => {
+      const activeQuizStarBtn = await driver.findElement(By.className('quiz-star-btn'))
+      quizStarredClassAfterClick = await activeQuizStarBtn.getAttribute('class')
+      return quizStarredClassAfterClick.includes('starred') === isInitiallyStarred
+    }, 10000)
     expect(quizStarredClassAfterClick.includes('starred')).toBe(isInitiallyStarred)
 
     // 11. Chuyển ngược lại chế độ Flashcard

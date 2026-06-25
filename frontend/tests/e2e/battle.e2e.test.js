@@ -76,9 +76,13 @@ describe('Đối kháng từ vựng Battle - E2E Test bằng Selenium', () => {
     await submitBtn.click()
 
     await driver.wait(until.urlContains('/verify-email'), 10000)
-    await new Promise((resolve) => setTimeout(resolve, 1500))
 
-    const otpCode = await getOtpFromRedis(email)
+    let otpCode = null
+    for (let attempt = 0; attempt < 10; attempt++) {
+      otpCode = await getOtpFromRedis(email)
+      if (otpCode) break
+      await new Promise((resolve) => setTimeout(resolve, 500))
+    }
     expect(otpCode).toBeTruthy()
 
     for (let i = 0; i < 6; i++) {
