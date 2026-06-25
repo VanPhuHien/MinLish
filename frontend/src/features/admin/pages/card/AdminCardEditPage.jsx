@@ -45,7 +45,8 @@ function AdminCardEditPage({ deckId, topicId, cardId, onNavigate }) {
     explanationVi: '',
     exampleEn: '',
     exampleVi: '',
-    imageUrl: ''
+    imageUrl: '',
+    order: null
   })
   const [phoneticDraft, setPhoneticDraft] = useState(emptyPhoneticDraft)
   const [editingPronunciationIndex, setEditingPronunciationIndex] = useState(null)
@@ -88,7 +89,8 @@ function AdminCardEditPage({ deckId, topicId, cardId, onNavigate }) {
           explanationVi: card.explanation?.vi || '',
           exampleEn: card.examples?.en || '',
           exampleVi: card.examples?.vi || '',
-          imageUrl: card.imageUrl || ''
+          imageUrl: card.imageUrl || '',
+          order: card.order ?? null
         })
       } catch (error) {
         setErrorMsg(error.response?.data?.message || error.message)
@@ -123,7 +125,8 @@ function AdminCardEditPage({ deckId, topicId, cardId, onNavigate }) {
       en: form.exampleEn.trim(),
       vi: form.exampleVi.trim()
     },
-    imageUrl: form.imageUrl
+    imageUrl: form.imageUrl,
+    ...(form.order !== null && form.order !== undefined && { order: form.order })
   })
 
   const uploadFile = async (file, purpose) => {
@@ -247,7 +250,7 @@ function AdminCardEditPage({ deckId, topicId, cardId, onNavigate }) {
 
   const openEditPronunciationModal = (index) => {
     const phonetic = form.phonetics[index] || emptyPhoneticDraft
-    
+
     // Nếu có audio URL nhưng không có fileName, extract từ URL
     let fileName = phonetic.fileName || ''
     if (!fileName && phonetic.audio) {
@@ -258,7 +261,7 @@ function AdminCardEditPage({ deckId, topicId, cardId, onNavigate }) {
         fileName = phonetic.audio.split('/').pop() || ''
       }
     }
-    
+
     setPhoneticDraft({
       ...phonetic,
       fileName
@@ -274,8 +277,8 @@ function AdminCardEditPage({ deckId, topicId, cardId, onNavigate }) {
       phonetics: editingPronunciationIndex === null
         ? [...prev.phonetics, { ...phoneticDraft }]
         : prev.phonetics.map((item, index) =>
-            index === editingPronunciationIndex ? { ...item, ...phoneticDraft } : item
-          )
+          index === editingPronunciationIndex ? { ...item, ...phoneticDraft } : item
+        )
     }))
     setIsPronunciationModalOpen(false)
     setEditingPronunciationIndex(null)
@@ -353,6 +356,7 @@ function AdminCardEditPage({ deckId, topicId, cardId, onNavigate }) {
       <div className="admin-card-form-grid">
         <section className="admin-card-form-panel">
           <h2>{t('admin.cardInfoSection')}</h2>
+
           <Input
             id="card-term"
             label={t('admin.cardTermLabel').toUpperCase()}
@@ -367,13 +371,29 @@ function AdminCardEditPage({ deckId, topicId, cardId, onNavigate }) {
             }
           />
 
-          <label className="admin-card-field">
-            <span>{t('admin.cardPosLabel')}</span>
-            <select value={form.pos} onChange={(event) => updateField('pos', event.target.value)} className={errors.pos ? 'has-error' : ''}>
-              {POS_OPTIONS.map((pos) => <option key={pos} value={pos}>{t(`admin.${posToKey(pos)}`)}</option>)}
-            </select>
-            {errors.pos && <small>{errors.pos}</small>}
-          </label>
+          <div className="admin-card-pos-order-row">
+            <label className="admin-card-field">
+              <span>{t('admin.cardPosLabel')}</span>
+              <select value={form.pos} onChange={(event) => updateField('pos', event.target.value)} className={errors.pos ? 'has-error' : ''}>
+                {POS_OPTIONS.map((pos) => <option key={pos} value={pos}>{t(`admin.${posToKey(pos)}`)}</option>)}
+              </select>
+              {errors.pos && <small>{errors.pos}</small>}
+            </label>
+
+            <label className="admin-card-field">
+              <span>{t('admin.cardOrderLabel') || 'SỐ THỨ TỰ'}</span>
+              <input
+                type="number"
+                min="0"
+                value={form.order !== null && form.order !== undefined ? form.order : ''}
+                onChange={(event) => {
+                  const val = event.target.value
+                  updateField('order', val === '' ? null : Number(val))
+                }}
+                placeholder={t('admin.cardOrderPlaceholder') || 'Auto'}
+              />
+            </label>
+          </div>
 
           <div className="admin-card-image-box">
             {form.imageUrl ? (
@@ -426,9 +446,9 @@ function AdminCardEditPage({ deckId, topicId, cardId, onNavigate }) {
                     <div><span>{t('admin.cardIpaLabel')}</span><strong>{phonetic.text || '-'}</strong></div>
                     <div><span>{t('admin.cardLocaleLabel')}</span><strong>{phonetic.locale || '-'}</strong></div>
                     <div><span>{t('admin.cardAudioLabel')}</span><strong>{phonetic.fileName || phonetic.audio || t('admin.cardNoAudio')}</strong></div>
-                    <button 
-                      type="button" 
-                      className="admin-card-play-btn" 
+                    <button
+                      type="button"
+                      className="admin-card-play-btn"
                       onClick={() => handlePlayAudio(index)}
                       disabled={!phonetic.audio || playingAudioIndex === index}
                       aria-label={t('admin.cardPlayAudio')}

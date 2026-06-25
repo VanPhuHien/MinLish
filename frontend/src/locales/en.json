@@ -405,6 +405,8 @@
     "cardTranslationRequired": "Please enter the Vietnamese meaning",
     "cardPosRequired": "Please choose a part of speech",
     "cardPosLabel": "Part of speech",
+    "cardOrderLabel": "Order",
+    "cardOrderPlaceholder": "Automatic",
     "cardImageAlt": "Vocabulary image",
     "cardImageHint": "PNG, JPG up to 5MB",
     "cardTranslationLabel": "Vietnamese meaning",

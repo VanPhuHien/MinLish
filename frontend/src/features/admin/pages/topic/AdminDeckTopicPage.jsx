@@ -446,7 +446,7 @@ function AdminDeckTopicPage({ onNavigate, deckId }) {
           <div className="admin-topic-list">
             {topics.map((topic, index) => {
               const isSelected = selectedTopic && selectedTopic._id === topic._id
-              const displayIndex = String(index + 1).padStart(2, '0')
+              const displayIndex = String(topic.order ?? index + 1).padStart(2, '0')
 
               return (
                 <div

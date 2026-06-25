@@ -405,6 +405,8 @@
     "cardTranslationRequired": "Vui lòng nhập nghĩa tiếng Việt",
     "cardPosRequired": "Vui lòng chọn từ loại",
     "cardPosLabel": "Loại từ",
+    "cardOrderLabel": "SỐ THỨ TỰ",
+    "cardOrderPlaceholder": "Tự động",
     "cardImageAlt": "Hình ảnh từ vựng",
     "cardImageHint": "PNG, JPG up to 5MB",
     "cardTranslationLabel": "Nghĩa tiếng Việt",
