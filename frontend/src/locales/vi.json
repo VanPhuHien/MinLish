@@ -684,7 +684,7 @@
       "TAG_NOT_FOUND": "Không tìm thấy danh mục",
       "TAG_LABEL_EXISTS": "Tên danh mục này đã tồn tại",
       "LESSON_NOT_FOUND": "Không tìm thấy bài học",
-      "LESSON_SLUG_EXISTS": "Slug bài học đã tồn tại. Vui lòng thay đổi tiêu đề",
+      "LESSON_TITLE_EXISTS": "Tiêu đề bài học đã tồn tại. Vui lòng thay đổi tiêu đề",
       "LESSON_TITLE_REQUIRED": "Trường tiêu đề là bắt buộc.",
       "LESSON_SOURCE_URL_REQUIRED": "Trường sourceURL là bắt buộc.",
       "LESSON_SOURCE_URL_INVALID": "sourceUrl phải là một liên kết YouTube hợp lệ.",

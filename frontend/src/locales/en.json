@@ -684,7 +684,7 @@
       "TAG_NOT_FOUND": "Tag not found",
       "TAG_LABEL_EXISTS": "This tag label already exists",
       "LESSON_NOT_FOUND": "Lesson not found",
-      "LESSON_SLUG_EXISTS": "Lesson slug already exists. Please change the title or slug",
+      "LESSON_TITLE_EXISTS": "Lesson already exists. Please change the title",
       "LESSON_TITLE_REQUIRED": "The title field is required.",
       "LESSON_SOURCE_URL_REQUIRED": "The sourceURL field is required.",
       "LESSON_SOURCE_URL_INVALID": "The sourceUrl must be a valid YouTube link.",

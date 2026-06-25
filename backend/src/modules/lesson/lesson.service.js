@@ -179,9 +179,9 @@ export const createAdminLesson = async (data) => {
   if (!data.slug) slug = generateSlug(data.title);
   const existing = await Lesson.findOne({ slug });
   if (existing) {
-    throw new AppError(ADMIN.LESSON_SLUG_EXISTS, 400, {
+    throw new AppError(ADMIN.LESSON_TITLE_EXISTS, 400, {
       field: 'slug',
-      message: MESSAGES[ADMIN.LESSON_SLUG_EXISTS],
+      message: MESSAGES[ADMIN.LESSON_TITLE_EXISTS],
     });
   }
 
@@ -227,9 +227,9 @@ export const updateAdminLesson = async (lessonId, data) => {
   if (!data.slug) slug = generateSlug(data.title);
   const existing = await Lesson.findOne({ slug, _id: { $ne: lessonId } });
   if (existing) {
-    throw new AppError(ADMIN.LESSON_SLUG_EXISTS, 400, {
+    throw new AppError(ADMIN.LESSON_TITLE_EXISTS, 400, {
       field: 'slug',
-      message: MESSAGES[ADMIN.LESSON_SLUG_EXISTS],
+      message: MESSAGES[ADMIN.LESSON_TITLE_EXISTS],
     });
   }
   lesson.slug = slug;

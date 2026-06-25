@@ -26,7 +26,7 @@ export const ADMIN = Object.freeze({
   LESSON_DELETED_SUCCESS: 'LESSON_DELETED_SUCCESS',
   LESSON_PUBLISHED_SUCCESS: 'LESSON_PUBLISHED_SUCCESS',
   LESSON_NOT_FOUND: 'LESSON_NOT_FOUND',
-  LESSON_SLUG_EXISTS: 'LESSON_SLUG_EXISTS',
+  LESSON_TITLE_EXISTS: 'LESSON_TITLE_EXISTS',
   LESSON_TITLE_REQUIRED: 'LESSON_TITLE_REQUIRED',
   LESSON_SOURCE_URL_REQUIRED: 'LESSON_SOURCE_URL_REQUIRED',
   LESSON_SOURCE_URL_INVALID: 'LESSON_SOURCE_URL_INVALID',
@@ -108,8 +108,8 @@ export const ADMIN_MESSAGES = {
   LESSON_DELETED_SUCCESS: 'Lesson deleted/archived successfully',
   LESSON_PUBLISHED_SUCCESS: 'Lesson published successfully',
   LESSON_NOT_FOUND: 'Lesson not found',
-  LESSON_SLUG_EXISTS:
-    'The lesson slug already exists in the system. Please adjust the title.',
+  LESSON_TITLE_EXISTS:
+    'The lesson title already exists in the system. Please adjust the title.',
   LESSON_TITLE_REQUIRED: 'The title field is required.',
   LESSON_SOURCE_URL_REQUIRED: 'The sourceURL field is required.',
   LESSON_SOURCE_URL_INVALID: 'The sourceUrl must be a valid YouTube link.',
