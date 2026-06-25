@@ -1,0 +1,224 @@
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import Card from '../../models/card.model.js';
+import Lesson from '../../models/lesson.model.js';
+import AppError from '../../utils/AppError.js';
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({
+  model: 'gemini-2.5-flash',
+  generationConfig: { responseMimeType: 'application/json' },
+});
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const generateWithRetry = async (prompt, retries = 3) => {
+  let lastError;
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await model.generateContent(prompt);
+    } catch (error) {
+      lastError = error;
+
+      // chỉ retry lỗi tạm thời
+      if (!error.message.includes('503') && !error.message.includes('429')) {
+        throw new AppError(error.message, 500);
+      }
+      await sleep(1000 * (i + 1));
+    }
+  }
+  throw new AppError(lastError.message, 500);
+};
+
+export const responseQuestionService = async (question, mode) => {
+  if (mode === 'network') {
+    return await responseQuestionNetworkService(question);
+  } else {
+    const keywordData = await extractKeywordsService(question);
+    const keywords = keywordData.keywords || [];
+
+    if (keywords.length === 0) {
+      return {
+        isValidQuestion: false,
+        answer:
+          'Không tìm thấy từ khóa hợp lệ trong câu hỏi để tra cứu hệ thống.',
+      };
+    }
+
+    const foundItems = await queryMinLishDataForAI(keywords);
+    if (foundItems.length !== 0) {
+      return await responseQuestionMinLishService(question, foundItems);
+    } else {
+      return {
+        isValidQuestion: true,
+        answer:
+          'Hệ thống MinLish hiện tại chưa có dữ liệu nào khớp với câu hỏi của bạn. Hãy thử chuyển sang chế độ tìm kiếm trên mạng!',
+      };
+    }
+  }
+};
+
+export const extractKeywordsService = async (question) => {
+  const prompt = `Trích xuất các từ khóa quan trọng nhất từ câu hỏi sau để dùng cho việc tìm kiếm bài học/từ vựng tiếng Anh trong Database: "${question}"
+  Yêu cầu:
+  - Ưu tiên giữ lại các từ / cụm từ tiếng Anh hoặc nghĩa tiếng Việt của từ/cụm từ.
+  - Lược bỏ các từ để hỏi thông thường (ví dụ: "làm sao", "như thế nào", "cách để", "giúp tôi", "là gì").
+  - Trả về kết quả bắt buộc dưới định dạng JSON bao gồm trường:
+  + "keywords": một mảng các chuỗi (array of strings) chứa các từ khóa. (Nếu không có từ khóa nào hợp lý, trả về mảng rỗng []).`;
+
+  const result = await generateWithRetry(prompt);
+  return JSON.parse(result.response.text());
+};
+
+export const queryMinLishDataForAI = async (keywords) => {
+  keywords = [...new Set(keywords)];
+  let contextData = [];
+  for (const keyword of keywords) {
+    const searchRegex = new RegExp(keyword, 'i');
+
+    const mainCard = await Card.findOne({
+      $or: [
+        { term: searchRegex },
+        { translation: searchRegex },
+        // Tìm theo cả từ tiếng anh hoặc nghĩa tiếng việt
+      ],
+    })
+      .populate('deckId')
+      .populate('topicId')
+      .lean(); // Để trả về plain JS Object, nhẹ hơn và dễ stringify cho AI
+
+    if (!mainCard) continue;
+    // Lấy ra từ vựng gốc xác định được để đi tìm Lesson
+    const termToSearch = mainCard.term;
+
+    // Lấy 10 ngẫu nhiên cards liên quan cùng topic
+    const relatedTopicCards = await Card.aggregate([
+      {
+        $match: {
+          topicId: mainCard.topicId._id,
+          _id: { $ne: mainCard._id },
+        },
+      },
+      {
+        $sample: { size: 10 },
+      },
+    ]);
+
+    // Lấy 10 ngẫu nhiên cards liên quan cùng deck
+    const relatedDeckCards = await Card.aggregate([
+      {
+        $match: {
+          deckId: mainCard.deckId._id,
+          _id: { $ne: mainCard._id },
+        },
+      },
+      {
+        $sample: { size: 10 },
+      },
+    ]);
+
+    // Lấy 10 lesson chứa term ngẫu nhiên
+    const relatedLessons = await Lesson.aggregate([
+      {
+        $match: {
+          $or: [
+            { title: { $regex: termToSearch, $options: 'i' } },
+            { description: { $regex: termToSearch, $options: 'i' } },
+          ],
+        },
+      },
+      { $sample: { size: 10 } },
+    ]);
+
+    contextData.push(`
+    [TỪ VỰNG CHÍNH]
+    Từ vựng: ${mainCard.term} (${mainCard.pos})
+    Phát âm: ${JSON.stringify(mainCard.phonetics)}
+    Nghĩa tiếng Việt: ${mainCard.translation}
+    Giải thích: ${JSON.stringify(mainCard.explanation)}
+    Ví dụ: ${JSON.stringify(mainCard.examples)}
+    Thuộc Topic: ${mainCard.topicId.name || 'Không rõ'}
+    Thuộc Deck: ${mainCard.deckId.name || 'Không rõ'}
+
+    [10 TỪ VỰNG LIÊN QUAN CÙNG TOPIC]
+    ${relatedTopicCards.map((c) => `- ${c.term} (${c.pos}): ${c.translation}`).join('\n')}
+
+    [10 TỪ VỰNG LIÊN QUAN CÙNG DECK]
+    ${relatedDeckCards.map((c) => `- ${c.term} (${c.pos}): ${c.translation}`).join('\n')}
+
+    [CÁC BÀI HỌC CÓ CHỨA TỪ NÀY]
+    ${relatedLessons.map((l) => `- Bài học: "${l.title}" | Mô tả: "${l.description}"`).join('\n')}
+  `);
+  }
+  return contextData;
+};
+
+export const responseQuestionNetworkService = async (question) => {
+  // AI trả lời tự do
+  try {
+    const prompt = `Trả lời câu hỏi "${question}" bằng tiếng Việt.
+  Vui lòng trả về kết quả dưới định dạng JSON bao gồm các trường:
+  - isValidQuestion: true hoặc false
+  - answer: câu trả lời
+  (Nếu câu hỏi ngoài phạm vi học tiếng Anh thì trả về isValidQuestion là false và answer là "Câu hỏi không hợp lệ")`;
+    const result = await generateWithRetry(prompt);
+    return JSON.parse(result.response.text());
+  } catch (error) {
+    if (error.message.includes('503')) {
+      return {
+        isValidQuestion: false,
+        answer: 'AI đang bận, vui lòng thử lại sau',
+      };
+    }
+    throw new AppError(error.message, 500);
+  }
+};
+
+export const responseQuestionMinLishService = async (question, contextData) => {
+  try {
+    const prompt = `Dựa vào dữ liệu từ hệ thống MinLish sau đây:
+  ---
+  ${contextData}
+  ---
+  Hãy trả lời câu hỏi "${question}" bằng tiếng Việt.
+  Vui lòng trả về kết quả dưới định dạng JSON bao gồm các trường:
+  - isValidQuestion: true hoặc false
+  - answer: câu trả lời
+  (Nếu câu hỏi ngoài phạm vi học tiếng Anh hoặc dữ liệu không liên quan thì trả về isValidQuestion là false và answer là "Câu hỏi không hợp lệ")`;
+    const result = await generateWithRetry(prompt);
+    return JSON.parse(result.response.text());
+  } catch (error) {
+    if (error.message.includes('503')) {
+      return {
+        isValidQuestion: false,
+        answer: 'AI đang bận, vui lòng thử lại sau',
+      };
+    }
+    throw new AppError(error.message, 500);
+  }
+};
+
+export const generateCardDetailsFromAI = async (inputStr) => {
+  try {
+    const prompt = `Bạn là một chuyên gia ngôn ngữ học. Dựa vào từ vựng hoặc nghĩa sau: "${inputStr}".
+  Hãy cung cấp các thông tin của thẻ từ vựng dưới định dạng JSON bao gồm:
+  - term: từ vựng tiếng Anh (bắt buộc)
+  - translation: nghĩa tiếng Việt (bắt buộc)
+  - pos: từ loại (chọn duy nhất một trong các pos sau theo đúng phát âm: adjective, adverb, auxiliary verb, collocation,
+       conjunction, determiner, idiom, interjection, modal verb, noun, phrasal verb, phrase, preposition, pronoun, verb)
+  - phonetics: mảng chứa object có dạng { text: "phát âm IPA", locale: "en-UK" hoặc "en-US" hoặc cả 2}
+  - explanation: object chứa { vi: "giải thích tiếng Việt", en: "giải thích tiếng Anh" }
+  - examples: object chứa { vi: "ví dụ tiếng Việt", en: "ví dụ tiếng Anh" }
+  Đảm bảo kết quả trả về là JSON hợp lệ, đầy đủ ngoặc và đúng format.`;
+
+    const result = await generateWithRetry(prompt);
+    return JSON.parse(result.response.text());
+  } catch (error) {
+    if (error.message.includes('503')) {
+      return {
+        isValidQuestion: false,
+        answer: 'AI đang bận, vui lòng thử lại sau',
+      };
+    }
+    throw new AppError(error.message, 500);
+  }
+};

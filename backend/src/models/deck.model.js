@@ -33,6 +33,21 @@ const deckSchema = new mongoose.Schema(
         ref: 'CefrLevel',
       },
     ],
+    status: {
+      type: String,
+      enum: ['draft', 'published', 'archived'],
+      default: 'draft',
+    },
+    ownerType: {
+      type: String,
+      enum: ['system', 'user'],
+      default: 'system',
+    },
+    ownerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
     topicCount: {
       type: Number,
       default: 0,

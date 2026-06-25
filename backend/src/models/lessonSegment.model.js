@@ -7,10 +7,6 @@ const lessonSegmentSchema = new mongoose.Schema(
       ref: 'Lesson',
       required: true,
     },
-    order: {
-      type: Number,
-      required: true,
-    },
     startMs: {
       type: Number,
       required: true,

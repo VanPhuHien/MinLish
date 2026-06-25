@@ -1,18 +1,12 @@
 import * as authService from './auth.service.js';
 import { successResponse } from '../../utils/response.js';
+import { AUTH } from '../../constants/codes/index.js';
 
 export const signup = async (req, res, next) => {
   try {
     const { email, password, name } = req.body;
     const user = await authService.signup(email, password, name);
-    res
-      .status(201)
-      .json(
-        successResponse(
-          'Đăng ký tài khoản thành công. Mã OTP kích hoạt đã được gửi đến email của bạn.',
-          { user }
-        )
-      );
+    res.status(201).json(successResponse(AUTH.SIGNUP_SUCCESS, { user }));
   } catch (error) {
     next(error);
   }
@@ -32,7 +26,7 @@ export const login = async (req, res, next) => {
     });
 
     res.status(200).json(
-      successResponse('Đăng nhập thành công', {
+      successResponse(AUTH.LOGIN_SUCCESS, {
         accessToken: result.accessToken,
         user: result.user,
       })
@@ -45,10 +39,8 @@ export const login = async (req, res, next) => {
 export const sendVerificationEmail = async (req, res, next) => {
   try {
     const { email } = req.body;
-    const result = await authService.sendVerificationEmail(email);
-    res
-      .status(200)
-      .json(successResponse(result.message || 'Mã OTP kích hoạt đã được gửi'));
+    await authService.sendVerificationEmail(email);
+    res.status(200).json(successResponse(AUTH.VERIFICATION_EMAIL_SENT));
   } catch (error) {
     next(error);
   }
@@ -57,12 +49,8 @@ export const sendVerificationEmail = async (req, res, next) => {
 export const verifyEmail = async (req, res, next) => {
   try {
     const { email, otp } = req.body;
-    const result = await authService.verifyEmail(email, otp);
-    res
-      .status(200)
-      .json(
-        successResponse(result.message || 'Kích hoạt tài khoản thành công')
-      );
+    await authService.verifyEmail(email, otp);
+    res.status(200).json(successResponse(AUTH.EMAIL_VERIFIED));
   } catch (error) {
     next(error);
   }
@@ -71,12 +59,8 @@ export const verifyEmail = async (req, res, next) => {
 export const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
-    const result = await authService.forgotPassword(email);
-    res
-      .status(200)
-      .json(
-        successResponse(result.message || 'Mã OTP đặt lại mật khẩu đã được gửi')
-      );
+    await authService.forgotPassword(email);
+    res.status(200).json(successResponse(AUTH.PASSWORD_RESET_OTP_SENT));
   } catch (error) {
     next(error);
   }
@@ -85,10 +69,8 @@ export const forgotPassword = async (req, res, next) => {
 export const resetPassword = async (req, res, next) => {
   try {
     const { email, otp, newPassword } = req.body;
-    const result = await authService.resetPassword(email, otp, newPassword);
-    res
-      .status(200)
-      .json(successResponse(result.message || 'Đặt lại mật khẩu thành công'));
+    await authService.resetPassword(email, otp, newPassword);
+    res.status(200).json(successResponse(AUTH.PASSWORD_RESET_SUCCESS));
   } catch (error) {
     next(error);
   }
@@ -108,7 +90,7 @@ export const refresh = async (req, res, next) => {
     });
 
     res.status(200).json(
-      successResponse('Làm mới token thành công', {
+      successResponse(AUTH.TOKEN_REFRESHED, {
         accessToken: result.accessToken,
       })
     );
@@ -125,7 +107,7 @@ export const logout = async (req, res, next) => {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
     });
-    res.status(200).json(successResponse('Đăng xuất thành công'));
+    res.status(200).json(successResponse(AUTH.LOGOUT_SUCCESS));
   } catch (error) {
     next(error);
   }

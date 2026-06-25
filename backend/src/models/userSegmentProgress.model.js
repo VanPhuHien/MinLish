@@ -20,37 +20,27 @@ const userSegmentProgressSchema = new mongoose.Schema(
     dictation: {
       attemptCount: {
         type: Number,
-        default: 0,
       },
       bestScore: {
         type: Number,
-        default: 0,
-      },
-      completed: {
-        type: Boolean,
-        default: false,
       },
       hintUsedCount: {
         type: Number,
-        default: 0,
       },
     },
     shadowing: {
       attemptCount: {
         type: Number,
-        default: 0,
       },
-      bestOverallScore: {
+      bestScore: {
         type: Number,
-        default: 0,
       },
       latestAudioUrl: {
         type: String,
-        default: '',
       },
-      completed: {
-        type: Boolean,
-        default: false,
+      wordsAccuracy: {
+        type: Map,
+        of: Number,
       },
     },
   },

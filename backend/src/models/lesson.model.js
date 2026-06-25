@@ -43,6 +43,10 @@ const lessonSchema = new mongoose.Schema(
     publishedAt: {
       type: Date,
     },
+    durationMs: {
+      type: Number,
+      default: 0,
+    },
     sourceUrl: {
       type: String,
       required: true,

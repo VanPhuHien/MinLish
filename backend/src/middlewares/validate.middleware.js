@@ -1,4 +1,5 @@
 import AppError from '../utils/AppError.js';
+import { COMMON } from '../constants/codes/index.js';
 
 const validate = (schema) => (req, res, next) => {
   const result = schema.safeParse(req.body);
@@ -7,7 +8,7 @@ const validate = (schema) => (req, res, next) => {
       field: e.path.join('.'),
       message: e.message,
     }));
-    return next(new AppError('Dữ liệu không hợp lệ', 400, errors));
+    return next(new AppError(COMMON.INVALID_DATA, 400, errors));
   }
   req.body = result.data;
   next();

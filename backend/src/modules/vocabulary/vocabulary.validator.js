@@ -13,3 +13,8 @@ export const getCardsSchema = z
     message: 'Phải cung cấp ít nhất deckId hoặc topicId',
     path: ['deckId', 'topicId'],
   });
+
+export const searchVocabularySchema = z.object({
+  q: z.string().trim().min(1, 'Từ khóa tìm kiếm không được để trống').max(100),
+  limit: z.coerce.number().int().min(1).max(50).default(10),
+});
