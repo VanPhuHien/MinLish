@@ -293,7 +293,7 @@ const validateSegmentData = (data) => {
   if (
     data.endMs === undefined ||
     typeof data.endMs !== 'number' ||
-    data.endMs <= 0
+    data.endMs < 1000
   ) {
     throw new AppError(ADMIN.SEGMENT_END_MS_INVALID, 400);
   } else {
@@ -319,7 +319,7 @@ export const createAdminLessonSegment = async (lessonId, data) => {
 
   if (
     lesson.durationMs &&
-    lesson.durationMs > 0 &&
+    lesson.durationMs >= 0 &&
     data.endMs > lesson.durationMs
   ) {
     throw new AppError(ADMIN.SEGMENT_END_MS_EXCEEDS_DURATION, 400);

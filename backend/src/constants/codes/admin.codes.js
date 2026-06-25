@@ -124,9 +124,9 @@ export const ADMIN_MESSAGES = {
   SEGMENT_DELETED_SUCCESS: 'Segment deleted successfully',
   SEGMENT_NOT_FOUND: 'Segment not found',
   SEGMENT_START_MS_INVALID:
-    'The startMs field is mandatory, must be a number and >= 0.',
+    'The startMs field is mandatory, must be a number and >= 0s.',
   SEGMENT_END_MS_INVALID:
-    'The endMs field is mandatory, must be a number and > 0.',
+    'The endMs field is mandatory, must be a number and >= 1s.',
   SEGMENT_END_MS_LESS_THAN_START_MS:
     'The endMs field must be larger than the startMs field.',
   SEGMENT_END_MS_EXCEEDS_DURATION:
