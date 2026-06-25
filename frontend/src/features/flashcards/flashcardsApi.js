@@ -212,3 +212,26 @@ export const getUserDueCardStates = async (params = {}) => {
   })
   return response.data
 }
+
+/**
+ * Xuất danh sách card trong topic ra file Excel
+ * @param {string} deckId ID của bộ từ
+ * @param {string} topicId ID của chủ đề
+ */
+export const exportUserTopicCards = async (deckId, topicId) => {
+  const response = await apiClient.get(`/users/me/decks/${deckId}/topics/${topicId}/export`, {
+    responseType: 'blob'
+  })
+  return response.data
+}
+
+/**
+ * Nhập danh sách card từ file Excel vào topic
+ * @param {string} deckId ID của bộ từ
+ * @param {string} topicId ID của chủ đề
+ * @param {Object} data payload gồm fileUrl và mode
+ */
+export const importUserTopicCards = async (deckId, topicId, data) => {
+  const response = await apiClient.post(`/users/me/decks/${deckId}/topics/${topicId}/import`, data)
+  return response.data
+}
