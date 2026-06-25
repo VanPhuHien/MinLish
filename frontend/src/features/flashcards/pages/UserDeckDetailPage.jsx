@@ -15,6 +15,7 @@ import {
 } from '../flashcardsApi'
 import Input from '../../../components/Input/Input'
 import ConfirmModal from '../../../components/ConfirmModal/ConfirmModal'
+import ImportExportModal from '../components/ImportExportModal'
 import './UserDeckDetailPage.css'
 
 const POS_OPTIONS = [
@@ -84,6 +85,9 @@ function UserDeckDetailPage({ deckId, onNavigate }) {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [confirmType, setConfirmType] = useState('deleteTopic') // 'deleteTopic' | 'deleteCard'
   const [targetDeleteId, setTargetDeleteId] = useState(null)
+
+  // States cho modal Nhập/Xuất
+  const [isImportExportModalOpen, setIsImportExportModalOpen] = useState(false)
 
   // 1. Tải thông tin chi tiết bộ từ và danh sách chủ đề
   const fetchDeckData = async (shouldSelectFirst = false) => {
@@ -539,13 +543,26 @@ function UserDeckDetailPage({ deckId, onNavigate }) {
             <h2 className="user-deck-cards-area-title">
               {t('userDeckDetail.cardsInTopic', { topicName: selectedTopic.name })}
             </h2>
-            <button className="user-deck-btn-primary btn-add-card-secondary" onClick={() => openCreateCardModal(selectedTopic._id)}>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-              {t('userDeckDetail.createCardBtn')}
-            </button>
+            <div className="user-deck-cards-area-actions">
+              <button 
+                className="user-deck-btn-secondary btn-import-export" 
+                onClick={() => setIsImportExportModalOpen(true)}
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+                {t('userDeckDetail.importExportBtn')}
+              </button>
+              <button className="user-deck-btn-primary btn-add-card-secondary" onClick={() => openCreateCardModal(selectedTopic._id)}>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                {t('userDeckDetail.createCardBtn')}
+              </button>
+            </div>
           </div>
 
           {loadingCards ? (
@@ -838,6 +855,18 @@ function UserDeckDetailPage({ deckId, onNavigate }) {
             </form>
           </div>
         </div>
+      )}
+
+      {isImportExportModalOpen && selectedTopic && (
+        <ImportExportModal
+          deckId={deckId}
+          topic={selectedTopic}
+          onClose={() => setIsImportExportModalOpen(false)}
+          onImportSuccess={() => {
+            fetchCards(selectedTopic._id)
+            fetchDeckData(false)
+          }}
+        />
       )}
 
       {/* ConfirmModal xóa Chủ đề hoặc Thẻ */}
