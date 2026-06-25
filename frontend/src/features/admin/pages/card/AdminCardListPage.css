@@ -96,6 +96,38 @@
   letter-spacing: -0.02em;
 }
 
+/* Header actions group */
+.admin-cards-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-ie-trigger-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background-color: var(--color-surface-container-lowest);
+  color: var(--color-on-surface);
+  border: 1.5px solid var(--color-outline-variant);
+  border-radius: var(--rounded-full);
+  padding: 9px 18px;
+  font-size: 13.5px;
+  font-family: var(--font-family);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.admin-ie-trigger-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
+  transform: translateY(-1px);
+}
+
 .admin-create-card-btn {
   display: inline-flex;
   align-items: center;

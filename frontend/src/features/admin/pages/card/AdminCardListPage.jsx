@@ -8,6 +8,7 @@ import {
   deleteDeckCardApi
 } from '../../adminApi'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
+import AdminImportExportModal from '../../components/AdminImportExportModal/AdminImportExportModal'
 import './AdminCardListPage.css'
 
 function AdminCardListPage({ deckId, topicId, onNavigate }) {
@@ -40,6 +41,9 @@ function AdminCardListPage({ deckId, topicId, onNavigate }) {
   // Delete modal states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [cardToDelete, setCardToDelete] = useState(null)
+
+  // Import/Export modal state
+  const [isImportExportModalOpen, setIsImportExportModalOpen] = useState(false)
 
   // Debouncing search term
   const searchTimeoutRef = useRef(null)
@@ -274,14 +278,31 @@ function AdminCardListPage({ deckId, topicId, onNavigate }) {
       <div className="admin-cards-header-section">
         <h1 className="admin-cards-title">{topic?.name || 'Chi tiết thẻ từ vựng'}</h1>
         
-        {/* Symbolic Add Card Button */}
-        <button
-          type="button"
-          className="admin-create-card-btn"
-          onClick={() => onNavigate(`/admin/decks/${deckId}/topics/${topicId}/cards/new`)}
-        >
-          <span>{t('admin.addCardBtn') || '+ Thêm thẻ mới'}</span>
-        </button>
+        <div className="admin-cards-header-actions">
+          {/* Import/Export Button */}
+          <button
+            type="button"
+            className="admin-ie-trigger-btn"
+            onClick={() => setIsImportExportModalOpen(true)}
+            title={t('admin.importExportModalTitle')}
+          >
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            {t('admin.importExportBtn')}
+          </button>
+
+          {/* Add Card Button */}
+          <button
+            type="button"
+            className="admin-create-card-btn"
+            onClick={() => onNavigate(`/admin/decks/${deckId}/topics/${topicId}/cards/new`)}
+          >
+            <span>{t('admin.addCardBtn') || '+ Thêm thẻ mới'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Controls Bar: Search, POS filter, Layout toggle */}
@@ -612,6 +633,19 @@ function AdminCardListPage({ deckId, topicId, onNavigate }) {
         }}
         isDanger={true}
       />
+
+      {/* Import/Export Modal */}
+      {isImportExportModalOpen && topic && (
+        <AdminImportExportModal
+          deckId={deckId}
+          topic={topic}
+          onClose={() => setIsImportExportModalOpen(false)}
+          onImportSuccess={() => {
+            setIsImportExportModalOpen(false)
+            fetchCards(1, searchTerm, selectedPos)
+          }}
+        />
+      )}
     </div>
   )
 }

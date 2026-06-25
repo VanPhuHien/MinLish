@@ -223,3 +223,19 @@ export const changeAdminUserPasswordApi = async (userId, newPassword) => {
   });
   return response.data;
 };
+
+export const exportAdminTopicCardsApi = async (deckId, topicId) => {
+  const response = await apiClient.get(
+    `/admin/decks/${deckId}/topics/${topicId}/export`,
+    { responseType: 'blob' },
+  );
+  return response.data;
+};
+
+export const importAdminTopicCardsApi = async (deckId, topicId, data) => {
+  const response = await apiClient.post(
+    `/admin/decks/${deckId}/topics/${topicId}/import`,
+    data,
+  );
+  return response.data;
+};
