@@ -342,6 +342,12 @@ export const deleteAdminDeckTopic = async (deckId, topicId) => {
     UserCardState.deleteMany({ cardId: { $in: cardIds } }),
   ]);
   await topic.deleteOne();
+
+  await Topic.updateMany(
+    { deckId, order: { $gt: topic.order } },
+    { $inc: { order: -1 } }
+  );
+
   await Deck.updateOne(
     { _id: deckId },
     { $inc: { topicCount: -1, cardCount: -cardIds.length } }

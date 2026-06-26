@@ -201,7 +201,14 @@ function AdminDeckTopicPage({ onNavigate, deckId }) {
 
     try {
       const res = await deleteDeckTopicApi(deckId, selectedTopic._id)
-      const remainingTopics = topics.filter(t => t._id !== selectedTopic._id)
+      const remainingTopics = topics
+        .filter(t => t._id !== selectedTopic._id)
+        .map(t => {
+          if (t.order > selectedTopic.order) {
+            return { ...t, order: t.order - 1 }
+          }
+          return t
+        })
       setTopics(remainingTopics)
 
       // Re-fetch deck to update stats
