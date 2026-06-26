@@ -141,6 +141,11 @@
   flex: 1;
   overflow-y: auto;
   padding: 20px 28px 28px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hm-body::-webkit-scrollbar {
+  display: none;
 }
 
 /* Table */
