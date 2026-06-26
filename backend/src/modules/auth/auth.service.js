@@ -151,9 +151,6 @@ export const forgotPassword = async (email) => {
   if (!user) {
     throw new AppError(AUTH.ACCOUNT_NOT_FOUND, 404);
   }
-  if (!user.isVerified) {
-    throw new AppError(AUTH.ACCOUNT_NOT_VERIFIED_RESET, 403);
-  }
   if (!user.isActive) {
     throw new AppError(AUTH.ACCOUNT_BANNED, 403);
   }
