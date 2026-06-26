@@ -20,6 +20,7 @@ import { calculateNextSRS } from '../../utils/srs.util.js';
 import { generateQuizOptions, generateQuizOptionsBatch } from '../deck/deck.service.js';
 import { recordActivity } from '../gamification/gamification.service.js';
 import { segmentXp, getDayKey } from '../../config/gamification.config.js';
+import { sendChangePasswordEmail } from '../../utils/mail.util.js';
 //import fs from 'fs';
 
 export const evaluatePronunciation = async (audioUrl, referenceText) => {
@@ -498,7 +499,11 @@ export const changeAdminUserPassword = async (userId, newPassword) => {
   }
   const salt = await bcrypt.genSalt(10);
   user.passwordHash = await bcrypt.hash(newPassword, salt);
+  user.passwordChangedAt = new Date();
   await user.save();
+  sendChangePasswordEmail(user.email, user.name).catch((error) => {
+    console.error('Lỗi gửi email thông báo thay đổi mật khẩu:', error);
+  });
 };
 
 export const changeAdminUserStatus = async (userId, status, banReason = '') => {

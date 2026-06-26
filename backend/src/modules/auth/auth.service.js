@@ -224,6 +224,15 @@ export const refreshTokens = async (refreshToken) => {
     );
   }
 
+  if (
+    user.passwordChangedAt &&
+    decoded.iat < Math.floor(user.passwordChangedAt.getTime() / 1000)
+    //decoded.iat: iat là viết tắt của Issued At trong JWT -> thời điểm JWT token được tạo
+    // -> tạo trước khi đổi mật khẩu
+  ) {
+    throw new AppError(AUTH.INVALID_TOKEN, 401);
+  }
+
   const accessToken = generateToken(
     { id: user._id, role: user.role, type: 'ACCESS' },
     config.jwtAccessExpiresIn

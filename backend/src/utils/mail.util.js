@@ -61,3 +61,20 @@ export const sendForgotPasswordEmail = async (email, otp) => {
   `;
   return sendEmail({ to: email, subject, html });
 };
+
+export const sendChangePasswordEmail = async (email, name) => {
+  const subject = 'Thông báo thay đổi mật khẩu tài khoản MinLish';
+  const changeTime = new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
+      <h2 style="color: #FF9800; text-align: center;">Thông báo thay đổi mật khẩu</h2>
+      <p>Chào <strong>${name}</strong>,</p>
+      <p>Mật khẩu tài khoản MinLish của bạn đã được thay đổi vào lúc <strong>${changeTime}</strong>.</p>
+      <p><strong>Lưu ý:</strong> Việc thay đổi mật khẩu này được thực hiện bởi Quản trị viên (Admin) của hệ thống.</p>
+      <p>Nếu bạn không yêu cầu thay đổi này hoặc không nhận biết về hành động này, vui lòng liên hệ ngay với đội ngũ hỗ trợ của chúng tôi bằng cách phản hồi lại email này để được giải quyết kịp thời.</p>
+      <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+      <p style="font-size: 12px; color: #888; text-align: center;">&copy; ${new Date().getFullYear()} MinLish. All rights reserved.</p>
+    </div>
+  `;
+  return sendEmail({ to: email, subject, html });
+};
