@@ -14,11 +14,11 @@ users
 | `isActive`     | Ban/unban                              |
 | `banReason`    | Lý do khóa tài khoản                   |
 
-cerf_levels
+cefr_levels
 
 | Field   | Ý nghĩa                         |
 | :------ | :------------------------------ |
-| `_id`   | ID tag.                         |
+| `_id`   | ID level.                       |
 | `code`  | Mã ngắn, ví dụ `a1,a2` …        |
 | `label` | Tên hiển thị, ví dụ `A1`, `A2`. |
 
@@ -43,6 +43,7 @@ lessons
 | `modes`        | Những mode hỗ trợ, ví dụ `dictation`, `shadowing`. |
 | `status`       | Trạng thái như `draft`, `published`, `archived`.   |
 | `publishedAt`  | Ngày công khai bài học.                            |
+| `durationMs`   | Tổng thời lượng video (ms), mặc định 0.            |
 | `createdAt`    | Ngày tạo.                                          |
 | `updatedAt`    | Ngày cập nhật.                                     |
 | `sourceUrl`    | URL gốc để phát media.                             |
