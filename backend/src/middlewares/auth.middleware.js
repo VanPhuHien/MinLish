@@ -40,7 +40,7 @@ export const protect = async (req, res, next) => {
     if (!user) {
       user = await User.findById(decoded.id).select('isActive passwordChangedAt banReason').lean();
       if (user && redisClient.isOpen) {
-        await redisClient.set(redisKey, JSON.stringify(user), { EX: 900 });//15 phút
+        await redisClient.set(redisKey, JSON.stringify(user), { EX: parseInt(process.env.JWT_ACCESS_EXPIRES_IN) });
       }
     }
     if (!user || !user.isActive) {
@@ -101,7 +101,7 @@ export const protectOptional = async (req, res, next) => {
       if (!user) {
         user = await User.findById(decoded.id).select('isActive passwordChangedAt banReason').lean();
         if (user && redisClient.isOpen) {
-          await redisClient.set(redisKey, JSON.stringify(user), { EX: 900 });
+          await redisClient.set(redisKey, JSON.stringify(user), { EX: parseInt(process.env.JWT_ACCESS_EXPIRES_IN)});
         }
       }
       if (user && user.isActive) {
