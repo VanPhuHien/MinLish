@@ -700,7 +700,8 @@
       "STREAK_FETCHED": "Streak fetched",
       "PROFILE_FETCHED": "Profile fetched",
       "LEADERBOARD_FETCHED": "Leaderboard fetched",
-      "RANK_FETCHED": "Rank fetched"
+      "RANK_FETCHED": "Rank fetched",
+      "AI_RESPONSE_SUCCESS": "AI response successfully"
     },
     "error": {
       "INVALID_DATA": "Invalid request data",
@@ -779,7 +780,14 @@
       "EXPORT_PERMISSION_DENIED": "You don't have permission to export this deck",
       "TOPIC_NOT_BELONG_TO_DECK": "Topic is not belong to the selected deck",
       "SEGMENT_PROGRESS_NOT_FOUND": "Segment progress not found",
-      "SEGMENT_NOT_FOUND_IN_LESSON": "Segment not found in this lesson"
+      "SEGMENT_NOT_FOUND_IN_LESSON": "Segment not found in this lesson",
+      "QUESTION_REQUIRED": "The question is required",
+      "INVALID_LANGUAGE": "The language must be en (for English) or vi (for Vietnamese)",
+      "INVALID_KEYWORD_IN_QUESTION": "No valid keyword found in your question",
+      "INVALID_QUESTION": "Invalid question",
+      "NO_DATA_MATCH": "MinLish currently doesn't have any data matching your question. Please try switching to web search mode!",
+      "BUSY_TRY_AGAIN": "AI is busy, please try again later",
+      "RATE_LIMITED": "Too many requests, please try again later"
     },
     "common": {
       "UNKNOWN_ERROR": "An unknown error occurred"
