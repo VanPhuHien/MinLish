@@ -56,6 +56,7 @@ function AdminLessonEditPage({ lessonId, onNavigate }) {
   const [sourceUrlError, setSourceUrlError] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
+  const [initialLoadFailed, setInitialLoadFailed] = useState(false)
   const youtubeEmbedUrl = getYouTubeEmbedUrl(sourceUrl)
 
   useEffect(() => {
@@ -87,6 +88,7 @@ function AdminLessonEditPage({ lessonId, onNavigate }) {
         if (cefrRes.data) setCefrLevels(cefrRes.data)
         setAvailableTags(tags)
       } catch (error) {
+        setInitialLoadFailed(true)
         if (error.response?.status === 404) {
           setErrorMsg(t('api.error.LESSON_NOT_FOUND'))
         } else if (error.response?.status === 403) {
@@ -237,7 +239,7 @@ function AdminLessonEditPage({ lessonId, onNavigate }) {
     )
   }
 
-  if (errorMsg && !title) {
+  if (initialLoadFailed) {
     return (
       <div className="admin-create-page">
         <div className="admin-create-page-header">
