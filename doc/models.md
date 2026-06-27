@@ -1,18 +1,19 @@
 users
 
-| Field          | Ý nghĩa                                |
-| :------------- | :------------------------------------- |
-| `_id`          | ID duy nhất của user trong MongoDB.    |
-| `email`        | Email đăng nhập, nên unique.           |
-| `passwordHash` | Mật khẩu đã băm, không lưu plain text. |
-| `name`         | Tên hiển thị của user.                 |
-| `avatarUrl`    | Ảnh đại diện.                          |
-| `role`         | Vai trò như `user`, `admin`            |
-| `createdAt`    | Ngày tạo tài khoản.                    |
-| `updatedAt`    | Ngày cập nhật gần nhất.                |
-| `isVerified`   | Check verify email                     |
-| `isActive`     | Ban/unban                              |
-| `banReason`    | Lý do khóa tài khoản                   |
+| Field              | Ý nghĩa                                |
+| :-------------     | :------------------------------------- |
+| `_id`              | ID duy nhất của user trong MongoDB.    |
+| `email`            | Email đăng nhập, nên unique.           |
+| `passwordHash`     | Mật khẩu đã băm, không lưu plain text. |
+| `name`             | Tên hiển thị của user.                 |
+| `avatarUrl`        | Ảnh đại diện.                          |
+| `role`             | Vai trò như `user`, `admin`            |
+| `createdAt`        | Ngày tạo tài khoản.                    |
+| `updatedAt`        | Ngày cập nhật gần nhất.                |
+| `isVerified`       | Check verify email                     |
+| `isActive`         | Ban/unban                              |
+| `banReason`        | Lý do khóa tài khoản                   |
+| `passwordChangedAt`| Thời điểm đổi mật khẩu gần nhất        |
 
 cefr_levels
 
