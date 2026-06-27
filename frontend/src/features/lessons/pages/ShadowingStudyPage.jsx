@@ -127,7 +127,11 @@ function ShadowingStudyPage({ lessonId, onNavigate }) {
     if (segments.length > 0 && segments[currentSegmentIndex]) {
       const currentProgress = segments[currentSegmentIndex].userProgress?.shadowing
       setAttemptCount(currentProgress ? currentProgress.attemptCount || 1 : 1)
-      setAccuracyScore(currentProgress ? Math.round(currentProgress.bestScore) : null)
+      setAccuracyScore(
+        currentProgress
+          ? Math.round((v => v.reduce((sum, s) => sum + s, 0) / v.length)(Object.values(currentProgress.wordsAccuracy)))
+          : null
+      )
       setWordsAccuracy(currentProgress ? currentProgress.wordsAccuracy : null)
       setUserAudioUrl(currentProgress ? currentProgress.latestAudioUrl : null)
       setIsRecording(false)
@@ -218,7 +222,7 @@ function ShadowingStudyPage({ lessonId, onNavigate }) {
       setError('')
       try {
         const audioBlob = recorderRef.current.stop()
-        
+
         // 1. Lấy URL ký trước từ Backend
         const presignedRes = await getPresignedUrl({
           contentType: 'audio/wav',
@@ -263,7 +267,7 @@ function ShadowingStudyPage({ lessonId, onNavigate }) {
           // Cập nhật điểm và độ chính xác phân tích phát âm
           const shadowingData = updatedProgress.shadowing
           if (shadowingData) {
-            setAccuracyScore(Math.round(shadowingData.bestScore))
+            setAccuracyScore(Math.round((v => v.reduce((sum, s) => sum + s, 0) / v.length)(Object.values(shadowingData.wordsAccuracy))))
             setWordsAccuracy(shadowingData.wordsAccuracy)
             setUserAudioUrl(shadowingData.latestAudioUrl)
           }
@@ -355,7 +359,7 @@ function ShadowingStudyPage({ lessonId, onNavigate }) {
         <main className="shadowing-center-main">
           {currentSegmentIndex < segments.length ? (
             <div className="study-shadowing-wrapper">
-              
+
               {/* Lời thoại của segment hiện tại */}
               <p className="study-transcript-display">
                 {segment?.transcript?.original}
@@ -363,7 +367,7 @@ function ShadowingStudyPage({ lessonId, onNavigate }) {
 
               {/* Hàng điều khiển nút ghi âm */}
               <div className="recording-controls-row">
-                
+
                 {/* Nút phát lại */}
                 <div className="control-btn-wrapper">
                   <button onClick={handleReplaySegment} className="btn-control-side" disabled={isRecording || isProcessing}>
@@ -442,7 +446,7 @@ function ShadowingStudyPage({ lessonId, onNavigate }) {
           {/* KHỐI KẾT QUẢ PHÂN TÍCH PHÁT ÂM (CHỈ HIỂN THỊ KHI CÓ ĐIỂM) */}
           {currentSegmentIndex < segments.length && accuracyScore !== null && (
             <div className="shadowing-results-row">
-              
+
               {/* Thẻ Độ chính xác hình tròn */}
               <div className="accuracy-score-card">
                 <span className="accuracy-card-label">{t('shadowing.accuracyLabel')}</span>
