@@ -26,12 +26,29 @@ const BattlePlayPage = ({ onNavigate }) => {
     isOpponentDisconnected,
     opponentDisconnectTimeLeft,
     sendAnswer,
+    rejoinMatch,
     exitBattle
   } = useBattleSocket()
 
   const [opponent, setOpponent] = useState(null)
   const [matchType, setMatchType] = useState('queue')
   const [preGameCountdown, setPreGameCountdown] = useState(3)
+
+  // Tự động rejoin nếu tải lại trang (F5) khi đang chơi
+  useEffect(() => {
+    const savedMatchId = sessionStorage.getItem('currentMatchId')
+    if (savedMatchId && gameStatus === 'idle') {
+      rejoinMatch(savedMatchId)
+    }
+  }, [gameStatus, rejoinMatch])
+
+  // Kiểm tra nếu không có trận đấu đang diễn ra thì chuyển hướng người dùng về /battle
+  useEffect(() => {
+    const savedMatchId = sessionStorage.getItem('currentMatchId')
+    if (gameStatus === 'idle' && !savedMatchId) {
+      onNavigate('/battle')
+    }
+  }, [gameStatus, onNavigate])
 
   // Tải chi tiết trận đấu từ REST API để lấy thông tin đối thủ (tên, avatar)
   useEffect(() => {

@@ -64,6 +64,15 @@ export const BattleSocketProvider = ({ children }) => {
 
     socketInstance.on('connect', () => {
       setIsConnected(true)
+      socketInstance.emit('battle:active_match:check')
+    })
+
+    socketInstance.on('battle:active_match:found', ({ matchId: activeMatchId }) => {
+      if (activeMatchId) {
+        sessionStorage.setItem('currentMatchId', activeMatchId)
+        setMatchId(activeMatchId)
+        socketInstance.emit('battle:rejoin', { matchId: activeMatchId })
+      }
     })
 
     socketInstance.on('disconnect', () => {
@@ -161,11 +170,13 @@ export const BattleSocketProvider = ({ children }) => {
       clearDisconnectTimer()
     })
 
-    socketInstance.on('battle:opponentLeft', ({ winnerId: forfeitWinnerId }) => {
+    socketInstance.on('battle:opponentLeft', ({ winnerId: forfeitWinnerId, scores: forfeitScores, players: forfeitPlayers }) => {
       setIsOpponentDisconnected(false)
       clearDisconnectTimer()
-      setGameStatus('finished')
+      setScores(forfeitScores || {})
+      setPlayers(forfeitPlayers || [])
       setWinnerId(forfeitWinnerId)
+      setGameStatus('finished')
       sessionStorage.removeItem('currentMatchId')
     })
 

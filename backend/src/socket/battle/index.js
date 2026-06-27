@@ -10,6 +10,7 @@ import {
   handleAnswer,
   handleDisconnect,
   handleRejoin,
+  activeMatches,
 } from './engine.js';
 
 export function registerBattleHandlers(io) {
@@ -67,6 +68,17 @@ export function registerBattleHandlers(io) {
 
     socket.on('battle:answer', (payload) => handleAnswer(socket, payload));
     socket.on('battle:rejoin', (payload) => handleRejoin(socket, payload));
+
+    socket.on('battle:active_match:check', () => {
+      const userId = socket.user?.id;
+      if (!userId) return;
+      for (const match of activeMatches.values()) {
+        if (match.players[userId] && match.status !== 'finishing') {
+          socket.emit('battle:active_match:found', { matchId: match.matchId });
+          break;
+        }
+      }
+    });
 
     socket.on('disconnect', () => {
       leaveQueue(socket.id);

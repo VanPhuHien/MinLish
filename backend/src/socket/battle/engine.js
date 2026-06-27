@@ -460,6 +460,11 @@ async function finalizeAsForfeit(liveState, io, forfeitUserId) {
     console.warn('[battle] forfeit persist failed:', e);
   }
 
+  const scores = {};
+  for (const player of players) {
+    scores[player.userId] = player.score;
+  }
+
   // 3. Notify room — include winner profile + both players (with profiles) so the
   //    client can render the result screen without an extra fetch.
   io.to(matchId).emit('battle:opponentLeft', {
@@ -468,6 +473,7 @@ async function finalizeAsForfeit(liveState, io, forfeitUserId) {
     winner: winnerId
       ? liveState.profiles?.[winnerId] || { userId: winnerId }
       : null,
+    scores,
     players: players.map((p) => ({
       ...(liveState.profiles?.[p.userId] || { userId: p.userId }),
       score: p.score,
