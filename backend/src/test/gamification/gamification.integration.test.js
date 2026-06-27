@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 import app from '../../app.js';
 import UserGamification from '../../models/userGamification.model.js';
+import User from '../../models/user.model.js';
 import XpEvent from '../../models/xpEvent.model.js';
 import { generateToken } from '../../utils/jwt.js';
 import { XP, getDayKey } from '../../config/gamification.config.js';
@@ -12,6 +13,7 @@ import * as service from '../../modules/gamification/gamification.service.js';
 let mongod;
 const userId1 = new mongoose.Types.ObjectId();
 const userId2 = new mongoose.Types.ObjectId();
+const userId3 = new mongoose.Types.ObjectId();
 
 beforeAll(async () => {
   mongod = await MongoMemoryServer.create();
@@ -28,6 +30,16 @@ afterAll(async () => {
 beforeEach(async () => {
   await UserGamification.deleteMany({});
   await XpEvent.deleteMany({});
+  await User.deleteMany({});
+  const usersToCreate = [userId1, userId2, userId3].map(id => ({
+    _id: id,
+    email: `test_${Date.now()}_${Math.floor(Math.random()*10000)}@test.com`,
+    passwordHash: 'hash',
+    name: 'Test',
+    isActive: true,
+    role: 'user'
+  }));
+  await User.insertMany(usersToCreate);
 });
 
 const makeToken = (userId) =>
@@ -379,7 +391,7 @@ describe('GET /api/v1/gamification/leaderboard', () => {
   });
 
   it('orders users by totalXp descending', async () => {
-    const userId3 = new mongoose.Types.ObjectId();
+
     await UserGamification.insertMany([
       { userId: userId1, totalXp: 100, level: 2 },
       { userId: userId2, totalXp: 300, level: 3 },
@@ -402,7 +414,7 @@ describe('GET /api/v1/gamification/leaderboard', () => {
   });
 
   it('rank numbers correct across pages', async () => {
-    const userId3 = new mongoose.Types.ObjectId();
+
     await UserGamification.insertMany([
       { userId: userId1, totalXp: 300, level: 3 },
       { userId: userId2, totalXp: 200, level: 2 },
@@ -458,7 +470,7 @@ describe('GET /api/v1/gamification/me/rank', () => {
   });
 
   it('returns rank=totalPlayers for new user with xp=0', async () => {
-    const userId3 = new mongoose.Types.ObjectId();
+
     await UserGamification.insertMany([
       { userId: userId1, totalXp: 300, level: 3 },
       { userId: userId2, totalXp: 200, level: 2 },
@@ -497,7 +509,7 @@ describe('GET /api/v1/gamification/me/rank', () => {
   });
 
   it('returns correct rank for middle user', async () => {
-    const userId3 = new mongoose.Types.ObjectId();
+
     await UserGamification.insertMany([
       { userId: userId1, totalXp: 500, level: 4 },
       { userId: userId2, totalXp: 300, level: 3 },

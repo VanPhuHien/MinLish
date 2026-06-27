@@ -1,3 +1,4 @@
+import User from '../../models/user.model.js';
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
@@ -28,6 +29,15 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
+  await User.deleteMany({});
+  await User.create({ 
+    _id: testUserId, 
+    email: `test_${Date.now()}_${Math.floor(Math.random()*1000)}@test.com`, 
+    passwordHash: 'hash', 
+    name: 'Test User', 
+    isActive: true, 
+    role: 'user' 
+  });
   await Promise.all([
     Deck.deleteMany({}),
     Topic.deleteMany({}),
