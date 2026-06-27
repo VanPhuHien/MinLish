@@ -635,6 +635,37 @@ export const updateAdminDeckCard = async (deckId, cardId, data) => {
   if (data.examples !== undefined) set.examples = data.examples;
   if (data.imageUrl !== undefined) set.imageUrl = data.imageUrl;
 
+  const isTopicChanged = set.topicId && set.topicId.toString() !== card.topicId.toString();
+
+  if (isTopicChanged) {
+    await Card.updateMany(
+      { deckId, topicId: card.topicId, order: { $gt: card.order } },
+      { $inc: { order: -1 } }
+    );
+    
+    const newOrder = data.order !== undefined ? data.order : await Card.countDocuments({ deckId, topicId: set.topicId }) + 1;
+    await Card.updateMany(
+      { deckId, topicId: set.topicId, order: { $gte: newOrder } },
+      { $inc: { order: 1 } }
+    );
+    set.order = newOrder;
+  } else if (data.order !== undefined && data.order !== card.order) {
+    const newOrder = data.order;
+    const oldOrder = card.order;
+    if (newOrder > oldOrder) {
+      await Card.updateMany(
+        { deckId, topicId: card.topicId, order: { $gt: oldOrder, $lte: newOrder } },
+        { $inc: { order: -1 } }
+      );
+    } else if (newOrder < oldOrder) {
+      await Card.updateMany(
+        { deckId, topicId: card.topicId, order: { $gte: newOrder, $lt: oldOrder } },
+        { $inc: { order: 1 } }
+      );
+    }
+    set.order = newOrder;
+  }
+
   const updated = await Card.findOneAndUpdate(
     { _id: cardId, deckId },
     { $set: set },

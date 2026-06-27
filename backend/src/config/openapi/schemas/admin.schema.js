@@ -589,6 +589,11 @@ export default {
         example: 'https://example.com/images/family.jpg',
         description: 'Ảnh minh họa.',
       },
+      order: {
+        type: 'integer',
+        example: 5,
+        description: 'Thứ tự hiển thị.',
+      },
     },
   },
   CardReorderPayload: {
