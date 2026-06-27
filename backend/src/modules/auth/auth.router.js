@@ -39,6 +39,10 @@ router.post(
 // Gửi lại mã OTP kích hoạt tài khoản
 router.post(
   '/verify-email/send',
+  rateLimiter({
+    windowMs: config.verifyEmailSendLimitWindowMs,
+    max: config.verifyEmailSendLimitMax,
+  }),
   validate(resendVerifyEmailSchema),
   authController.sendVerificationEmail
 );
@@ -46,6 +50,10 @@ router.post(
 // Xác thực OTP kích hoạt tài khoản
 router.post(
   '/verify-email',
+  rateLimiter({
+    windowMs: config.verifyEmailLimitWindowMs,
+    max: config.verifyEmailLimitMax,
+  }),
   validate(verifyEmailSchema),
   authController.verifyEmail
 );
@@ -53,6 +61,10 @@ router.post(
 // Yêu cầu OTP khi quên mật khẩu
 router.post(
   '/forgot-password',
+  rateLimiter({
+    windowMs: config.forgotPasswordLimitWindowMs,
+    max: config.forgotPasswordLimitMax,
+  }),
   validate(forgotPasswordSchema),
   authController.forgotPassword
 );
@@ -60,6 +72,10 @@ router.post(
 // Đặt lại mật khẩu mới kèm OTP xác thực
 router.post(
   '/reset-password',
+  rateLimiter({
+    windowMs: config.resetPasswordLimitWindowMs,
+    max: config.resetPasswordLimitMax,
+  }),
   validate(resetPasswordSchema),
   authController.resetPassword
 );
