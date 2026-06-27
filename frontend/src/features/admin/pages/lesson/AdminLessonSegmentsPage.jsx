@@ -591,7 +591,7 @@ function AdminLessonSegmentsPage({ onNavigate, lessonId }) {
         <svg className="breadcrumb-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5">
           <polyline points="9 18 15 12 9 6" />
         </svg>
-        <span className="breadcrumb-current">{t('admin.segmentsBreadcrumb') || 'Segment'}</span>
+        <span className="breadcrumb-current">{t('admin.segmentsBreadcrumb') || 'Phân đoạn'}</span>
       </div>
 
       {/* Alerts */}
@@ -618,7 +618,7 @@ function AdminLessonSegmentsPage({ onNavigate, lessonId }) {
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
               </svg>
-              {t('admin.addSegmentBtn') || 'Thêm Segment'}
+              {t('admin.addSegmentBtn') || 'Thêm Phân đoạn'}
             </button>
           </div>
 
@@ -718,8 +718,8 @@ function AdminLessonSegmentsPage({ onNavigate, lessonId }) {
                 <div>
                   <h2 className="admin-segment-details-title">
                     {selectedSegment._id === 'new' 
-                      ? (t('admin.newSegmentTitle') || 'Segment mới')
-                      : (t('admin.editSegmentTitle') || 'Chi tiết Segment')}
+                      ? (t('admin.newSegmentTitle') || 'Phân đoạn mới')
+                      : (t('admin.editSegmentTitle') || 'Chi tiết Phân đoạn')}
                   </h2>
                   {selectedSegment._id !== 'new' && (
                     <p className="admin-segment-current-info">
@@ -836,7 +836,7 @@ function AdminLessonSegmentsPage({ onNavigate, lessonId }) {
                 <rect x="3" y="12" width="18" height="4" rx="1" />
                 <rect x="3" y="20" width="18" height="4" rx="1" />
               </svg>
-              <p>{t('admin.selectSegmentPrompt') || 'Chọn một segment để xem chi tiết hoặc thêm segment mới.'}</p>
+              <p>{t('admin.selectSegmentPrompt') || 'Chọn một phân đoạn để xem chi tiết hoặc thêm phân đoạn mới.'}</p>
             </div>
           )}
         </div>
@@ -845,8 +845,8 @@ function AdminLessonSegmentsPage({ onNavigate, lessonId }) {
       {/* Delete Confirmation Modal */}
       <ConfirmModal
         isOpen={isDeleteModalOpen}
-        title={t('admin.confirmDeleteSegmentTitle') || 'Xóa segment này?'}
-        message={t('admin.confirmDeleteSegmentMessage') || 'Bạn có chắc chắn muốn xóa segment này? Hành động này không thể hoàn tác.'}
+        title={t('admin.confirmDeleteSegmentTitle') || 'Xóa phân đoạn này?'}
+        message={t('admin.confirmDeleteSegmentMessage') || 'Bạn có chắc chắn muốn xóa phân đoạn này? Hành động này không thể hoàn tác.'}
         confirmText={t('admin.deleteBtn') || 'Xóa'}
         cancelText={t('admin.cancelBtn') || 'Hủy'}
         onConfirm={handleConfirmDelete}

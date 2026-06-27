@@ -484,6 +484,7 @@
     "banUserPlaceholder": "Enter reason for locking account...",
     "banUserConfirm": "Confirm Lock",
     "unbanUserConfirm": "Confirm Unlock",
+    "userSearchPlaceholder": "Search users...",
     "userPagination": "Showing {{from}}-{{to}} of {{total}} users",
     "viewUserDetail": "View Details",
     "lockUser": "Lock Account",

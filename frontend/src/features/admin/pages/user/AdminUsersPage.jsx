@@ -276,7 +276,7 @@ function AdminUsersPage({ onNavigate }) {
           <input
             type="text"
             className="admin-search-input"
-            placeholder={t('admin.searchPlaceholder')}
+            placeholder={t('admin.userSearchPlaceholder') || 'Tìm kiếm người dùng...'}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
