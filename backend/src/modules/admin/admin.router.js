@@ -66,7 +66,7 @@ router.delete(
 router.get('/users', adminController.listUsers);
 router.get('/users/:userId', adminController.getUserById);
 router.patch('/users/:userId', adminController.changeUserPassword);
-router.delete('/users/:userId', adminController.changeUserStatus);
+router.patch('/users/:userId/status', adminController.changeUserStatus);
 
 router.get(
   '/decks/:deckId/topics/:topicId/export',

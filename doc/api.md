@@ -195,7 +195,7 @@ XP idempotent: gọi finalize nhiều lần không bị cộng trùng (`refId=ma
 - GET /api/v1/admin/users — danh sách user, filter theo, status, q, page, limit.
 - GET /api/v1/admin/users/{userId} — chi tiết một user.
 - PATCH /api/v1/admin/users/{userId} — cập nhật password.
-- DELETE /api/v1/admin/users/{userId} — khóa / mở khóa user.
+- PATCH /api/v1/admin/users/{userId}/status — khóa / mở khóa user.
 
 ## **CEFR Levels management**
 

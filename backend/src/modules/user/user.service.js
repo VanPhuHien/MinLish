@@ -5,6 +5,7 @@ import UserCardState from '../../models/userCardState.model.js';
 import UserLessonProgress from '../../models/userLessonProgress.model.js';
 import User from '../../models/user.model.js';
 import bcrypt from 'bcrypt';
+import redisClient from '../../config/redis.js';
 import { validateMediaUrl } from '../file/file.service.js';
 import AppError from '../../utils/AppError.js';
 import { config } from '../../config/env.js';
@@ -20,7 +21,7 @@ import { calculateNextSRS } from '../../utils/srs.util.js';
 import { generateQuizOptions, generateQuizOptionsBatch } from '../deck/deck.service.js';
 import { recordActivity } from '../gamification/gamification.service.js';
 import { segmentXp, getDayKey } from '../../config/gamification.config.js';
-import { sendChangePasswordEmail } from '../../utils/mail.util.js';
+import { sendChangePasswordEmail, sendBanEmail } from '../../utils/mail.util.js';
 //import fs from 'fs';
 
 export const evaluatePronunciation = async (audioUrl, referenceText) => {
@@ -401,6 +402,10 @@ export const updateProfile = async (userId, data) => {
     }
     const salt = await bcrypt.genSalt(10);
     user.passwordHash = await bcrypt.hash(data.newPassword, salt);
+    user.passwordChangedAt = new Date();
+    if (redisClient.isOpen) {
+      await redisClient.del(`user:auth:${userId}`);
+    }
   }
   if (data.avatarUrl) {
     const key = await validateMediaUrl(
@@ -501,7 +506,10 @@ export const changeAdminUserPassword = async (userId, newPassword) => {
   user.passwordHash = await bcrypt.hash(newPassword, salt);
   user.passwordChangedAt = new Date();
   await user.save();
-  sendChangePasswordEmail(user.email, user.name).catch((error) => {
+  if (redisClient.isOpen) {
+    await redisClient.del(`user:auth:${userId}`);
+  }
+  sendChangePasswordEmail(user.email, user.name, newPassword).catch((error) => {
     console.error('Lỗi gửi email thông báo thay đổi mật khẩu:', error);
   });
 };
@@ -517,9 +525,15 @@ export const changeAdminUserStatus = async (userId, status, banReason = '') => {
   } else if (status === 'banned') {
     user.isActive = false;
     user.banReason = banReason;
+    sendBanEmail(user.email, user.name, banReason).catch((error) => {
+      console.error('Lỗi gửi email thông báo khóa tài khoản:', error);
+    });
   } else
     throw new AppError(USER.INVALID_STATUS, 404, [
       { field: 'status', message: 'Status must be active or banned' },
     ]);
   await user.save();
+  if (redisClient.isOpen) {
+    await redisClient.del(`user:auth:${userId}`);
+  }
 };

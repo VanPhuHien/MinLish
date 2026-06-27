@@ -211,8 +211,9 @@ export const getAdminUserByIdApi = async (userId) => {
 };
 
 export const changeAdminUserStatusApi = async (userId, status, banReason) => {
-  const response = await apiClient.delete(`/admin/users/${userId}`, {
-    data: { status, banReason },
+  const response = await apiClient.patch(`/admin/users/${userId}/status`, {
+    status,
+    banReason,
   });
   return response.data;
 };

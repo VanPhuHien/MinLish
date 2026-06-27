@@ -2637,7 +2637,9 @@ export default {
         500: { $ref: '#/components/responses/ServerError' },
       },
     },
-    delete: {
+  },
+  '/admin/users/{userId}/status': {
+    patch: {
       tags: ['Admin users'],
       summary: 'Khóa / mở khóa tài khoản người dùng',
       description:

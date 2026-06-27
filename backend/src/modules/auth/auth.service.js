@@ -189,6 +189,9 @@ export const resetPassword = async (email, otp, newPassword) => {
   }
 
   await redisClient.del(redisKey);
+  if (redisClient.isOpen) {
+    await redisClient.del(`user:auth:${user._id}`);
+  }
 };
 
 export const refreshTokens = async (refreshToken) => {
