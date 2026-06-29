@@ -18,7 +18,7 @@ import './ProfilePage.css'
 
 function ProfilePage({ onNavigate }) {
   const { t } = useTranslation()
-  const { user } = useAuth()
+  const { user, updateUser } = useAuth()
   const fileInputRef = useRef(null)
 
   // State
@@ -56,6 +56,15 @@ function ProfilePage({ onNavigate }) {
   useEffect(() => {
     loadProfileData()
   }, [])
+
+  useEffect(() => {
+    if (successMsg) {
+      const timer = setTimeout(() => {
+        setSuccessMsg('')
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [successMsg])
 
   const loadProfileData = async () => {
     setLoading(true)
@@ -120,6 +129,10 @@ function ProfilePage({ onNavigate }) {
       setNameError(t('profile.nameRequired'))
       return false
     }
+    if (name.trim().length > 50) {
+      setNameError(t('profile.nameTooLong'))
+      return false
+    }
     if (!/^[a-zA-Z0-9\sÀ-ỹ]+$/.test(name)) {
       setNameError(t('profile.nameInvalid'))
       return false
@@ -136,10 +149,7 @@ function ProfilePage({ onNavigate }) {
       const res = await updateProfileApi({ name: name.trim() })
       if (res.success) {
         setSuccessMsg(t('profile.savedSuccess'))
-        // Update user in localStorage
-        const savedUser = JSON.parse(localStorage.getItem('user') || '{}')
-        savedUser.name = name.trim()
-        localStorage.setItem('user', JSON.stringify(savedUser))
+        updateUser({ name: name.trim() })
       } else {
         setErrorMsg(res.message || t('common.error'))
       }
@@ -201,10 +211,7 @@ function ProfilePage({ onNavigate }) {
       if (updateRes.success) {
         setAvatarUrl(url)
         setSuccessMsg(t('profile.avatarUploadSuccess'))
-        // Update localStorage
-        const savedUser = JSON.parse(localStorage.getItem('user') || '{}')
-        savedUser.avatarUrl = url
-        localStorage.setItem('user', JSON.stringify(savedUser))
+        updateUser({ avatarUrl: url })
       } else {
         setErrorMsg(updateRes.message || t('profile.avatarUploadFailed'))
       }

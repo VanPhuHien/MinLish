@@ -119,12 +119,16 @@
   font-weight: 700;
   color: var(--color-on-surface);
   margin-bottom: 4px;
+  word-break: break-word;
+  max-width: 100%;
 }
 
 .profile-user-email {
   font-size: 13px;
   color: var(--color-on-surface-variant);
   margin-bottom: 6px;
+  word-break: break-all;
+  max-width: 100%;
 }
 
 .profile-user-joined {
@@ -172,7 +176,11 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 15px 135px;
+  padding: 15px 32px;
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+  white-space: nowrap;
   background-color: var(--color-primary);
   color: var(--color-on-primary);
   border: none;
@@ -182,7 +190,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.2s ease;
-  align-self: flex-start;
+  align-self: center;
 }
 
 .profile-save-btn:hover:not(:disabled) {

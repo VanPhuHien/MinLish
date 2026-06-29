@@ -554,6 +554,7 @@
     "emailLabel": "EMAIL",
     "nameRequired": "Họ và tên không được để trống",
     "nameInvalid": "Tên không được chứa ký tự đặc biệt",
+    "nameTooLong": "Họ và tên không được vượt quá 50 ký tự",
     "statsLessons": "Bài học đã học",
     "statsCards": "Thẻ đã ôn",
     "statsStreak": "Ngày học liên tiếp",

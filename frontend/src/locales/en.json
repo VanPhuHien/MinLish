@@ -554,6 +554,7 @@
     "emailLabel": "EMAIL",
     "nameRequired": "Full name is required",
     "nameInvalid": "Name must not contain special characters",
+    "nameTooLong": "Full name must be at most 50 characters",
     "statsLessons": "Lessons Learned",
     "statsCards": "Cards Reviewed",
     "statsStreak": "Day Streak",
