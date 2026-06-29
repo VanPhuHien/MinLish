@@ -232,7 +232,12 @@ export async function getLeaderboard({ page = 1, limit = 20 } = {}) {
 export async function getMyRank(userId) {
   const profile = await ensureProfile(userId);
   const [above, totalPlayers] = await Promise.all([
-    UserGamification.countDocuments({ totalXp: { $gt: profile.totalXp } }),
+    UserGamification.countDocuments({
+      $or: [
+        { totalXp: { $gt: profile.totalXp } },
+        { totalXp: profile.totalXp, _id: { $lt: profile._id } },
+      ],
+    }),
     UserGamification.countDocuments(),
   ]);
   return { rank: above + 1, totalXp: profile.totalXp, totalPlayers };
