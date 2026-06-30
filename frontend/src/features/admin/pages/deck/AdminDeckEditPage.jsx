@@ -4,6 +4,7 @@ import Input from '../../../../components/Input/Input'
 import TagPickerModal from '../../components/TagPickerModal/TagPickerModal'
 import { getAdminDeckByIdApi, updateAdminDeckApi, listCefrLevelsApi, listTagsApi } from '../../adminApi'
 import { getPresignedUrl, uploadAudioToS3 } from '../../../../utils/s3Upload'
+import { validateImageMagicBytes } from '../../../../utils/imageValidation'
 import './AdminDeckCreatePage.css'
 
 function AdminDeckEditPage({ onNavigate, deckId }) {
@@ -117,6 +118,26 @@ function AdminDeckEditPage({ onNavigate, deckId }) {
     const file = event.target.files?.[0]
     event.target.value = ''
     if (!file) return
+
+    // Validate format
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+    if (!allowedTypes.includes(file.type)) {
+      setErrorMsg(t('admin.invalidImageFormat') || 'Invalid file format')
+      return
+    }
+
+    // Validate magic bytes
+    const isValidImage = await validateImageMagicBytes(file)
+    if (!isValidImage) {
+      setErrorMsg(t('admin.invalidImageFile') || 'Invalid image file')
+      return
+    }
+
+    // Validate size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setErrorMsg(t('admin.fileTooLarge') || 'File too large')
+      return
+    }
 
     setIsImageUploading(true)
     setErrorMsg('')

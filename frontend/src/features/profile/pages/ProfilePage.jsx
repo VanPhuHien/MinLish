@@ -12,6 +12,7 @@ import {
 } from '../profileApi'
 import { getLessons } from '../../lessons/lessonsApi'
 import { getPresignedUrl } from '../../../utils/s3Upload'
+import { validateImageMagicBytes } from '../../../utils/imageValidation'
 import ChangePasswordModal from '../components/ChangePasswordModal/ChangePasswordModal'
 import HistoryModal from '../components/HistoryModal/HistoryModal'
 import './ProfilePage.css'
@@ -169,6 +170,13 @@ function ProfilePage({ onNavigate }) {
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
     if (!allowedTypes.includes(file.type)) {
       setErrorMsg(t('admin.invalidImageFormat') || 'Invalid file format')
+      return
+    }
+
+    // Validate file content (magic bytes)
+    const isValidImage = await validateImageMagicBytes(file)
+    if (!isValidImage) {
+      setErrorMsg(t('admin.invalidImageFile') || 'Invalid image file')
       return
     }
 

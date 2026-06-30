@@ -538,7 +538,10 @@
     "importFailed": "Import thất bại. Vui lòng thử lại.",
     "importNoFile": "Vui lòng chọn file .xlsx trước khi nhập.",
     "uploadFailed": "Tải file lên thất bại. Vui lòng thử lại.",
-    "cancelBtn2": "Hủy"
+    "cancelBtn2": "Hủy",
+    "invalidImageFormat": "Định dạng ảnh không hợp lệ. Chỉ chấp nhận JPG, PNG hoặc WebP",
+    "invalidImageFile": "Tệp ảnh bị lỗi hoặc không hợp lệ",
+    "fileTooLarge": "Kích thước ảnh không được vượt quá 5MB"
   },
   "profile": {
     "title": "Thông tin cá nhân",

@@ -538,7 +538,10 @@
     "importFailed": "Import failed. Please try again.",
     "importNoFile": "Please select a .xlsx file before importing.",
     "uploadFailed": "File upload failed. Please try again.",
-    "cancelBtn2": "Cancel"
+    "cancelBtn2": "Cancel",
+    "invalidImageFormat": "Invalid image format. Only JPG, PNG or WebP are accepted",
+    "invalidImageFile": "Invalid or corrupted image file",
+    "fileTooLarge": "Image size cannot exceed 5MB"
   },
   "profile": {
     "title": "Profile",
