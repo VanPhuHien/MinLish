@@ -2,17 +2,17 @@ name: Run MinLish Tests
 
 on:
   push:
-    branches: [ "dev", "main" ]
+    branches: [ "dev" ]
     paths:
       - 'backend/**'
       - 'frontend/**'
-      - '.github/workflows/**'
+      - '.github/workflows/app_ci.yml'
   pull_request:
     branches: [ "dev", "main" ]
     paths:
       - 'backend/**'
       - 'frontend/**'
-      - '.github/workflows/**'
+      - '.github/workflows/app_ci.yml'
 
 jobs:
   test:
