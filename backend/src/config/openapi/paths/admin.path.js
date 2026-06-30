@@ -712,104 +712,189 @@ export default {
       security: [{ BearerAuth: [] }],
       responses: {
         200: {
-          description: 'Lấy thống kê thành công',
+          description: 'Dashboard metrics retrieved successfully',
           content: {
             'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  success: { type: 'boolean', example: true },
-                  code: {
-                    type: 'string',
-                    example: 'DASHBOARD_METRICS_SUCCESS',
-                  },
-                  message: {
-                    type: 'string',
-                    example: 'Dashboard metrics retrieved successfully',
-                  },
-                  data: {
-                    type: 'object',
-                    properties: {
-                      totalUsers: { type: 'integer', example: 100 },
-                      activeUsers: { type: 'integer', example: 80 },
-                      totalLessons: { type: 'integer', example: 50 },
-                      totalDecks: { type: 'integer', example: 10 },
-                      userRegistrationChart: {
-                        type: 'array',
-                        items: {
-                          type: 'object',
-                          properties: {
-                            label: { type: 'string', example: '1/2026' },
-                            count: { type: 'integer', example: 25 },
-                          },
-                        },
-                      },
-                      popularLessons: {
-                        type: 'array',
-                        items: {
-                          type: 'object',
-                          properties: {
-                            _id: { type: 'string' },
-                            title: { type: 'string' },
-                            slug: { type: 'string' },
-                            thumbnailUrl: { type: 'string' },
-                            userCount: { type: 'integer' },
-                          },
-                        },
-                      },
-                      popularDecks: {
-                        type: 'array',
-                        items: {
-                          type: 'object',
-                          properties: {
-                            _id: { type: 'string' },
-                            title: { type: 'string' },
-                            slug: { type: 'string' },
-                            coverImage: { type: 'string' },
-                            cardCount: { type: 'integer' },
-                          },
-                        },
-                      },
-                      recentContent: {
-                        type: 'object',
-                        properties: {
-                          lessons: {
-                            type: 'array',
-                            items: {
-                              type: 'object',
-                              properties: {
-                                _id: { type: 'string' },
-                                title: { type: 'string' },
-                                slug: { type: 'string' },
-                                status: { type: 'string' },
-                                createdAt: {
-                                  type: 'string',
-                                  format: 'date-time',
-                                },
-                                thumbnailUrl: { type: 'string' },
-                              },
-                            },
-                          },
-                          decks: {
-                            type: 'array',
-                            items: {
-                              type: 'object',
-                              properties: {
-                                _id: { type: 'string' },
-                                title: { type: 'string' },
-                                slug: { type: 'string' },
-                                status: { type: 'string' },
-                                createdAt: {
-                                  type: 'string',
-                                  format: 'date-time',
-                                },
-                                coverImage: { type: 'string' },
-                              },
-                            },
-                          },
-                        },
-                      },
+              example: {
+                success: true,
+                code: 'DASHBOARD_METRICS_SUCCESS',
+                message: 'Dashboard metrics retrieved successfully',
+                data: {
+                  totalUsers: 34,
+                  activeUsers: 33,
+                  totalLessons: 34,
+                  totalDecks: 8,
+                  userRegistrationChart6Months: [
+                    { label: '1/2026', count: 1 },
+                    { label: '2/2026', count: 0 },
+                    { label: '3/2026', count: 0 },
+                    { label: '4/2026', count: 0 },
+                    { label: '5/2026', count: 2 },
+                    { label: '6/2026', count: 31 },
+                  ],
+                  userRegistrationChart12Months: [
+                    { label: '7/2025', count: 0 },
+                    { label: '8/2025', count: 0 },
+                    { label: '9/2025', count: 0 },
+                    { label: '10/2025', count: 0 },
+                    { label: '11/2025', count: 0 },
+                    { label: '12/2025', count: 0 },
+                    { label: '1/2026', count: 1 },
+                    { label: '2/2026', count: 0 },
+                    { label: '3/2026', count: 0 },
+                    { label: '4/2026', count: 0 },
+                    { label: '5/2026', count: 2 },
+                    { label: '6/2026', count: 31 },
+                  ],
+                  popularLessons: [
+                    {
+                      userCount: 6,
+                      _id: '69c79cd3d9501970bf0c23b3',
+                      title: 'How To Plant a Tree (While Two Grown Men Try to Climb You) - Moving Mind Studio',
+                      slug: 'how-to-plant-a-tree-while-two-grown-men-try-to-climb-you-moving-mind-studio',
+                      thumbnailUrl: 'https://img.youtube.com/vi/7blGR9KxTGY/0.jpg',
                     },
+                    {
+                      userCount: 3,
+                      _id: '69c79bf5d9501970bf0bc814',
+                      title: 'How to Cut Rope in an Emergency',
+                      slug: 'how-to-cut-rope-in-an-emergency',
+                      thumbnailUrl: 'https://img.youtube.com/vi/eCNwxqP7l44/0.jpg',
+                    },
+                    {
+                      userCount: 3,
+                      _id: '69c53f0ac160bb412e9b1b97',
+                      title: 'What Is a Sandwich?',
+                      slug: 'what-is-a-sandwich',
+                      thumbnailUrl: 'https://img.youtube.com/vi/qDSPDOe7LJg/0.jpg',
+                    },
+                    {
+                      userCount: 2,
+                      _id: '689cba35186a4c2f57f75dbe',
+                      title: 'English in a Minute: Zone Out',
+                      slug: 'english-in-a-minute-zone-out',
+                      thumbnailUrl: 'https://img.youtube.com/vi/qFhCU9UWbq8/0.jpg',
+                    },
+                    {
+                      userCount: 2,
+                      _id: '689cba28186a4c2f57f75d15',
+                      title: 'English in a Minute: Play Up',
+                      slug: 'english-in-a-minute-play-up',
+                      thumbnailUrl: 'https://img.youtube.com/vi/bLYdr5T55aY/0.jpg',
+                    },
+                  ],
+                  popularDecks: [
+                    {
+                      _id: '6a12ea606d2bf0df8c442399',
+                      title: 'Essential Words for the TOEFL',
+                      slug: 'essential-words-for-the-toefl',
+                      coverImage: 'https://assets.parroto.app/assets/decks/6900e0eff1a22d0de4fe6d74/thumbnail-RFpNacsQ68FdXjCM-4X1d.jpg',
+                      cardCount: 529,
+                    },
+                    {
+                      _id: '6a12ea606d2bf0df8c442394',
+                      title: '600 basic IELTS vocabulary',
+                      slug: '600-basic-ielts-vocabulary',
+                      coverImage: 'https://assets.parroto.app/assets/decks/68fb9444c82801c32077e73e/thumbnail-TPgsVZ-s4SXFL3s0ie7EL.jpg',
+                      cardCount: 599,
+                    },
+                    {
+                      _id: '6a12ea5e6d2bf0df8c442389',
+                      title: '1000 common English words',
+                      slug: '1000-common-english-words',
+                      coverImage: 'https://assets.parroto.app/assets/decks/68f46a24b79f2226f4ef9491/thumbnail-OQPDM-w_9HqmPWniWj8Dg.webp',
+                      cardCount: 992,
+                    },
+                    {
+                      _id: '6a12ea5f6d2bf0df8c442391',
+                      title: '600 essential words for the TOEIC',
+                      slug: '600-essential-words-for-the-toeic',
+                      coverImage: 'https://assets.parroto.app/assets/decks/68f2173c5e2ac8381d780dc8/thumbnail-AFWd3rdTW4-uHJZoOJBYr.webp',
+                      cardCount: 622,
+                    },
+                    {
+                      _id: '6a12ea5f6d2bf0df8c44238c',
+                      title: '3000 Oxford Vocabulary A2',
+                      slug: '3000-oxford-vocabulary-a2',
+                      coverImage: 'https://assets.parroto.app/assets/decks/691c160fd3a2e879f9c6b103/thumbnail-sxNAh58W-l-gFEQ2Hpr2K.webp',
+                      cardCount: 827,
+                    },
+                  ],
+                  recentContent: {
+                    lessons: [
+                      {
+                        _id: '6a3ff199cda51e03d7a01c6e',
+                        title: 'good',
+                        slug: 'good',
+                        status: 'draft',
+                        createdAt: '2026-06-27T15:51:53.666Z',
+                      },
+                      {
+                        _id: '6a3ff169cda51e03d7a01c5b',
+                        title: 'Good night',
+                        slug: 'good-night',
+                        status: 'draft',
+                        createdAt: '2026-06-27T15:51:05.089Z',
+                      },
+                      {
+                        _id: '6a3fd647c7a344f40415223e',
+                        title: 'test 1',
+                        slug: 'test-1',
+                        status: 'archived',
+                        createdAt: '2026-06-27T13:55:19.028Z',
+                      },
+                      {
+                        _id: '6a3d4c65ec7c2e04a6e0491a',
+                        title: 'Good luck',
+                        slug: 'good-luck',
+                        status: 'draft',
+                        createdAt: '2026-06-25T15:42:29.667Z',
+                      },
+                      {
+                        _id: '68c0fc86ca0b3e86dd919972',
+                        title: 'Vietnam’s bank risk rating upgraded | Vietnam Today',
+                        slug: 'vietnams-bank-risk-rating-upgraded-vietnam-today',
+                        status: 'published',
+                        createdAt: '2026-06-15T11:48:41.225Z',
+                      },
+                    ],
+                    decks: [
+                      {
+                        _id: '6a3e66f82800ca30bf6fe8cf',
+                        title: 'test',
+                        slug: 'test',
+                        status: 'draft',
+                        createdAt: '2026-06-26T11:48:08.261Z',
+                      },
+                      {
+                        _id: '6a12ea606d2bf0df8c442399',
+                        title: 'Essential Words for the TOEFL',
+                        slug: 'essential-words-for-the-toefl',
+                        status: 'published',
+                        createdAt: '2026-06-15T11:07:22.828Z',
+                      },
+                      {
+                        _id: '6a12ea5f6d2bf0df8c44238a',
+                        title: 'Conversational English Vocabulary',
+                        slug: 'conversational-english-vocabulary',
+                        status: 'published',
+                        createdAt: '2026-06-15T11:07:22.828Z',
+                      },
+                      {
+                        _id: '6a12ea5f6d2bf0df8c44238b',
+                        title: '3000 Oxford Vocabulary A1',
+                        slug: '3000-oxford-vocabulary-a1',
+                        status: 'published',
+                        createdAt: '2026-06-15T11:07:22.828Z',
+                      },
+                      {
+                        _id: '6a12ea5e6d2bf0df8c442389',
+                        title: '1000 common English words',
+                        slug: '1000-common-english-words',
+                        status: 'published',
+                        createdAt: '2026-06-15T11:07:22.828Z',
+                      },
+                    ],
                   },
                 },
               },
