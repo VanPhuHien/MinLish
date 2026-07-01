@@ -361,7 +361,7 @@ const DeckBadRequest = {
 };
 
 const DeckNotFound = {
-  description: 'Không tìm thấy deck',
+  description: 'Deck not found',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
@@ -389,35 +389,51 @@ const DeckSlugConflict = {
   },
 };
 
+// const DeckOrTopicNotFound = {
+//   description: 'Deck or topic not found',
+//   content: {
+//     'application/json': {
+//       schema: { $ref: '#/components/schemas/ErrorResponse' },
+//       examples: {
+//         DeckNotFound: {
+//           summary: 'Deck not found',
+//           value: {
+//             success: false,
+//             code: 'DECK_NOT_FOUND',
+//             message: 'Deck not found',
+//           },
+//         },
+//         TopicNotFound: {
+//           summary: 'Không tìm thấy topic',
+//           value: {
+//             success: false,
+//             code: 'TOPIC_NOT_FOUND',
+//             message: 'Topic not found',
+//           },
+//         },
+//         TopicNotInDeck: {
+//           summary: 'Topic không thuộc deck',
+//           value: {
+//             success: false,
+//             code: 'INVALID_DATA',
+//             message: 'Topic is not belong to the selected deck',
+//           },
+//         },
+//       },
+//     },
+//   },
+// };
+
 const DeckOrTopicNotFound = {
-  description: 'Không tìm thấy deck hoặc topic',
+  description: 'Deck or topic not found',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
-      examples: {
-        DeckNotFound: {
-          summary: 'Không tìm thấy deck',
-          value: {
-            success: false,
-            code: 'DECK_NOT_FOUND',
-            message: 'Deck not found',
-          },
-        },
-        TopicNotFound: {
-          summary: 'Không tìm thấy topic',
-          value: {
-            success: false,
-            code: 'TOPIC_NOT_FOUND',
-            message: 'Topic not found',
-          },
-        },
-        TopicNotInDeck: {
-          summary: 'Topic không thuộc deck',
-          value: {
-            success: false,
-            code: 'INVALID_DATA',
-            message: 'Topic is not belong to the selected deck',
-          },
+      example: {
+        value: {
+          success: false,
+          code: 'DECK_OR_TOPIC_NOT_FOUND',
+          message: 'Deck or topic not found',
         },
       },
     },
@@ -425,19 +441,19 @@ const DeckOrTopicNotFound = {
 };
 
 const TopicConflict = {
-  description: 'Dữ liệu đã tồn tại',
+  description: 'Duplicate data',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
       example: {
         success: false,
-        code: 'ALREADY_EXISTS',
-        message: 'Resource already exists',
+        code: 'TOPIC_SLUG_EXISTS',
+        message: 'Topic slug already exists. Please change the slug or title',
         errors: [
           {
             field: 'slug',
             message:
-              'Slug của topic đã tồn tại. Vui lòng thay đổi slug hoặc title',
+              'Topic slug already exists. Please change the slug or title',
           },
         ],
       },
@@ -451,12 +467,12 @@ const TopicBadRequest = {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
       example: {
-        summary: 'Thiếu dữ liệu trường bắt buộc',
+        summary: 'The name field is required',
         value: {
           success: false,
-          code: 'INVALID_DATA',
-          message: 'Invalid request data',
-          errors: [{ field: 'name', message: 'Trường name là bắt buộc' }],
+          code: 'TOPIC_NAME_REQUIRED',
+          message: 'The name field is required',
+          errors: [{ field: 'name', message: 'The name field is required' }],
         },
       },
     },
@@ -470,7 +486,7 @@ const TopicReorderBadRequest = {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
       examples: {
         MissingFields: {
-          summary: 'Thiếu hoặc sai cấu trúc dữ liệu',
+          summary: 'Missing field or invalid field',
           value: {
             success: false,
             code: 'INVALID_DATA',
@@ -493,29 +509,29 @@ const TopicReorderBadRequest = {
           },
         },
         DuplicateOrderInArray: {
-          summary: 'Trùng lặp order trong mảng',
+          summary: 'Duplicate order found in the list',
           value: {
             success: false,
             code: 'INVALID_DATA',
             message: 'Invalid request data',
             errors: [
               {
-                field: 'topics',
-                message: 'Order của các topics không được trùng lặp trong mảng',
+                field: 'topics[1].order',
+                message: 'Duplicate order found in the list',
               },
             ],
           },
         },
-        InvalidTopicInDeck: {
-          summary: 'Topic không thuộc Deck',
+        DuplicateTopicIdInArray: {
+          summary: 'Duplicate topicId found in the list',
           value: {
             success: false,
             code: 'INVALID_DATA',
             message: 'Invalid request data',
             errors: [
               {
-                field: 'topics[0].topicId',
-                message: 'Topic này không thuộc về deck hiện tại',
+                field: 'topics[1].topicId',
+                message: 'Duplicate topicId found in the list',
               },
             ],
           },
@@ -540,7 +556,7 @@ const TopicNotFound = {
 };
 
 const DeckOrCardNotFound = {
-  description: 'Không tìm thấy deck hoặc card',
+  description: 'Deck not found hoặc card',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
@@ -602,7 +618,7 @@ const CardReorderBadRequest = {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
       examples: {
         MissingFields: {
-          summary: 'Thiếu hoặc sai cấu trúc dữ liệu',
+          summary: 'Missing field or invalid field',
           value: {
             success: false,
             code: 'INVALID_DATA',
@@ -633,7 +649,7 @@ const CardReorderBadRequest = {
             errors: [
               {
                 field: 'topics',
-                message: 'Order của các topics không được trùng lặp trong mảng',
+                message: 'Duplicate order found in the list',
               },
             ],
           },
@@ -1670,7 +1686,7 @@ export default {
       ],
       responses: {
         200: {
-          description: 'Lấy chi tiết deck thành công',
+          description: 'Deck detail retrieved successfully',
           content: {
             'application/json': {
               schema: { $ref: '#/components/schemas/DeckDetailResponse' },
@@ -1707,7 +1723,7 @@ export default {
       },
       responses: {
         200: {
-          description: 'Cập nhật deck thành công',
+          description: 'Deck updated successfully',
           content: {
             'application/json': {
               schema: {
@@ -1718,7 +1734,7 @@ export default {
                     properties: {
                       message: {
                         type: 'string',
-                        example: 'Cập nhật deck thành công',
+                        example: 'Deck updated successfully',
                       },
                     },
                   },
@@ -1783,7 +1799,7 @@ export default {
       ],
       responses: {
         200: {
-          description: 'Lấy danh sách topic thành công',
+          description: 'Topics retrieved successfully',
           content: {
             'application/json': {
               schema: { $ref: '#/components/schemas/TopicsResponse' },
@@ -1820,7 +1836,7 @@ export default {
       },
       responses: {
         201: {
-          description: 'Tạo topic thành công',
+          description: 'Topic created successfully',
           content: {
             'application/json': {
               schema: {
@@ -1829,9 +1845,13 @@ export default {
                   {
                     type: 'object',
                     properties: {
+                      code: {
+                        type: 'string',
+                        example: 'TOPIC_CREATED_SUCCESS',
+                      },
                       message: {
                         type: 'string',
-                        example: 'Tạo topic thành công',
+                        example: 'Topic created successfully',
                       },
                     },
                   },
@@ -1874,7 +1894,7 @@ export default {
       },
       responses: {
         200: {
-          description: 'Sắp xếp topics thành công',
+          description: 'Topics reordered successfully',
           content: {
             'application/json': {
               schema: {
@@ -1931,7 +1951,7 @@ export default {
       ],
       responses: {
         200: {
-          description: 'Lấy chi tiết topic thành công',
+          description: 'Topic detail retrieved successfully',
           content: {
             'application/json': {
               schema: { $ref: '#/components/schemas/TopicResponse' },
@@ -1976,7 +1996,7 @@ export default {
       },
       responses: {
         200: {
-          description: 'Cập nhật topic thành công',
+          description: 'Topic updated successfully',
           content: {
             'application/json': {
               schema: {
@@ -1985,9 +2005,13 @@ export default {
                   {
                     type: 'object',
                     properties: {
+                      code: {
+                        type: 'string',
+                        example: 'TOPIC_UPDATED_SUCCESS',
+                      },
                       message: {
                         type: 'string',
-                        example: 'Cập nhật topic thành công',
+                        example: 'Topic updated successfully',
                       },
                     },
                   },
@@ -2027,10 +2051,14 @@ export default {
       ],
       responses: {
         200: {
-          description: 'Xóa topic thành công',
+          description: 'Topic deleted successfully',
           content: {
             'application/json': {
-              schema: { $ref: '#/components/schemas/SuccessResponse' },
+              example: {
+                  success: true,
+                  code: 'TOPIC_DELETED_SUCCESS',
+                  message: 'Topic deleted successfully',
+              },
             },
           },
         },
@@ -2046,7 +2074,7 @@ export default {
       tags: ['Admin cards'],
       summary: 'Lấy danh sách card của deck',
       description:
-        'Lấy danh sách các card thuộc về một deck cụ thể dành cho Admin. Hỗ trợ lọc theo topicId, q, page, limit.',
+        'Lấy danh sách các card thuộc về một deck cụ thể dành cho Admin. Hỗ trợ lọc theo topicId, q, page, limit, pos.',
       security: [{ BearerAuth: [] }],
       parameters: [
         {
@@ -2089,7 +2117,7 @@ export default {
       ],
       responses: {
         200: {
-          description: 'Lấy danh sách cards thành công',
+          description: 'Cards retrieved successfully',
           content: {
             'application/json': {
               schema: { $ref: '#/components/schemas/CardsResponse' },

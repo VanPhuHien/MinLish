@@ -362,18 +362,35 @@ export const reorderAdminDeckTopics = async (deckId, topics) => {
       message: 'The topics field must be a non-empty array',
     });
   } else {
+    const seenTopicIds = new Set();
+    const seenOrders = new Set();
     topics.forEach((item, index) => {
       if (!item.topicId) {
         errors.push({
           field: `topics[${index}].topicId`,
           message: 'The topicId field is required',
         });
+      } else if (seenTopicIds.has(item.topicId)) {
+        errors.push({
+          field: `topics[${index}].topicId`,
+          message: 'Duplicate topicId found in the list',
+        });
+      } else {
+        seenTopicIds.add(item.topicId);
       }
+
       if (!item.order || !Number.isInteger(item.order) || item.order < 1) {
         errors.push({
           field: `topics[${index}].order`,
           message: 'The order field is required and must be an integer >= 1',
         });
+      } else if (seenOrders.has(item.order)) {
+        errors.push({
+          field: `topics[${index}].order`,
+          message: 'Duplicate order found in the list',
+        });
+      } else {
+        seenOrders.add(item.order);
       }
     });
   }
@@ -707,18 +724,35 @@ export const reorderAdminTopicCards = async (topicId, cards) => {
       message: 'The cards field must be a non-empty array',
     });
   } else {
+    const seenCardIds = new Set();
+    const seenOrders = new Set();
     cards.forEach((item, index) => {
       if (!item.cardId) {
         errors.push({
           field: `cards[${index}].cardId`,
           message: 'The cardId field is required',
         });
+      } else if (seenCardIds.has(item.cardId)) {
+        errors.push({
+          field: `cards[${index}].cardId`,
+          message: 'Duplicate cardId found in the list',
+        });
+      } else {
+        seenCardIds.add(item.cardId);
       }
+
       if (!item.order || !Number.isInteger(item.order) || item.order < 1) {
         errors.push({
           field: `cards[${index}].order`,
           message: 'The order field is required and must be an integer >= 1',
         });
+      } else if (seenOrders.has(item.order)) {
+        errors.push({
+          field: `cards[${index}].order`,
+          message: 'Duplicate order found in the list',
+        });
+      } else {
+        seenOrders.add(item.order);
       }
     });
   }

@@ -248,7 +248,7 @@ XP idempotent: gọi finalize nhiều lần không bị cộng trùng (`refId=ma
 
 ## **Cards management**
 
-- GET /api/v1/admin/decks/{deckId}/cards — danh sách card của deck; hỗ trợ topicId, q, page, limit.
+- GET /api/v1/admin/decks/{deckId}/cards — danh sách card của deck; hỗ trợ topicId, q, page, limit, pos (loại từ).
 - POST /api/v1/admin/decks/{deckId}/cards — tạo card mới.
 - GET /api/v1/admin/decks/{deckId}/cards/{cardId} — chi tiết card.
 - PUT /api/v1/admin/decks/{deckId}/cards/{cardId} — cập nhật term, pos, phonetics, translation, explanation, examples, imageUrl.

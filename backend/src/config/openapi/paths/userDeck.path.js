@@ -160,11 +160,11 @@ export default {
       responses: {
         200: jsonResponse(
           'UserDeckDetailResponse',
-          'Lấy chi tiết deck thành công.'
+          'Deck detail retrieved successfully.'
         ),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
-        404: NotFound('Không tìm thấy deck'),
+        404: NotFound('Deck not found'),
         500: { $ref: '#/components/responses/ServerError' },
       },
     },
@@ -179,11 +179,11 @@ export default {
       responses: {
         200: jsonResponse(
           'UserDeckUpdateResponse',
-          'Cập nhật deck thành công.'
+          'Deck updated successfully.'
         ),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
-        404: NotFound('Không tìm thấy deck'),
+        404: NotFound('Deck not found'),
         500: { $ref: '#/components/responses/ServerError' },
       },
     },
@@ -198,7 +198,7 @@ export default {
         200: simpleSuccess('DECK_DELETE_SUCCESS', 'Deck deleted successfully'),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
-        404: NotFound('Không tìm thấy deck'),
+        404: NotFound('Deck not found'),
         500: { $ref: '#/components/responses/ServerError' },
       },
     },
@@ -216,11 +216,11 @@ export default {
       responses: {
         200: jsonResponse(
           'UserTopicListResponse',
-          'Lấy danh sách topic thành công.'
+          'Topics retrieved successfully.'
         ),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
-        404: NotFound('Không tìm thấy deck'),
+        404: NotFound('Deck not found'),
         500: { $ref: '#/components/responses/ServerError' },
       },
     },
@@ -241,7 +241,7 @@ export default {
         ),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
-        404: NotFound('Không tìm thấy deck'),
+        404: NotFound('Deck not found'),
         500: { $ref: '#/components/responses/ServerError' },
       },
     },
@@ -263,7 +263,7 @@ export default {
         ),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
-        404: NotFound('Không tìm thấy deck hoặc topic'),
+        404: NotFound('Deck or topic not found'),
         500: { $ref: '#/components/responses/ServerError' },
       },
     },
@@ -284,7 +284,7 @@ export default {
         ),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
-        404: NotFound('Không tìm thấy deck hoặc topic'),
+        404: NotFound('Deck or topic not found'),
         500: { $ref: '#/components/responses/ServerError' },
       },
     },
@@ -302,7 +302,7 @@ export default {
         ),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
-        404: NotFound('Không tìm thấy deck hoặc topic'),
+        404: NotFound('Deck or topic not found'),
         500: { $ref: '#/components/responses/ServerError' },
       },
     },
@@ -347,7 +347,7 @@ export default {
           },
         },
         404: {
-          description: 'Không tìm thấy deck, topic hoặc user',
+          description: 'Deck, topic or user not found',
           content: {
             'application/json': {
               schema: { $ref: '#/components/schemas/ErrorResponse' },
@@ -481,7 +481,7 @@ export default {
           },
         },
         404: {
-          description: 'Không tìm thấy deck, topic',
+          description: 'Deck or topic not found',
           content: {
             'application/json': {
               schema: { $ref: '#/components/schemas/ErrorResponse' },
@@ -541,7 +541,7 @@ export default {
         ),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
-        404: NotFound('Không tìm thấy deck'),
+        404: NotFound('Deck not found'),
         500: { $ref: '#/components/responses/ServerError' },
       },
     },
@@ -562,7 +562,7 @@ export default {
         ),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
-        404: NotFound('Không tìm thấy deck hoặc topic'),
+        404: NotFound('Deck or topic not found'),
         500: { $ref: '#/components/responses/ServerError' },
       },
     },
@@ -584,7 +584,7 @@ export default {
         ),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
-        404: NotFound('Không tìm thấy deck hoặc card'),
+        404: NotFound('Deck or card not found'),
         500: { $ref: '#/components/responses/ServerError' },
       },
     },
@@ -605,7 +605,7 @@ export default {
         ),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
-        404: NotFound('Không tìm thấy deck hoặc card'),
+        404: NotFound('Deck or card not found'),
         500: { $ref: '#/components/responses/ServerError' },
       },
     },
@@ -619,7 +619,7 @@ export default {
         200: simpleSuccess('CARD_DELETE_SUCCESS', 'Card deleted successfully'),
         400: { $ref: '#/components/responses/BadRequest' },
         401: { $ref: '#/components/responses/Unauthorized' },
-        404: NotFound('Không tìm thấy deck hoặc card'),
+        404: NotFound('Deck or card not found'),
         500: { $ref: '#/components/responses/ServerError' },
       },
     },

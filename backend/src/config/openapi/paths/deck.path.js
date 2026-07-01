@@ -127,7 +127,7 @@ export default {
       ],
       responses: {
         200: {
-          description: 'Lấy chi tiết deck thành công.',
+          description: 'Deck detail retrieved successfully.',
           content: {
             'application/json': {
               schema: {
@@ -161,7 +161,7 @@ export default {
           $ref: '#/components/responses/Unauthorized',
         },
         404: {
-          description: 'Không tìm thấy deck.',
+          description: 'Deck not found.',
           content: {
             'application/json': {
               schema: {
@@ -237,7 +237,7 @@ export default {
           $ref: '#/components/responses/Unauthorized',
         },
         404: {
-          description: 'Không tìm thấy deck hoặc topic.',
+          description: 'Deck or topic not found.',
           content: {
             'application/json': {
               schema: {
@@ -324,7 +324,7 @@ export default {
           $ref: '#/components/responses/Unauthorized',
         },
         404: {
-          description: 'Không tìm thấy deck, topic hoặc card.',
+          description: 'Deck, topic or card not found.',
           content: {
             'application/json': {
               schema: {
