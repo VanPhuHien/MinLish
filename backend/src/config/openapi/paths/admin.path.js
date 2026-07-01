@@ -47,7 +47,7 @@ const UserInvalidStatus = {
 };
 
 const UserPasswordBadRequest = {
-  description: 'Dữ liệu đầu vào không hợp lệ',
+  description: 'Invalid input data',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
@@ -86,7 +86,7 @@ const UserPasswordBadRequest = {
 };
 
 const TagNotFound = {
-  description: 'Không tìm thấy tag',
+  description: 'Tag not found',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
@@ -113,56 +113,64 @@ const LessonNotFound = {
   },
 };
 
-const LessonSlugConflict = {
-  description: 'Slug đã tồn tại',
+const LessonTitleConflict = {
+  description: 'The lesson title already exists',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
       example: {
         success: false,
-        code: 'ALREADY_EXISTS',
-        message: 'Resource already exists',
-        errors: [
-          {
-            field: 'slug',
-            message: 'Slug của lesson đã tồn tại trong hệ thống',
-          },
-        ],
+        code: 'LESSON_TITLE_EXISTS',
+        message: 'The lesson title already exists in the system. Please adjust the title.',
       },
     },
   },
 };
 
 const LessonBadRequest = {
-  description: 'Dữ liệu đầu vào không hợp lệ',
+  description: 'Invalid input data',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
       examples: {
-        MissingFields: {
-          summary: 'Thiếu dữ liệu trường bắt buộc',
+        MissingTitleFields: {
+          summary: 'The title field is required',
           value: {
             success: false,
-            code: 'INVALID_DATA',
-            message: 'Invalid request data',
-            errors: [
-              { field: 'title', message: 'Trường title là bắt buộc' },
-              { field: 'sourceUrl', message: 'Trường sourceUrl là bắt buộc' },
-            ],
+            code: 'LESSON_TITLE_REQUIRED',
+            message: 'The title field is required.',
+          },
+        },
+        MissingSourceUrlFields: {
+          summary: 'The sourceURL field is required',
+          value: {
+            success: false,
+            code: 'LESSON_SOURCE_URL_REQUIRED',
+            message: 'The sourceURL field is required.',
+          },
+        },
+        InvalidSourceUrlFields: {
+          summary: 'The sourceUrl must be a valid YouTube link',
+          value: {
+            success: false,
+            code: 'LESSON_SOURCE_URL_INVALID',
+            message: 'The sourceUrl must be a valid YouTube link.',
+          },
+        },
+        DisabledPlaybackSourceUrlFields: {
+          summary: 'Video is unavailable. Video owner has disabled playback on other websites',
+          value: {
+            success: false,
+            code: 'LESSON_SOURCE_URL_DISABLED_PLAYBACK',
+            message: 'Video is unavailable. Video owner has disabled playback on other websites',
           },
         },
         InvalidStatus: {
-          summary: 'Sai trạng thái',
+          summary: 'The status field must be draft, published or archived',
           value: {
             success: false,
-            code: 'INVALID_DATA',
-            message: 'Invalid request data',
-            errors: [
-              {
-                field: 'status',
-                message: 'Trường status phải là draft, published hoặc archived',
-              },
-            ],
+            code: 'LESSON_STATUS_INVALID',
+            message: 'The status field must be draft, published or archived.',
           },
         },
       },
@@ -197,40 +205,16 @@ const LessonOrSegmentNotFound = {
   },
 };
 
-const CefrBadRequest = {
-  description: 'Dữ liệu đầu vào không hợp lệ',
-  content: {
-    'application/json': {
-      schema: { $ref: '#/components/schemas/ErrorResponse' },
-      examples: {
-        MissingFields: {
-          summary: 'Thiếu dữ liệu trường bắt buộc',
-          value: {
-            success: false,
-            code: 'INVALID_DATA',
-            message: 'Invalid request data',
-            errors: [{ field: 'label', message: 'Trường label là bắt buộc' }],
-          },
-        },
-      },
-    },
-  },
-};
-
 const TagBadRequest = {
-  description: 'Dữ liệu đầu vào không hợp lệ',
+  description: 'Invalid input data',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
-      examples: {
-        MissingFields: {
-          summary: 'Thiếu dữ liệu trường bắt buộc',
-          value: {
-            success: false,
-            code: 'INVALID_DATA',
-            message: 'Invalid request data',
-            errors: [{ field: 'label', message: 'Trường label là bắt buộc' }],
-          },
+      example: {
+        value: {
+          success: false,
+          code: 'TAG_LABEL_REQUIRED',
+          message: 'The label field is required',
         },
       },
     },
@@ -321,19 +305,15 @@ const CefrConflict = {
 };
 
 const TagConflict = {
-  description: 'Dữ liệu Tag đã tồn tại',
+  description: 'This tag label already exists',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
-      examples: {
-        DuplicateLabel: {
-          summary: 'Trùng label',
-          value: {
-            success: false,
-            code: 'ALREADY_EXISTS',
-            message: 'Resource already exists',
-            errors: [{ field: 'label', message: 'Label tag này đã tồn tại' }],
-          },
+      example: {
+        value: {
+          success: false,
+          code: 'TAG_LABEL_EXISTS',
+          message: 'This tag label already exists',
         },
       },
     },
@@ -341,7 +321,7 @@ const TagConflict = {
 };
 
 const DeckBadRequest = {
-  description: 'Dữ liệu đầu vào không hợp lệ',
+  description: 'Invalid input data',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
@@ -375,7 +355,7 @@ const DeckNotFound = {
 };
 
 const DeckSlugConflict = {
-  description: 'Slug đã tồn tại',
+  description: 'The deck title already exists',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
@@ -457,7 +437,7 @@ const TopicConflict = {
 };
 
 const TopicBadRequest = {
-  description: 'Dữ liệu đầu vào không hợp lệ',
+  description: 'Invalid input data',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
@@ -475,7 +455,7 @@ const TopicBadRequest = {
 };
 
 const TopicReorderBadRequest = {
-  description: 'Dữ liệu đầu vào không hợp lệ',
+  description: 'Invalid input data',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
@@ -565,7 +545,7 @@ const DeckOrCardNotFound = {
 };
 
 const CardBadRequest = {
-  description: 'Dữ liệu đầu vào không hợp lệ',
+  description: 'Invalid input data',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
@@ -607,7 +587,7 @@ const CardBadRequest = {
 };
 
 const CardReorderBadRequest = {
-  description: 'Dữ liệu đầu vào không hợp lệ',
+  description: 'Invalid input data',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
@@ -669,7 +649,7 @@ const CardReorderBadRequest = {
 };
 
 const ImportCardBadRequest = {
-  description: 'Dữ liệu đầu vào không hợp lệ',
+  description: 'Invalid input data',
   content: {
     'application/json': {
       schema: { $ref: '#/components/schemas/ErrorResponse' },
@@ -750,37 +730,43 @@ export default {
                     {
                       userCount: 6,
                       _id: '69c79cd3d9501970bf0c23b3',
-                      title: 'How To Plant a Tree (While Two Grown Men Try to Climb You) - Moving Mind Studio',
+                      title:
+                        'How To Plant a Tree (While Two Grown Men Try to Climb You) - Moving Mind Studio',
                       slug: 'how-to-plant-a-tree-while-two-grown-men-try-to-climb-you-moving-mind-studio',
-                      thumbnailUrl: 'https://img.youtube.com/vi/7blGR9KxTGY/0.jpg',
+                      thumbnailUrl:
+                        'https://img.youtube.com/vi/7blGR9KxTGY/0.jpg',
                     },
                     {
                       userCount: 3,
                       _id: '69c79bf5d9501970bf0bc814',
                       title: 'How to Cut Rope in an Emergency',
                       slug: 'how-to-cut-rope-in-an-emergency',
-                      thumbnailUrl: 'https://img.youtube.com/vi/eCNwxqP7l44/0.jpg',
+                      thumbnailUrl:
+                        'https://img.youtube.com/vi/eCNwxqP7l44/0.jpg',
                     },
                     {
                       userCount: 3,
                       _id: '69c53f0ac160bb412e9b1b97',
                       title: 'What Is a Sandwich?',
                       slug: 'what-is-a-sandwich',
-                      thumbnailUrl: 'https://img.youtube.com/vi/qDSPDOe7LJg/0.jpg',
+                      thumbnailUrl:
+                        'https://img.youtube.com/vi/qDSPDOe7LJg/0.jpg',
                     },
                     {
                       userCount: 2,
                       _id: '689cba35186a4c2f57f75dbe',
                       title: 'English in a Minute: Zone Out',
                       slug: 'english-in-a-minute-zone-out',
-                      thumbnailUrl: 'https://img.youtube.com/vi/qFhCU9UWbq8/0.jpg',
+                      thumbnailUrl:
+                        'https://img.youtube.com/vi/qFhCU9UWbq8/0.jpg',
                     },
                     {
                       userCount: 2,
                       _id: '689cba28186a4c2f57f75d15',
                       title: 'English in a Minute: Play Up',
                       slug: 'english-in-a-minute-play-up',
-                      thumbnailUrl: 'https://img.youtube.com/vi/bLYdr5T55aY/0.jpg',
+                      thumbnailUrl:
+                        'https://img.youtube.com/vi/bLYdr5T55aY/0.jpg',
                     },
                   ],
                   popularDecks: [
@@ -788,35 +774,40 @@ export default {
                       _id: '6a12ea606d2bf0df8c442399',
                       title: 'Essential Words for the TOEFL',
                       slug: 'essential-words-for-the-toefl',
-                      coverImage: 'https://assets.parroto.app/assets/decks/6900e0eff1a22d0de4fe6d74/thumbnail-RFpNacsQ68FdXjCM-4X1d.jpg',
+                      coverImage:
+                        'https://assets.parroto.app/assets/decks/6900e0eff1a22d0de4fe6d74/thumbnail-RFpNacsQ68FdXjCM-4X1d.jpg',
                       cardCount: 529,
                     },
                     {
                       _id: '6a12ea606d2bf0df8c442394',
                       title: '600 basic IELTS vocabulary',
                       slug: '600-basic-ielts-vocabulary',
-                      coverImage: 'https://assets.parroto.app/assets/decks/68fb9444c82801c32077e73e/thumbnail-TPgsVZ-s4SXFL3s0ie7EL.jpg',
+                      coverImage:
+                        'https://assets.parroto.app/assets/decks/68fb9444c82801c32077e73e/thumbnail-TPgsVZ-s4SXFL3s0ie7EL.jpg',
                       cardCount: 599,
                     },
                     {
                       _id: '6a12ea5e6d2bf0df8c442389',
                       title: '1000 common English words',
                       slug: '1000-common-english-words',
-                      coverImage: 'https://assets.parroto.app/assets/decks/68f46a24b79f2226f4ef9491/thumbnail-OQPDM-w_9HqmPWniWj8Dg.webp',
+                      coverImage:
+                        'https://assets.parroto.app/assets/decks/68f46a24b79f2226f4ef9491/thumbnail-OQPDM-w_9HqmPWniWj8Dg.webp',
                       cardCount: 992,
                     },
                     {
                       _id: '6a12ea5f6d2bf0df8c442391',
                       title: '600 essential words for the TOEIC',
                       slug: '600-essential-words-for-the-toeic',
-                      coverImage: 'https://assets.parroto.app/assets/decks/68f2173c5e2ac8381d780dc8/thumbnail-AFWd3rdTW4-uHJZoOJBYr.webp',
+                      coverImage:
+                        'https://assets.parroto.app/assets/decks/68f2173c5e2ac8381d780dc8/thumbnail-AFWd3rdTW4-uHJZoOJBYr.webp',
                       cardCount: 622,
                     },
                     {
                       _id: '6a12ea5f6d2bf0df8c44238c',
                       title: '3000 Oxford Vocabulary A2',
                       slug: '3000-oxford-vocabulary-a2',
-                      coverImage: 'https://assets.parroto.app/assets/decks/691c160fd3a2e879f9c6b103/thumbnail-sxNAh58W-l-gFEQ2Hpr2K.webp',
+                      coverImage:
+                        'https://assets.parroto.app/assets/decks/691c160fd3a2e879f9c6b103/thumbnail-sxNAh58W-l-gFEQ2Hpr2K.webp',
                       cardCount: 827,
                     },
                   ],
@@ -852,7 +843,8 @@ export default {
                       },
                       {
                         _id: '68c0fc86ca0b3e86dd919972',
-                        title: 'Vietnam’s bank risk rating upgraded | Vietnam Today',
+                        title:
+                          'Vietnam’s bank risk rating upgraded | Vietnam Today',
                         slug: 'vietnams-bank-risk-rating-upgraded-vietnam-today',
                         status: 'published',
                         createdAt: '2026-06-15T11:48:41.225Z',
@@ -907,226 +899,6 @@ export default {
       },
     },
   },
-  '/admin/cefr-levels': {
-    get: {
-      tags: ['Admin cefr-levels'],
-      summary: 'Lấy danh sách CEFR Levels',
-      description:
-        'Lấy toàn bộ danh sách các cấp độ CEFR (cefr_levels) dành cho Admin.',
-      security: [
-        {
-          BearerAuth: [],
-        },
-      ],
-      responses: {
-        200: {
-          description: 'Lấy danh sách thành công',
-          content: {
-            'application/json': {
-              schema: {
-                $ref: '#/components/schemas/CefrLevelsResponse',
-              },
-            },
-          },
-        },
-        401: {
-          $ref: '#/components/responses/Unauthorized',
-        },
-        403: {
-          $ref: '#/components/responses/Forbidden',
-        },
-        500: {
-          $ref: '#/components/responses/ServerError',
-        },
-      },
-    },
-    post: {
-      tags: ['Admin cefr-levels'],
-      summary: 'Tạo CEFR Level mới',
-      description: 'Tạo mới một CEFR level dành cho Admin.',
-      security: [{ BearerAuth: [] }],
-      requestBody: {
-        required: true,
-        content: {
-          'application/json': {
-            schema: {
-              $ref: '#/components/schemas/CefrLevelPayload',
-            },
-          },
-        },
-      },
-      responses: {
-        201: {
-          description: 'Tạo CEFR Level thành công',
-          content: {
-            'application/json': {
-              schema: {
-                allOf: [
-                  { $ref: '#/components/schemas/CefrLevelResponse' }, // Kế thừa toàn bộ
-                  {
-                    type: 'object',
-                    properties: {
-                      message: {
-                        type: 'string',
-                        example: 'Tạo mới CEFR level thành công', // Chỉ đè duy nhất trường này
-                      },
-                    },
-                  },
-                ],
-              },
-            },
-          },
-        },
-        400: CefrBadRequest,
-        409: CefrConflict,
-        401: {
-          $ref: '#/components/responses/Unauthorized',
-        },
-        403: {
-          $ref: '#/components/responses/Forbidden',
-        },
-        500: {
-          $ref: '#/components/responses/ServerError',
-        },
-      },
-    },
-  },
-  '/admin/cefr-levels/{id}': {
-    get: {
-      tags: ['Admin cefr-levels'],
-      summary: 'Lấy chi tiết một CEFR Level',
-      description: 'Lấy thông tin chi tiết một cấp độ CEFR dành cho Admin.',
-      security: [{ BearerAuth: [] }],
-      parameters: [
-        {
-          in: 'path',
-          name: 'id',
-          required: true,
-          schema: { type: 'string' },
-          description: 'ID của CEFR Level',
-        },
-      ],
-      responses: {
-        200: {
-          description: 'Lấy thông tin thành công',
-          content: {
-            'application/json': {
-              schema: {
-                $ref: '#/components/schemas/CefrLevelResponse',
-              },
-            },
-          },
-        },
-        404: CefrNotFound,
-        401: {
-          $ref: '#/components/responses/Unauthorized',
-        },
-        403: {
-          $ref: '#/components/responses/Forbidden',
-        },
-        500: {
-          $ref: '#/components/responses/ServerError',
-        },
-      },
-    },
-    put: {
-      tags: ['Admin cefr-levels'],
-      summary: 'Cập nhật CEFR Level',
-      description: 'Cập nhật thông tin CEFR level dành cho Admin.',
-      security: [{ BearerAuth: [] }],
-      parameters: [
-        {
-          in: 'path',
-          name: 'id',
-          required: true,
-          schema: { type: 'string' },
-          description: 'ID của CEFR Level',
-        },
-      ],
-      requestBody: {
-        required: true,
-        content: {
-          'application/json': {
-            schema: {
-              $ref: '#/components/schemas/CefrLevelPayload',
-            },
-          },
-        },
-      },
-      responses: {
-        200: {
-          description: 'Cập nhật CERF level thành công',
-          content: {
-            'application/json': {
-              schema: {
-                allOf: [
-                  { $ref: '#/components/schemas/CefrLevelResponse' },
-                  {
-                    type: 'object',
-                    properties: {
-                      message: {
-                        type: 'string',
-                        example: 'Cập nhật CEFR level thành công',
-                      },
-                    },
-                  },
-                ],
-              },
-            },
-          },
-        },
-        400: CefrBadRequest,
-        409: CefrConflict,
-        404: CefrNotFound,
-        401: {
-          $ref: '#/components/responses/Unauthorized',
-        },
-        403: {
-          $ref: '#/components/responses/Forbidden',
-        },
-        500: {
-          $ref: '#/components/responses/ServerError',
-        },
-      },
-    },
-    delete: {
-      tags: ['Admin cefr-levels'],
-      summary: 'Xóa CEFR Level',
-      description: 'Xóa CEFR level dành cho Admin.',
-      security: [{ BearerAuth: [] }],
-      parameters: [
-        {
-          in: 'path',
-          name: 'id',
-          required: true,
-          schema: { type: 'string' },
-          description: 'ID của CEFR Level',
-        },
-      ],
-      responses: {
-        200: {
-          description: 'Xóa CEFR Level thành công',
-          content: {
-            'application/json': {
-              schema: {
-                $ref: '#/components/schemas/SuccessResponse',
-              },
-            },
-          },
-        },
-        404: CefrNotFound,
-        401: {
-          $ref: '#/components/responses/Unauthorized',
-        },
-        403: {
-          $ref: '#/components/responses/Forbidden',
-        },
-        500: {
-          $ref: '#/components/responses/ServerError',
-        },
-      },
-    },
-  },
   '/admin/tags': {
     get: {
       tags: ['Admin tags'],
@@ -1135,7 +907,7 @@ export default {
       security: [{ BearerAuth: [] }],
       responses: {
         200: {
-          description: 'Lấy danh sách tag thành công',
+          description: 'Tags retrieved successfully',
           content: {
             'application/json': {
               schema: {
@@ -1166,7 +938,7 @@ export default {
       },
       responses: {
         201: {
-          description: 'Tạo tag thành công',
+          description: 'Tags created successfully',
           content: {
             'application/json': {
               schema: {
@@ -1177,7 +949,7 @@ export default {
                     properties: {
                       message: {
                         type: 'string',
-                        example: 'Tạo tag thành công',
+                        example: 'Tags created successfully',
                       },
                     },
                   },
@@ -1211,7 +983,7 @@ export default {
       ],
       responses: {
         200: {
-          description: 'Lấy thông tin tag thành công',
+          description: 'Tag detail retrieved successfully',
           content: {
             'application/json': {
               schema: {
@@ -1252,7 +1024,7 @@ export default {
       },
       responses: {
         200: {
-          description: 'Cập nhật tag thành công',
+          description: 'Tag updated successfully',
           content: {
             'application/json': {
               schema: {
@@ -1263,7 +1035,7 @@ export default {
                     properties: {
                       message: {
                         type: 'string',
-                        example: 'Cập nhật tag thành công',
+                        example: 'Tag updated successfully',
                       },
                     },
                   },
@@ -1296,11 +1068,13 @@ export default {
       ],
       responses: {
         200: {
-          description: 'Xóa tag thành công',
+          description: 'Tag deleted successfully',
           content: {
             'application/json': {
-              schema: {
-                $ref: '#/components/schemas/SuccessResponse',
+              example: {
+                success: true,
+                code: 'TAG_DELETED_SUCCESS',
+                message: 'Tag deleted successfully',
               },
             },
           },
@@ -1365,7 +1139,7 @@ export default {
       ],
       responses: {
         200: {
-          description: 'Lấy danh sách lessons thành công',
+          description: 'Lessons retrieved successfully',
           content: {
             'application/json': {
               schema: { $ref: '#/components/schemas/LessonsResponse' },
@@ -1392,7 +1166,7 @@ export default {
       },
       responses: {
         201: {
-          description: 'Tạo lesson thành công',
+          description: 'Lesson created successfully',
           content: {
             'application/json': {
               schema: {
@@ -1403,7 +1177,7 @@ export default {
                     properties: {
                       message: {
                         type: 'string',
-                        example: 'Tạo lesson thành công',
+                        example: 'Lesson created successfully',
                       },
                     },
                   },
@@ -1413,7 +1187,7 @@ export default {
           },
         },
         400: LessonBadRequest,
-        409: LessonSlugConflict,
+        409: LessonTitleConflict,
         401: { $ref: '#/components/responses/Unauthorized' },
         403: { $ref: '#/components/responses/Forbidden' },
         500: { $ref: '#/components/responses/ServerError' },
@@ -1437,7 +1211,7 @@ export default {
       ],
       responses: {
         200: {
-          description: 'Lấy chi tiết lesson thành công',
+          description: 'Lesson detail retrieved successfully',
           content: {
             'application/json': {
               schema: { $ref: '#/components/schemas/LessonResponse' },
@@ -1474,7 +1248,7 @@ export default {
       },
       responses: {
         200: {
-          description: 'Cập nhật lesson thành công',
+          description: 'Lesson updated successfully',
           content: {
             'application/json': {
               schema: {
@@ -1485,7 +1259,7 @@ export default {
                     properties: {
                       message: {
                         type: 'string',
-                        example: 'Cập nhật bài học thành công',
+                        example: 'Lesson updated successfully',
                       },
                     },
                   },
@@ -1496,7 +1270,7 @@ export default {
         },
         400: LessonBadRequest,
         404: LessonNotFound,
-        409: LessonSlugConflict,
+        409: LessonTitleConflict,
         401: { $ref: '#/components/responses/Unauthorized' },
         403: { $ref: '#/components/responses/Forbidden' },
         500: { $ref: '#/components/responses/ServerError' },
@@ -1518,10 +1292,14 @@ export default {
       ],
       responses: {
         200: {
-          description: 'Xóa lesson thành công',
+          description: 'Lesson deleted/archived successfully',
           content: {
             'application/json': {
-              schema: { $ref: '#/components/schemas/SuccessResponse' },
+              example: {
+                success: true,
+                code: 'LESSON_DELETED_SUCCESS',
+                message: 'Lesson deleted/archived successfully',
+              },
             },
           },
         },

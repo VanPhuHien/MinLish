@@ -38,7 +38,7 @@ export default {
       ],
       responses: {
         200: {
-          description: 'Lấy danh sách tag thành công.',
+          description: 'Tags retrieved successfully.',
           content: {
             'application/json': {
               schema: { $ref: '#/components/schemas/TagsResponse' },
