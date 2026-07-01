@@ -6,11 +6,6 @@ on:
     paths:
       - 'backend/**'
       - '.github/workflows/backend_deploy_to_ec2.yml'
-  pull_request:
-    branches: [ "main" ]
-    paths:
-      - 'backend/**'
-      - '.github/workflows/backend_deploy_to_ec2.yml'
 
 jobs:
   deploy:
