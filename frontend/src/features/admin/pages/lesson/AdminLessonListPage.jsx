@@ -78,7 +78,7 @@ function AdminLessonListPage({ onNavigate }) {
   const getLabels = (items = [], fallbackMap) => {
     return items.map((item) => {
       if (item?.label || item?.code) return item.label || item.code
-      return fallbackMap.get(item) || item
+      return fallbackMap.get(item)
     }).filter(Boolean)
   }
 
@@ -264,7 +264,7 @@ function AdminLessonListPage({ onNavigate }) {
                       </td>
                       <td>
                         <div className="admin-lesson-badge-list">
-                          {tagLabels.length > 0 ? tagLabels.slice(0, 2).map((label) => (
+                          {tagLabels.length > 0 ? tagLabels.map((label) => (
                             <span key={label} className="admin-lesson-badge tag">{label}</span>
                           )) : <span className="admin-muted-cell">-</span>}
                         </div>

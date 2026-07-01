@@ -80,10 +80,13 @@ function AdminLessonEditPage({ lessonId, onNavigate }) {
         setSourceUrl(lesson.sourceUrl || '')
         setThumbnailUrl(lesson.thumbnailUrl || '')
         setSelectedCefr((lesson.cefrLevelIds || []).map((item) => typeof item === 'object' ? item._id : item))
-        setSelectedTags((lesson.tagIds || []).map((item) => {
-          if (typeof item === 'object') return item
-          return tags.find((tag) => tag._id === item) || { _id: item, label: item }
-        }))
+        setSelectedTags((lesson.tagIds || [])
+          .map((item) => {
+            if (typeof item === 'object') return item
+            return tags.find((tag) => tag._id === item)
+          })
+          .filter(Boolean)
+        )
         setStatus(lesson.status || 'draft')
 
         if (cefrRes.data) setCefrLevels(cefrRes.data)
