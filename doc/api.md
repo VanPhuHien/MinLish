@@ -76,6 +76,8 @@ POST /api/v1/auth/reset-password — đặt lại mật khẩu với OTP; body `
 - GET /api/v1/users/me/decks/{deckId}/cards/{cardId} — chi tiết card.
 - PUT /api/v1/users/me/decks/{deckId}/cards/{cardId} — cập nhật term, translation, definition, example, pos (gửi ít nhất một). Thẻ giữ nguyên topic, không hỗ trợ chuyển nhóm.
 - DELETE /api/v1/users/me/decks/{deckId}/cards/{cardId} — xóa card.
+- POST /api/v1/users/me/decks/{deckId}/topics/{topicId}/import - Nhập danh sách card từ file Excel vào topic. Yêu cầu đăng nhập bằng Bearer token và phải là chủ sở hữu deck. Định dạng file Excel (header dòng 1): term, translation, explanation_vi, examples_en, pos. Các cột bắt buộc phải có: term và translation.
+- GET /api/v1/users/me/decks/{deckId}/topics/{topicId}/export - Xuất danh sách card trong topic ra file Excel. Yêu cầu đăng nhập bằng Bearer token và phải là chủ sở hữu deck.
 
 ## **Tra cứu từ vựng hệ thống**
 
@@ -88,17 +90,12 @@ Vòng đời upload 2 bước: (1) xin presigned PUT → (2) client PUT bytes th
 - POST /api/v1/s3/presigned-url — tạo URL PUT ký sẵn (hết hạn 60s) để client upload file trực tiếp lên S3. Body: contentType (bắt buộc), purpose (bắt buộc: shadowing-audio | deck-import | card-image), fileSize (bắt buộc, bytes). Key sinh ở server theo userId; backend không nhận bytes. `fileSize` được bake vào chữ ký → S3 reject upload sai kích thước. Trả về uploadUrl + key + url (public/CDN) + expiresIn. Client dùng url này để gửi kèm khi cập nhật resource. **Phân quyền theo purpose:** `card-image` yêu cầu role `admin` (403 nếu user thường); `shadowing-audio` và `deck-import` cho phép mọi user đã xác thực.
 
 ## **Progress của user**
-
-- GET /api/v1/users/me/lesson-progress — danh sách tiến độ lesson của user.
-- GET /api/v1/users/me/lesson-progress/{lessonId} — chi tiết tiến độ một lesson.
-- PUT /api/v1/users/me/lesson-progress/{lessonId} — upsert toàn bộ tiến độ lesson.
 - GET /api/v1/users/me/lessons/{lessonId}/segments-progress — lấy toàn bộ tiến độ segment của một lesson.
 - GET /api/v1/users/me/lessons/{lessonId}/segments/{segmentId}/progress — lấy tiến độ một segment.
-- PATCH /api/v1/users/me/lessons/{lessonId}/segments/{segmentId}/progress - upsert/cập nhật một phần block dictation hoặc shadowing (nếu chưa có sẽ tự tạo mới tiến độ cho câu này).
-- GET /api/v1/users/me/card-states — danh sách trạng thái card; hỗ trợ deckId, topicId, due, starred, page, limit.
+- PATCH /api/v1/users/me/lessons/{lessonId}/segments/{segmentId}/progress - upsert/cập nhật một phần block dictation hoặc shadowing (nếu chưa có sẽ tự tạo mới tiến độ cho segment này).
+- GET /api/v1/users/me/card-states — danh sách trạng thái card; hỗ trợ deckId, topicId, due, starred, hidden, page, limit.
 - GET /api/v1/users/me/card-states/{cardId} — lấy trạng thái một card.
-- PUT /api/v1/users/me/card-states/{cardId} — upsert toàn bộ state card.
-- PATCH /api/v1/users/me/card-states/{cardId} — cập nhật srs và flags
+- PATCH /api/v1/users/me/card-states/{cardId} — Cập nhật một phần state của một card (srs, flags). Nếu card chưa có state, sẽ tự động tạo mới (bắt buộc phải có deckId và topicId trong body khi tạo mới).
 
 ## **Gamification**
 
@@ -192,18 +189,10 @@ XP idempotent: gọi finalize nhiều lần không bị cộng trùng (`refId=ma
 
 ## **User management**
 
-- GET /api/v1/admin/users — danh sách user, filter theo, status, q, page, limit.
+- GET /api/v1/admin/users — danh sách user, filter theo status, q, page, limit.
 - GET /api/v1/admin/users/{userId} — chi tiết một user.
 - PATCH /api/v1/admin/users/{userId} — cập nhật password.
 - PATCH /api/v1/admin/users/{userId}/status — khóa / mở khóa user.
-
-## **CEFR Levels management**
-
-- GET /api/v1/admin/cefr-levels — danh sách level CEFR.
-- POST /api/v1/admin/cefr-levels — tạo level mới.
-- GET /api/v1/admin/cefr-levels/{id} — chi tiết một level.
-- PUT /api/v1/admin/cefr-levels/{id} — cập nhật level.
-- DELETE /api/v1/admin/cefr-levels/{id} — xóa level.
 
 ## **Tags management**
 
@@ -253,3 +242,9 @@ XP idempotent: gọi finalize nhiều lần không bị cộng trùng (`refId=ma
 - GET /api/v1/admin/decks/{deckId}/cards/{cardId} — chi tiết card.
 - PUT /api/v1/admin/decks/{deckId}/cards/{cardId} — cập nhật term, pos, phonetics, translation, explanation, examples, imageUrl.
 - DELETE /api/v1/admin/decks/{deckId}/cards/{cardId} — xóa card.
+- PATCH /api/v1/admin/topics/{topicId}/cards/reorder — sắp xếp lại card theo order trong topic.
+- POST /api/v1/admin/decks/{deckId}/topics/{topicId}/import - Import cards vào một topic từ file Excel trên S3.
+- POST /api/v1/admin/decks/{deckId}/topics/{topicId}/export - Export cards từ một topic ra file Excel.
+
+## **Admin API**
+- POST /api/v1/ai/cards/auto-fill - Dựa vào từ vựng hoặc nghĩa tiếng Việt để tự động sinh ra các trường dữ liệu còn thiếu cho thẻ từ vựng (phát âm, từ loại, giải thích, ví dụ...).
