@@ -354,6 +354,41 @@ export const deleteAdminDeckTopic = async (deckId, topicId) => {
   );
 };
 
+export const deleteAdminMultipleDeckTopics = async (deckId, topicIds) => {
+  if (!Array.isArray(topicIds) || topicIds.length === 0) {
+    throw new AppError(COMMON.INVALID_DATA, 400, [{ field: 'topicIds', message: 'Must be a non-empty array' }]);
+  }
+
+  const topics = await Topic.find({ _id: { $in: topicIds }, deckId });
+  if (topics.length === 0) {
+    throw new AppError(DECK.DECK_OR_TOPIC_NOT_FOUND, 404);
+  }
+  const foundTopicIds = topics.map((t) => t._id);
+
+  const cardIds = await Card.find({ deckId, topicId: { $in: foundTopicIds } }).distinct('_id');
+  await Promise.all([
+    Card.deleteMany({ deckId, topicId: { $in: foundTopicIds } }),
+    UserCardState.deleteMany({ cardId: { $in: cardIds } }),
+  ]);
+  await Topic.deleteMany({ _id: { $in: foundTopicIds } });
+
+  // Tính toán lại order cho các topics còn lại
+  const remainingTopics = await Topic.find({ deckId }).sort({ order: 1 });
+  const bulkOps = remainingTopics.map((t, index) => ({
+    updateOne: {
+      filter: { _id: t._id },
+      update: { $set: { order: index + 1 } },//array dùng index bắt đầu từ 0
+    },
+  }));
+  if (bulkOps.length > 0) {
+    await Topic.bulkWrite(bulkOps);
+  }
+  await Deck.updateOne(
+    { _id: deckId },
+    { $inc: { topicCount: -foundTopicIds.length, cardCount: -cardIds.length } }
+  );
+};
+
 export const reorderAdminDeckTopics = async (deckId, topics) => {
   const errors = [];
   if (!Array.isArray(topics) || topics.length === 0) {
@@ -714,6 +749,57 @@ export const deleteAdminDeckCard = async (deckId, cardId) => {
     Topic.updateOne({ _id: card.topicId }, { $inc: { cardCount: -1 } }),
     Deck.updateOne({ _id: deckId }, { $inc: { cardCount: -1 } }),
   ]);
+};
+
+export const deleteAdminMultipleDeckCards = async (deckId, cardIds) => {
+  if (!Array.isArray(cardIds) || cardIds.length === 0) {
+    throw new AppError(COMMON.INVALID_DATA, 400, [{ field: 'cardIds', message: 'Must be a non-empty array' }]);
+  }
+  const cards = await Card.find({ _id: { $in: cardIds }, deckId });
+  if (cards.length === 0) {
+    throw new AppError(ADMIN.CARD_NOT_FOUND, 404);
+  }
+  const foundCardIds = cards.map((c) => c._id);
+
+  // Group by topicId để update topic cardCount
+  const topicCountMap = {};
+  cards.forEach((card) => {
+    const topicIdStr = card.topicId.toString();
+    topicCountMap[topicIdStr] = (topicCountMap[topicIdStr] || 0) + 1;//topicCountMap[topicIdStr] chưa có lấy 0, có rồi + 1
+  });
+
+  await Promise.all([
+    Card.deleteMany({ _id: { $in: foundCardIds } }),
+    UserCardState.deleteMany({ cardId: { $in: foundCardIds } }),
+  ]);
+
+  const topicUpdates = Object.keys(topicCountMap).map((topicId) => {
+    return Topic.updateOne(
+      { _id: topicId },
+      { $inc: { cardCount: -topicCountMap[topicId] } }
+    );
+  });
+  await Promise.all(topicUpdates);//chạy tất cả các Promise trong mảng topicUpdates song song và chờ tất cả hoàn thành
+
+  // Tính toán lại order cho các cards còn lại trong từng topic bị ảnh hưởng
+  const affectedTopicIds = Object.keys(topicCountMap);
+  for (const tId of affectedTopicIds) {
+    const remainingCards = await Card.find({ deckId, topicId: tId }).sort({ order: 1 });
+    const bulkOps = remainingCards.map((c, index) => ({
+      updateOne: {
+        filter: { _id: c._id },
+        update: { $set: { order: index + 1 } },
+      },
+    }));
+    if (bulkOps.length > 0) {
+      await Card.bulkWrite(bulkOps);
+    }
+  }
+
+  await Deck.updateOne(
+    { _id: deckId },
+    { $inc: { cardCount: -foundCardIds.length } }
+  );
 };
 
 export const reorderAdminTopicCards = async (topicId, cards) => {

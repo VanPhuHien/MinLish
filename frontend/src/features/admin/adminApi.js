@@ -98,6 +98,14 @@ export const deleteDeckTopicApi = async (deckId, topicId) => {
   return response.data;
 };
 
+export const deleteMultipleDeckTopicsApi = async (deckId, topicIds) => {
+  const response = await apiClient.delete(
+    `/admin/decks/${deckId}/topics`,
+    { data: { topicIds } },
+  );
+  return response.data;
+};
+
 export const reorderDeckTopicsApi = async (deckId, topics) => {
   const response = await apiClient.patch(
     `/admin/decks/${deckId}/topics/reorder`,
@@ -151,6 +159,14 @@ export const deleteDeckCardApi = async (deckId, cardId) => {
   return response.data;
 };
 
+export const deleteMultipleDeckCardsApi = async (deckId, cardIds) => {
+  const response = await apiClient.delete(
+    `/admin/decks/${deckId}/cards`,
+    { data: { cardIds } },
+  );
+  return response.data;
+};
+
 export const autoFillCardApi = async (word) => {
   const response = await apiClient.post("/ai/cards/auto-fill", { word });
   return response.data;
@@ -191,6 +207,14 @@ export const updateAdminLessonSegmentApi = async (
 export const deleteAdminLessonSegmentApi = async (lessonId, segmentId) => {
   const response = await apiClient.delete(
     `/admin/lessons/${lessonId}/segments/${segmentId}`,
+  );
+  return response.data;
+};
+
+export const deleteMultipleLessonSegmentsApi = async (lessonId, segmentIds) => {
+  const response = await apiClient.delete(
+    `/admin/lessons/${lessonId}/segments`,
+    { data: { segmentIds } },
   );
   return response.data;
 };

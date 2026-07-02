@@ -23,24 +23,17 @@ router.get('/decks/:deckId/topics', adminController.getDeckTopics);
 router.post('/decks/:deckId/topics', adminController.createDeckTopic);
 router.get('/decks/:deckId/topics/:topicId', adminController.getDeckTopicById);
 router.put('/decks/:deckId/topics/:topicId', adminController.updateDeckTopic);
-router.delete(
-  '/decks/:deckId/topics/:topicId',
-  adminController.deleteDeckTopic
-);
-router.patch(
-  '/decks/:deckId/topics/reorder',
-  adminController.reorderDeckTopics
-);
+router.delete('/decks/:deckId/topics', adminController.deleteMultipleDeckTopics);
+router.delete('/decks/:deckId/topics/:topicId', adminController.deleteDeckTopic);
+router.patch('/decks/:deckId/topics/reorder', adminController.reorderDeckTopics);
 
 router.get('/decks/:deckId/cards', adminController.listDeckCards);
 router.post('/decks/:deckId/cards', adminController.createDeckCard);
 router.get('/decks/:deckId/cards/:cardId', adminController.getDeckCardById);
 router.put('/decks/:deckId/cards/:cardId', adminController.updateDeckCard);
+router.delete('/decks/:deckId/cards', adminController.deleteMultipleDeckCards);
 router.delete('/decks/:deckId/cards/:cardId', adminController.deleteDeckCard);
-router.patch(
-  '/topics/:topicId/cards/reorder',
-  adminController.reorderTopicCards
-);
+router.patch('/topics/:topicId/cards/reorder', adminController.reorderTopicCards);
 
 router.get('/lessons', adminController.listLessons);
 router.post('/lessons', adminController.createLesson);
@@ -58,6 +51,7 @@ router.put(
   '/lessons/:lessonId/segments/:segmentId',
   adminController.updateLessonSegment
 );
+router.delete('/lessons/:lessonId/segments', adminController.deleteMultipleLessonSegments);
 router.delete(
   '/lessons/:lessonId/segments/:segmentId',
   adminController.deleteLessonSegment

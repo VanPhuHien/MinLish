@@ -623,6 +623,140 @@
   }
 }
 
+/* ── Topic Select Mode Button ── */
+.admin-topic-col-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-topic-select-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background-color: var(--color-surface-container-lowest);
+  color: var(--color-on-surface);
+  border: 1.5px solid var(--color-outline-variant);
+  border-radius: var(--rounded-full);
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.admin-topic-select-mode-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
+}
+
+.admin-topic-select-mode-btn.active {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  border-color: var(--color-primary);
+}
+
+.admin-topic-select-mode-btn.active:hover {
+  background-color: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+}
+
+/* ── Topic Bulk Action Bar ── */
+.admin-topic-bulk-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  background-color: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface-container-lowest));
+  border: 1.5px solid var(--color-primary);
+  border-radius: var(--rounded-md);
+  animation: slideDown 0.2s ease-out;
+}
+
+.admin-topic-bulk-bar .admin-bulk-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-topic-bulk-bar .admin-bulk-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-on-surface);
+  cursor: pointer;
+}
+
+.admin-topic-bulk-bar .admin-bulk-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.admin-topic-bulk-bar .admin-bulk-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background-color: var(--color-danger);
+  color: var(--color-on-danger);
+  border: none;
+  border-radius: var(--rounded-md);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-topic-bulk-bar .admin-bulk-delete-btn:hover:not(:disabled) {
+  background-color: var(--color-danger-container);
+  color: var(--color-on-danger-container);
+  transform: translateY(-1px);
+}
+
+.admin-topic-bulk-bar .admin-bulk-delete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Topic Select Mode Items ── */
+.admin-topic-item.select-mode {
+  cursor: pointer;
+}
+
+.admin-topic-item.select-mode:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+
+.admin-topic-item.checked {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary);
+  background-color: color-mix(in srgb, var(--color-primary) 3%, var(--color-surface-container-lowest));
+}
+
+.admin-topic-select-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.admin-topic-select-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
 /* ── Alerts ── */
 .admin-alert {
   padding: 12px 18px;

@@ -5,7 +5,8 @@ import {
   listAdminLessonSegmentsApi,
   createAdminLessonSegmentApi,
   updateAdminLessonSegmentApi,
-  deleteAdminLessonSegmentApi
+  deleteAdminLessonSegmentApi,
+  deleteMultipleLessonSegmentsApi
 } from '../../adminApi'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
 import './AdminLessonSegmentsPage.css'
@@ -147,6 +148,11 @@ function AdminLessonSegmentsPage({ onNavigate, lessonId }) {
 
   // Confirm Modal state
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+
+  // Bulk select states
+  const [isSelectMode, setIsSelectMode] = useState(false)
+  const [selectedIds, setSelectedIds] = useState(new Set())
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false)
 
   // Feedback Alerts states
   const [successMsg, setSuccessMsg] = useState('')
@@ -558,6 +564,76 @@ function AdminLessonSegmentsPage({ onNavigate, lessonId }) {
     }
   }
 
+  // Bulk select handlers
+  const handleToggleSelectMode = () => {
+    if (isSelectMode) {
+      setIsSelectMode(false)
+      setSelectedIds(new Set())
+    } else {
+      setIsSelectMode(true)
+    }
+  }
+
+  const handleToggleSelect = (segmentId) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev)
+      if (next.has(segmentId)) {
+        next.delete(segmentId)
+      } else {
+        next.add(segmentId)
+      }
+      return next
+    })
+  }
+
+  const handleSelectAll = () => {
+    const allIds = new Set(segments.filter(s => s._id !== 'new').map(s => s._id))
+    setSelectedIds(allIds)
+  }
+
+  const handleDeselectAll = () => {
+    setSelectedIds(new Set())
+  }
+
+  const handleBulkDeleteClick = () => {
+    if (selectedIds.size > 0) {
+      setIsBulkDeleteModalOpen(true)
+    }
+  }
+
+  const handleConfirmBulkDelete = async () => {
+    if (selectedIds.size === 0) return
+    try {
+      const segmentIds = Array.from(selectedIds)
+      await deleteMultipleLessonSegmentsApi(lessonId, segmentIds)
+      setSuccessMsg(t('api.success.SEGMENT_DELETED_SUCCESS'))
+      setTimeout(() => {
+        setSuccessMsg('')
+      }, 3000)
+
+      // Re-fetch data
+      setIsSelectMode(false)
+      setSelectedIds(new Set())
+      const segmentsRes = await listAdminLessonSegmentsApi(lessonId)
+      const segmentsData = segmentsRes.data || []
+      setSegments(segmentsData)
+
+      if (segmentsData.length > 0) {
+        handleSelectSegment(segmentsData[0])
+      } else {
+        setSelectedSegment(null)
+      }
+    } catch (err) {
+      const code = err.response?.data?.code
+      setErrorMsg(code ? t('api.error.' + code) : (err.response?.data?.message || t('admin.segmentDeleteError')))
+      setTimeout(() => {
+        setErrorMsg('')
+      }, 3000)
+    } finally {
+      setIsBulkDeleteModalOpen(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="admin-loading">
@@ -613,19 +689,64 @@ function AdminLessonSegmentsPage({ onNavigate, lessonId }) {
               </svg>
               {t('admin.segmentListTitle') || 'Phân đoạn'} ({segments.length})
             </h2>
-            <button className="admin-add-segment-btn" onClick={handleAddNewSegment}>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-              {t('admin.addSegmentBtn') || 'Thêm Phân đoạn'}
-            </button>
+            <div className="admin-segment-col-actions">
+              {/* Select Mode Button */}
+              <button
+                type="button"
+                className={`admin-segment-select-mode-btn ${isSelectMode ? 'active' : ''}`}
+                onClick={handleToggleSelectMode}
+                title={isSelectMode ? t('admin.cancelSelectModeBtn') : t('admin.selectModeBtn')}
+              >
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 11 12 14 22 4" />
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                </svg>
+                {isSelectMode ? t('admin.cancelSelectModeBtn') || 'Hủy chọn' : t('admin.selectModeBtn') || 'Chọn'}
+              </button>
+              <button className="admin-add-segment-btn" onClick={handleAddNewSegment}>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                {t('admin.addSegmentBtn') || 'Thêm Phân đoạn'}
+              </button>
+            </div>
           </div>
+
+          {/* Bulk Action Bar */}
+          {isSelectMode && segments.filter(s => s._id !== 'new').length > 0 && (
+            <div className="admin-segment-bulk-bar">
+              <div className="admin-bulk-left">
+                <label className="admin-bulk-checkbox-label">
+                  <input
+                    type="checkbox"
+                    className="admin-bulk-checkbox"
+                    checked={selectedIds.size === segments.filter(s => s._id !== 'new').length}
+                    onChange={selectedIds.size === segments.filter(s => s._id !== 'new').length ? handleDeselectAll : handleSelectAll}
+                  />
+                  <span>{selectedIds.size === segments.filter(s => s._id !== 'new').length ? t('admin.deselectAllBtn') || 'Bỏ chọn tất cả' : t('admin.selectAllBtn') || 'Chọn tất cả'}</span>
+                </label>
+              </div>
+              <button
+                type="button"
+                className="admin-bulk-delete-btn"
+                disabled={selectedIds.size === 0}
+                onClick={handleBulkDeleteClick}
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                </svg>
+                {t('admin.deleteSelectedBtn', { count: selectedIds.size }) || `Xóa đã chọn (${selectedIds.size})`}
+              </button>
+            </div>
+          )}
 
           <div className="admin-segment-list">
             {segments.map((segment, index) => {
               const isSelected = selectedSegment && selectedSegment._id === segment._id
               const displayIndex = String(index + 1).padStart(2, '0')
+              const isChecked = selectedIds.has(segment._id)
 
               return (
                 <div
@@ -637,9 +758,27 @@ function AdminLessonSegmentsPage({ onNavigate, lessonId }) {
                       delete segmentItemRefs.current[segment._id]
                     }
                   }}
-                  onClick={() => handleSelectSegment(segment)}
-                  className={`admin-segment-item ${isSelected ? 'selected' : ''} ${autoActiveSegmentId === segment._id ? 'auto-active' : ''}`}
+                  onClick={() => {
+                    if (isSelectMode && segment._id !== 'new') {
+                      handleToggleSelect(segment._id)
+                    } else {
+                      handleSelectSegment(segment)
+                    }
+                  }}
+                  className={`admin-segment-item ${isSelected ? 'selected' : ''} ${autoActiveSegmentId === segment._id ? 'auto-active' : ''} ${isSelectMode ? 'select-mode' : ''} ${isChecked ? 'checked' : ''}`}
                 >
+                  {/* Select checkbox in select mode */}
+                  {isSelectMode && segment._id !== 'new' && (
+                    <div className="admin-segment-select-box">
+                      <input
+                        type="checkbox"
+                        className="admin-segment-select-checkbox"
+                        checked={isChecked}
+                        onChange={() => handleToggleSelect(segment._id)}
+                      />
+                    </div>
+                  )}
+
                   {/* Segment time and content */}
                   <div className="admin-segment-item-details">
                     <div className="admin-segment-time-row">
@@ -663,17 +802,19 @@ function AdminLessonSegmentsPage({ onNavigate, lessonId }) {
                   </div>
 
                   {/* Action buttons */}
-                  <div className="admin-segment-item-actions">
-                    <button className="admin-segment-edit-btn" title={t('admin.editSegment')} onClick={(e) => {
-                      e.stopPropagation()
-                      handleSelectSegment(segment)
-                    }}>
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                      </svg>
-                    </button>
-                  </div>
+                  {!isSelectMode && (
+                    <div className="admin-segment-item-actions">
+                      <button className="admin-segment-edit-btn" title={t('admin.editSegment')} onClick={(e) => {
+                        e.stopPropagation()
+                        handleSelectSegment(segment)
+                      }}>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
                 </div>
               )
             })}
@@ -842,7 +983,7 @@ function AdminLessonSegmentsPage({ onNavigate, lessonId }) {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
+      {/* Single Delete Confirmation Modal */}
       <ConfirmModal
         isOpen={isDeleteModalOpen}
         title={t('admin.confirmDeleteSegmentTitle') || 'Xóa phân đoạn này?'}
@@ -851,6 +992,18 @@ function AdminLessonSegmentsPage({ onNavigate, lessonId }) {
         cancelText={t('admin.cancelBtn') || 'Hủy'}
         onConfirm={handleConfirmDelete}
         onCancel={() => setIsDeleteModalOpen(false)}
+        isDanger={true}
+      />
+
+      {/* Bulk Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={isBulkDeleteModalOpen}
+        title={t('admin.confirmDeleteMultipleSegmentsTitle') || 'Xóa các phân đoạn đã chọn'}
+        message={t('admin.confirmDeleteMultipleSegmentsMessage', { count: selectedIds.size }) || `Bạn có chắc chắn muốn xóa ${selectedIds.size} phân đoạn đã chọn? Hành động này không thể hoàn tác.`}
+        confirmText={t('admin.deleteBtn') || 'Xóa'}
+        cancelText={t('admin.cancelBtn') || 'Hủy'}
+        onConfirm={handleConfirmBulkDelete}
+        onCancel={() => setIsBulkDeleteModalOpen(false)}
         isDanger={true}
       />
     </div>

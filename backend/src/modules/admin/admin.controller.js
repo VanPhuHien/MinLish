@@ -188,6 +188,18 @@ export const deleteDeckTopic = async (req, res, next) => {
   }
 };
 
+export const deleteMultipleDeckTopics = async (req, res, next) => {
+  try {
+    await deckService.deleteAdminMultipleDeckTopics(
+      req.params.deckId,
+      req.body.topicIds
+    );
+    return res.status(200).json(successResponse(ADMIN.TOPIC_DELETED_SUCCESS));
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const reorderDeckTopics = async (req, res, next) => {
   try {
     await deckService.reorderAdminDeckTopics(
@@ -265,6 +277,15 @@ export const updateDeckCard = async (req, res, next) => {
 export const deleteDeckCard = async (req, res, next) => {
   try {
     await deckService.deleteAdminDeckCard(req.params.deckId, req.params.cardId);
+    return res.status(200).json(successResponse(ADMIN.CARD_DELETED_SUCCESS));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteMultipleDeckCards = async (req, res, next) => {
+  try {
+    await deckService.deleteAdminMultipleDeckCards(req.params.deckId, req.body.cardIds);
     return res.status(200).json(successResponse(ADMIN.CARD_DELETED_SUCCESS));
   } catch (error) {
     next(error);
@@ -409,6 +430,18 @@ export const deleteLessonSegment = async (req, res, next) => {
     await lessonService.deleteAdminLessonSegment(
       req.params.lessonId,
       req.params.segmentId
+    );
+    return res.status(200).json(successResponse(ADMIN.SEGMENT_DELETED_SUCCESS));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteMultipleLessonSegments = async (req, res, next) => {
+  try {
+    await lessonService.deleteAdminMultipleLessonSegments(
+      req.params.lessonId,
+      req.body.segmentIds
     );
     return res.status(200).json(successResponse(ADMIN.SEGMENT_DELETED_SUCCESS));
   } catch (error) {
