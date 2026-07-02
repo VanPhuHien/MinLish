@@ -3,6 +3,7 @@ import {
   LESSON,
   ADMIN,
   MESSAGES,
+  COMMON,
 } from '../../constants/codes/index.js';
 import LessonSegment from '../../models/lessonSegment.model.js';
 import Lesson from '../../models/lesson.model.js';
@@ -416,4 +417,20 @@ export const deleteAdminLessonSegment = async (lessonId, segmentId) => {
   const segment = await LessonSegment.findOne({ _id: segmentId, lessonId });
   if (!segment) throw new AppError(LESSON.SEGMENT_NOT_FOUND, 404);
   await LessonSegment.deleteOne({ _id: segmentId });
+};
+
+export const deleteAdminMultipleLessonSegments = async (lessonId, segmentIds) => {
+  if (!Array.isArray(segmentIds) || segmentIds.length === 0) {
+    throw new AppError(COMMON.INVALID_DATA, 400, [{ field: 'segmentIds', message: 'Must be a non-empty array' }]);
+  }
+  const lesson = await Lesson.findById(lessonId);
+  if (!lesson) throw new AppError(LESSON.LESSON_NOT_FOUND, 404);
+
+  const segments = await LessonSegment.find({ _id: { $in: segmentIds }, lessonId });
+  if (segments.length === 0) {
+    throw new AppError(LESSON.SEGMENT_NOT_FOUND, 404);
+  }
+
+  const foundSegmentIds = segments.map((s) => s._id);
+  await LessonSegment.deleteMany({ _id: { $in: foundSegmentIds } });
 };
