@@ -80,8 +80,8 @@ function DeckDetailPage({ deckId, isSystem = true, onNavigate }) {
       try {
         const response = await getTopicCards(deckId, selectedTopicId)
         if (response.success && Array.isArray(response.data.cards)) {
-          // CHỈ LỌC lấy các thẻ từ mới (userCardState === null)
-          const newWords = response.data.cards.filter((item) => !item.userCardState)
+          // CHỈ LỌC lấy các thẻ từ mới (nextReviewAt === null)
+          const newWords = response.data.cards.filter((item) => !item.userCardState?.srs?.nextReviewAt)
           setCards(newWords)
           setCurrentCardIndex(0)
         }
