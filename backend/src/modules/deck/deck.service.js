@@ -781,6 +781,21 @@ export const deleteAdminMultipleDeckCards = async (deckId, cardIds) => {
   });
   await Promise.all(topicUpdates);//chạy tất cả các Promise trong mảng topicUpdates song song và chờ tất cả hoàn thành
 
+  // Tính toán lại order cho các cards còn lại trong từng topic bị ảnh hưởng
+  const affectedTopicIds = Object.keys(topicCountMap);
+  for (const tId of affectedTopicIds) {
+    const remainingCards = await Card.find({ deckId, topicId: tId }).sort({ order: 1 });
+    const bulkOps = remainingCards.map((c, index) => ({
+      updateOne: {
+        filter: { _id: c._id },
+        update: { $set: { order: index + 1 } },
+      },
+    }));
+    if (bulkOps.length > 0) {
+      await Card.bulkWrite(bulkOps);
+    }
+  }
+
   await Deck.updateOne(
     { _id: deckId },
     { $inc: { cardCount: -foundCardIds.length } }
